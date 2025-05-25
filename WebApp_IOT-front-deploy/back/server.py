@@ -283,6 +283,22 @@ def handle_ping():
     print("Ping received!")
     emit('pong', {'data': 'Pong from server!'})
 
+
+@app.route('/')
+def index():
+    """Serve a simple welcome page at the root URL"""
+    return jsonify({
+        'name': 'IOT Farming System API',
+        'version': '1.0',
+        'status': 'online',
+        'time': datetime.now().isoformat(),
+        'endpoints': {
+            'status': '/api/status',
+            'websocket': 'socket.io connection'
+        },
+        'connected_clients': len(connected_clients)
+    })
+
 # HTTP Routes
 @app.route('/api/status')
 def api_status():
