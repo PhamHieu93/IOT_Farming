@@ -10,20 +10,58 @@ const Control = () => {
     const [activePanel, setActivePanel] = useState("Panel A1");
     const [activeSector, setActiveSector] = useState("A");
     const [notification, setNotification] = useState({ show: false, message: '', type: 'info' });
-    const [groups, setGroups] = useState([
-        { id: "Light", status: true, type: "Schedule" },
-        { id: "Motor Fan", status: true, type: "Schedule" },
-        { id: "Pump", status: false, type: "Schedule" },
-    ]);
+    
+    // Thay đổi cách lưu trữ state của groups theo sector
+    const [sectorGroups, setSectorGroups] = useState({
+        'A': [
+            { id: "Light", status: false, type: "Schedule" },
+            { id: "Motor Fan", status: false, type: "Schedule" },
+            { id: "Pump", status: false, type: "Schedule" },
+        ],
+        'B': [
+            { id: "Light", status: false, type: "Schedule" },
+            { id: "Motor Fan", status: false, type: "Schedule" },
+            { id: "Pump", status: false, type: "Schedule" },
+        ],
+        'C': [
+            { id: "Light", status: false, type: "Schedule" },
+            { id: "Motor Fan", status: false, type: "Schedule" },
+            { id: "Pump", status: false, type: "Schedule" },
+        ],
+        'D': [
+            { id: "Light", status: false, type: "Schedule" },
+            { id: "Motor Fan", status: false, type: "Schedule" },
+            { id: "Pump", status: false, type: "Schedule" },
+        ]
+    });
 
-    // Time modal state
+    // Thời gian theo sector và thiết bị
+    const [timeSettings, setTimeSettings] = useState({
+        'A': [
+            { startTime: "00:00", endTime: "23:59" },
+            { startTime: "00:00", endTime: "23:59" },
+            { startTime: "00:00", endTime: "23:59" }
+        ],
+        'B': [
+            { startTime: "00:00", endTime: "23:59" },
+            { startTime: "00:00", endTime: "23:59" },
+            { startTime: "00:00", endTime: "23:59" }
+        ],
+        'C': [
+            { startTime: "00:00", endTime: "23:59" },
+            { startTime: "00:00", endTime: "23:59" },
+            { startTime: "00:00", endTime: "23:59" }
+        ],
+        'D': [
+            { startTime: "00:00", endTime: "23:59" },
+            { startTime: "00:00", endTime: "23:59" },
+            { startTime: "00:00", endTime: "23:59" }
+        ]
+    });
+
     const [showTimeModal, setShowTimeModal] = useState(false);
     const [selectedGroupIndex, setSelectedGroupIndex] = useState(null);
-    const [timeSettings, setTimeSettings] = useState(groups.map(() => ({
-        startTime: "00:00",
-        endTime: "23:59"
-    })));
-    
+
     // Attempt to reconnect if not connected
     useEffect(() => {
         if (!isConnected) {
@@ -49,22 +87,21 @@ const Control = () => {
                 return;
             }
 
-            const newGroups = [...groups];
-            newGroups[index].status = !newGroups[index].status;
-            setGroups(newGroups);
+            const newSectorGroups = { ...sectorGroups };
+            newSectorGroups[activeSector][index].status = !newSectorGroups[activeSector][index].status;
+            setSectorGroups(newSectorGroups);
 
-            // Send command using WebSocket context
-            console.log(`Sending device command: Sector ${activeSector}, Device ${newGroups[index].id}, Status ${newGroups[index].status}`);
+            const device = newSectorGroups[activeSector][index];
             
             const success = sendDeviceCommand(
                 activeSector,
-                newGroups[index].id,
-                newGroups[index].status,
-                newGroups[index].type
+                device.id,
+                device.status,
+                device.type
             );
             
             if (success) {
-                showNotification(`${newGroups[index].id} ${newGroups[index].status ? 'turned on' : 'turned off'}`, 'success');
+                showNotification(`${device.id} ${device.status ? 'turned on' : 'turned off'}`, 'success');
             } else {
                 showNotification('Failed to send command to server', 'error');
             }
@@ -81,30 +118,28 @@ const Control = () => {
                 reconnect();
                 return;
             }
-            
-            const newGroups = [...groups];
-            newGroups[index].type = type;
-            setGroups(newGroups);
-            
-            // If Schedule type is selected, show the time modal
+
+            const newSectorGroups = { ...sectorGroups };
+            newSectorGroups[activeSector][index].type = type;
+            setSectorGroups(newSectorGroups);
+
             if (type === "Schedule") {
                 setSelectedGroupIndex(index);
                 setShowTimeModal(true);
                 return;
             }
 
-            // Send control type change using WebSocket context
-            console.log(`Sending control type change: Sector ${activeSector}, Device ${newGroups[index].id}, Type ${type}`);
+            const device = newSectorGroups[activeSector][index];
             
             const success = changeControlType(
                 activeSector,
-                newGroups[index].id,
+                device.id,
                 type,
-                newGroups[index].status
+                device.status
             );
             
             if (!success) {
-                showNotification('Failed to change control type - WebSocket not connected', 'error');
+                showNotification('Failed to change control type', 'error');
             } else {
                 showNotification(`Control type changed to ${type}`, 'success');
             }
@@ -122,13 +157,13 @@ const Control = () => {
                 return;
             }
             
-            const device = groups[index];
+            const device = sectorGroups[activeSector][index];
             console.log(`Starting ${device.id} with mode ${device.type}`);
             
             // For Schedule type, we need to send the time settings
             const payload = device.type === "Schedule" 
                 ? { 
-                    ...timeSettings[index],
+                    ...timeSettings[activeSector][index],
                     command: "start" 
                   } 
                 : { command: "start" };
@@ -143,9 +178,9 @@ const Control = () => {
             
             if (success) {
                 // Update the group status to on
-                const newGroups = [...groups];
-                newGroups[index].status = true;
-                setGroups(newGroups);
+                const newSectorGroups = { ...sectorGroups };
+                newSectorGroups[activeSector][index].status = true;
+                setSectorGroups(newSectorGroups);
                 
                 showNotification(`Started ${device.id} in ${device.type} mode`, 'success');
             } else {
@@ -163,22 +198,22 @@ const Control = () => {
     
     const handleTimeSettingsChange = (field, value) => {
         if (selectedGroupIndex !== null) {
-            const newTimeSettings = [...timeSettings];
-            newTimeSettings[selectedGroupIndex][field] = value;
+            const newTimeSettings = { ...timeSettings };
+            newTimeSettings[activeSector][selectedGroupIndex][field] = value;
             setTimeSettings(newTimeSettings);
         }
     };
     
     const saveTimeSettings = () => {
         if (selectedGroupIndex !== null && isConnected) {
-            const device = groups[selectedGroupIndex];
+            const device = sectorGroups[activeSector][selectedGroupIndex];
             
             const success = changeControlType(
                 activeSector,
                 device.id,
                 device.type,
                 device.status,
-                timeSettings[selectedGroupIndex]
+                timeSettings[activeSector][selectedGroupIndex]
             );
             
             if (success) {
@@ -205,7 +240,7 @@ const Control = () => {
                 <div className="time-modal-overlay">
                     <div className="time-modal">
                         <div className="time-modal-header">
-                            <h3>Schedule Settings for {groups[selectedGroupIndex]?.id}</h3>
+                            <h3>Schedule Settings for {sectorGroups[activeSector][selectedGroupIndex]?.id}</h3>
                             <button className="close-btn" onClick={() => setShowTimeModal(false)}>
                                 <FaTimes />
                             </button>
@@ -215,7 +250,7 @@ const Control = () => {
                                 <label>Start Time:</label>
                                 <input
                                     type="time"
-                                    value={timeSettings[selectedGroupIndex]?.startTime || "00:00"}
+                                    value={timeSettings[activeSector][selectedGroupIndex]?.startTime || "00:00"}
                                     onChange={(e) => handleTimeSettingsChange("startTime", e.target.value)}
                                 />
                             </div>
@@ -223,7 +258,7 @@ const Control = () => {
                                 <label>End Time:</label>
                                 <input
                                     type="time"
-                                    value={timeSettings[selectedGroupIndex]?.endTime || "23:59"}
+                                    value={timeSettings[activeSector][selectedGroupIndex]?.endTime || "23:59"}
                                     onChange={(e) => handleTimeSettingsChange("endTime", e.target.value)}
                                 />
                             </div>
@@ -318,8 +353,8 @@ const Control = () => {
                                 <span>Start</span>
                                 <span>Status</span>
                             </div>
-                            {groups.map((group, index) => (
-                                <div key={group.id} className="group-row">
+                            {sectorGroups[activeSector].map((group, index) => (
+                                <div key={`${activeSector}_${group.id}`} className="group-row">
                                     <span className="group-id">{group.id}</span>
                                     <div className="control-type">
                                         <button
