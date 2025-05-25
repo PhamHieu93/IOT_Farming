@@ -8,7 +8,19 @@ from flask import Flask, jsonify, request
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import threading
+import logging
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("server.log"),
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger("IOT_server")
 
 # Initialize Flask and SocketIO
 app = Flask(__name__)
@@ -23,6 +35,9 @@ socketio = SocketIO(
 )
 # Keep track of connected clients
 connected_clients = set()
+
+# Keep track of device states
+device_states = {}
 
 def connect_db():
     """Connect to the PostgreSQL database server"""
@@ -256,33 +271,150 @@ def add_device_activity(device_id, action, status="Active"):
     finally:
         if conn is not None:
             conn.close()
-# WebSocket event handlers
-# WebSocket event handlers
+# Enhanced WebSocket event handlers
 @socketio.on('connect')
 def handle_connect():
     sid = request.sid
     connected_clients.add(sid)
-    print(f"Client connected: {sid}")
-    emit('connection_status', {'status': 'connected', 'message': 'Connected to IOT Farming WebSocket server'})
+    logger.info(f"Client connected: {sid}")
+    emit('connection_status', {
+        'status': 'connected', 
+        'message': 'Connected to IOT Farming WebSocket server',
+        'timestamp': datetime.now().isoformat()
+    })
 
 @socketio.on('disconnect')
 def handle_disconnect():
     sid = request.sid
     if sid in connected_clients:
         connected_clients.remove(sid)
-    print(f"Client disconnected: {sid}")
+    logger.info(f"Client disconnected: {sid}")
 
 @socketio.on('message')
 def handle_message(data):
-    print(f"Received message: {data}")
-    emit('message', {'status': 'received', 'data': data})
+    logger.info(f"Received message: {data}")
+    emit('message', {
+        'status': 'received', 
+        'data': data,
+        'timestamp': datetime.now().isoformat(),
+        'received': True
+    })
 
-# Add this new test event handler here
 @socketio.on('ping')
 def handle_ping():
-    print("Ping received!")
-    emit('pong', {'data': 'Pong from server!'})
+    logger.info(f"Ping received from client: {request.sid}")
+    emit('pong', {
+        'data': 'Pong from server!',
+        'timestamp': datetime.now().isoformat(),
+        'received': True
+    })
 
+@socketio.on('device_command')
+def handle_device_command(command):
+    """Handle device control commands from frontend with enhanced logging and acknowledgment"""
+    try:
+        # Get current timestamp
+        timestamp = datetime.now().isoformat()
+        
+        # Log detailed information about the command
+        logger.info(f"Device command received at {timestamp}")
+        logger.info(f"Command details - Sector: {command.get('sector')}, Device: {command.get('device')}, Status: {command.get('status')}, Type: {command.get('type')}")
+        logger.info(f"Additional data: {command}")
+        
+        sector = command.get('sector')
+        device = command.get('device')
+        status = command.get('status')
+        control_type = command.get('type')
+        
+        # Update device state
+        device_key = f"{sector}_{device}"
+        device_states[device_key] = {
+            'status': status,
+            'type': control_type,
+            'last_updated': timestamp
+        }
+        
+        # Save to database or send to actual device here
+        
+        # Send detailed acknowledgment back to client
+        emit('command_response', {
+            'success': True,
+            'device': device_key,
+            'status': status,
+            'received': True,
+            'timestamp': timestamp,
+            'message': f"Command for {device} in sector {sector} processed successfully"
+        })
+        
+        # Broadcast to all clients that a device state has changed
+        socketio.emit('device_update', {
+            'device': device_key,
+            'status': status,
+            'timestamp': timestamp
+        })
+        
+    except Exception as e:
+        error_msg = str(e)
+        logger.error(f"Error handling device command: {error_msg}")
+        emit('command_response', {
+            'success': False,
+            'error': error_msg,
+            'timestamp': datetime.now().isoformat()
+        })
+
+@socketio.on('control_type_change')
+def handle_control_type_change(command):
+    """Handle control type changes from frontend with enhanced logging"""
+    try:
+        # Get current timestamp
+        timestamp = datetime.now().isoformat()
+        
+        # Log the type change request
+        logger.info(f"Control type change received at {timestamp}")
+        logger.info(f"Type change details - Sector: {command.get('sector')}, Device: {command.get('device')}, Type: {command.get('type')}")
+        
+        sector = command.get('sector')
+        device = command.get('device')
+        control_type = command.get('type')
+        additionalData = {k: v for k, v in command.items() if k not in ['sector', 'device', 'type', 'status']}
+        
+        # Update device control type
+        device_key = f"{sector}_{device}"
+        if device_key in device_states:
+            device_states[device_key]['type'] = control_type
+            device_states[device_key]['last_updated'] = timestamp
+            # Add any additional data like schedule settings
+            if additionalData:
+                device_states[device_key].update(additionalData)
+        else:
+            device_states[device_key] = {
+                'type': control_type,
+                'last_updated': timestamp
+            }
+            # Add any additional data
+            if additionalData:
+                device_states[device_key].update(additionalData)
+            
+        logger.info(f"Control type change - Device: {device_key}, Type: {control_type}, Additional data: {additionalData}")
+        
+        # Send success response back to client
+        emit('type_change_response', {
+            'success': True,
+            'device': device_key,
+            'type': control_type,
+            'received': True,
+            'timestamp': timestamp,
+            'message': f"Control type for {device} in sector {sector} changed to {control_type}"
+        })
+        
+    except Exception as e:
+        error_msg = str(e)
+        logger.error(f"Error handling control type change: {error_msg}")
+        emit('type_change_response', {
+            'success': False,
+            'error': error_msg,
+            'timestamp': datetime.now().isoformat()
+        })
 
 @app.route('/')
 def index():
@@ -306,6 +438,15 @@ def api_status():
         'status': 'online',
         'time': datetime.now().isoformat(),
         'clients_connected': len(connected_clients)
+    })
+
+# Add a new route to get the current state of all devices
+@app.route('/api/device-states')
+def get_device_states():
+    return jsonify({
+        'status': 'success',
+        'time': datetime.now().isoformat(),
+        'device_states': device_states
     })
 
 def start_simulation_thread():

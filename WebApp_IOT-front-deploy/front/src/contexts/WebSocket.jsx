@@ -15,14 +15,17 @@ export const WebSocketProvider = ({ children }) => {
     // Disconnect existing connection if any
     if (socketRef.current) {
       socketRef.current.disconnect();
-    }
-    
-    console.log("Attempting Socket.IO connection to http://localhost:3000");
+    }    // Get the backend URL from environment variable or use a default
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin;
+    console.log("Attempting Socket.IO connection to", BACKEND_URL);
     
     // Create Socket.IO connection
-    const socket = io('http://localhost:3000', {
+    const socket = io(BACKEND_URL, {
+      path: '/socket.io/',
+      transports: ['websocket', 'polling'], // Allow fallback to polling
       reconnection: true,
-      reconnectionAttempts: Infinity
+      reconnectionAttempts: Infinity,
+      timeout: 10000 // Increase timeout to 10s
     });
     
     socketRef.current = socket;
@@ -49,6 +52,16 @@ export const WebSocketProvider = ({ children }) => {
       console.log("Received pong:", data);
       setLastMessage(data);
     });
+      // Listen for command responses
+    socket.on('command_response', (response) => {
+      console.log('Command response:', response);
+      setLastMessage({ event: 'command_response', data: response });
+    });
+
+    socket.on('type_change_response', (response) => {
+      console.log('Type change response:', response);
+      setLastMessage({ event: 'type_change_response', data: response });
+    });
     
     // Listen for all messages
     socket.onAny((event, ...args) => {
@@ -67,7 +80,52 @@ export const WebSocketProvider = ({ children }) => {
       }
     };
   }, []);
-  
+    // Fix the sendDeviceCommand function to handle additional payload
+    const sendDeviceCommand = (sector, device, status, type, additionalData = {}) => {
+    if (socketRef.current && socketRef.current.connected) {
+      console.log("Sending device command:", { sector, device, status, type, ...additionalData });
+      socketRef.current.emit('device_command', {
+        sector,
+        device,
+        status,
+        type,
+        ...additionalData
+      }, (response) => {
+        // Handle acknowledgment
+        if (response && response.error) {
+          console.error("Command error:", response.error);
+        } else {
+          console.log("Command successfully sent:", response);
+        }
+      });
+      return true;
+    } else {
+      console.error("Socket.IO is not connected");
+      // Try to reconnect
+      connect();
+      return false;
+    }
+  };
+
+  // Function to change control type with additional data
+  const changeControlType = (sector, device, type, status, additionalData = {}) => {
+    if (socketRef.current && socketRef.current.connected) {
+      socketRef.current.emit('control_type_change', {
+        sector,
+        device,
+        type,
+        status,
+        ...additionalData
+      });
+      return true;
+    } else {
+      console.error("Socket.IO is not connected");
+      // Try to reconnect
+      connect();
+      return false;
+    }
+  };
+
   // Send a message through Socket.IO
   const sendMessage = (event, message) => {
     if (socketRef.current && socketRef.current.connected) {
@@ -93,11 +151,12 @@ export const WebSocketProvider = ({ children }) => {
     }
     return () => {};
   };
-  
-  const value = {
+    const value = {
     isConnected,
     lastMessage,
     sendMessage,
+    sendDeviceCommand,
+    changeControlType,
     addMessageListener,
     reconnect: connect
   };

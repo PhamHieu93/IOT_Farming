@@ -1,0 +1,283 @@
+2025-05-25 11:24:33,178 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 11:24:33,184 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 11:24:33,190 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 11:24:33,431 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 11:24:33,437 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 11:24:33,442 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 11:24:36,069 - engineio.server - INFO - oej5EsZFIPBKj3P5AAAA: Sending packet OPEN data {'sid': 'oej5EsZFIPBKj3P5AAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 11:24:36,069 - engineio.server - INFO - oej5EsZFIPBKj3P5AAAA: Received request to upgrade to websocket
+2025-05-25 11:24:36,072 - engineio.server - INFO - oej5EsZFIPBKj3P5AAAA: Upgrade to websocket successful
+2025-05-25 11:24:36,072 - engineio.server - INFO - oej5EsZFIPBKj3P5AAAA: Received packet MESSAGE data 0
+2025-05-25 11:24:36,073 - IOT_server - INFO - Client connected: yfYdhcHz91TlFNj7AAAB
+2025-05-25 11:24:36,073 - socketio.server - INFO - emitting event "connection_status" to yfYdhcHz91TlFNj7AAAB [/]
+2025-05-25 11:24:36,074 - engineio.server - INFO - oej5EsZFIPBKj3P5AAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T11:24:36.073875"}]
+2025-05-25 11:24:36,074 - engineio.server - INFO - oej5EsZFIPBKj3P5AAAA: Sending packet MESSAGE data 0{"sid":"yfYdhcHz91TlFNj7AAAB"}
+2025-05-25 11:24:36,075 - engineio.server - INFO - oej5EsZFIPBKj3P5AAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 11:24:36,075 - socketio.server - INFO - received event "ping" from yfYdhcHz91TlFNj7AAAB [/]
+2025-05-25 11:24:36,076 - IOT_server - INFO - Ping received from client: yfYdhcHz91TlFNj7AAAB
+2025-05-25 11:24:36,076 - socketio.server - INFO - emitting event "pong" to yfYdhcHz91TlFNj7AAAB [/]
+2025-05-25 11:24:36,076 - engineio.server - INFO - oej5EsZFIPBKj3P5AAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T11:24:36.076875","received":true}]
+2025-05-25 11:24:36,083 - engineio.server - INFO - m0spDdqy8UokBuUFAAAC: Sending packet OPEN data {'sid': 'm0spDdqy8UokBuUFAAAC', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 11:24:36,083 - engineio.server - INFO - m0spDdqy8UokBuUFAAAC: Received request to upgrade to websocket
+2025-05-25 11:24:36,085 - engineio.server - INFO - m0spDdqy8UokBuUFAAAC: Upgrade to websocket successful
+2025-05-25 11:24:36,086 - engineio.server - INFO - m0spDdqy8UokBuUFAAAC: Received packet MESSAGE data 0
+2025-05-25 11:24:36,087 - IOT_server - INFO - Client connected: z7iYm8BcjjChLKEnAAAD
+2025-05-25 11:24:36,087 - socketio.server - INFO - emitting event "connection_status" to z7iYm8BcjjChLKEnAAAD [/]
+2025-05-25 11:24:36,088 - engineio.server - INFO - m0spDdqy8UokBuUFAAAC: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T11:24:36.087875"}]
+2025-05-25 11:24:36,088 - engineio.server - INFO - m0spDdqy8UokBuUFAAAC: Sending packet MESSAGE data 0{"sid":"z7iYm8BcjjChLKEnAAAD"}
+2025-05-25 11:24:36,089 - engineio.server - INFO - m0spDdqy8UokBuUFAAAC: Received packet MESSAGE data 2["ping"]
+2025-05-25 11:24:36,089 - socketio.server - INFO - received event "ping" from z7iYm8BcjjChLKEnAAAD [/]
+2025-05-25 11:24:36,090 - IOT_server - INFO - Ping received from client: z7iYm8BcjjChLKEnAAAD
+2025-05-25 11:24:36,090 - socketio.server - INFO - emitting event "pong" to z7iYm8BcjjChLKEnAAAD [/]
+2025-05-25 11:24:36,091 - engineio.server - INFO - m0spDdqy8UokBuUFAAAC: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T11:24:36.090878","received":true}]
+2025-05-25 11:24:42,285 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\server.py', reloading
+2025-05-25 11:24:42,675 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\server.py', reloading
+2025-05-25 11:24:42,928 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 11:24:42,934 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 11:24:42,939 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 11:24:43,275 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 11:24:43,281 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 11:24:43,287 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 11:24:45,906 - engineio.server - INFO - vgE6UBtEM-1iEeAQAAAA: Sending packet OPEN data {'sid': 'vgE6UBtEM-1iEeAQAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 11:24:45,907 - engineio.server - INFO - vgE6UBtEM-1iEeAQAAAA: Received request to upgrade to websocket
+2025-05-25 11:24:45,908 - engineio.server - INFO - vgE6UBtEM-1iEeAQAAAA: Upgrade to websocket successful
+2025-05-25 11:24:45,909 - engineio.server - INFO - vgE6UBtEM-1iEeAQAAAA: Received packet MESSAGE data 0
+2025-05-25 11:24:45,909 - IOT_server - INFO - Client connected: KkowfUkqC5P1gUitAAAB
+2025-05-25 11:24:45,909 - socketio.server - INFO - emitting event "connection_status" to KkowfUkqC5P1gUitAAAB [/]
+2025-05-25 11:24:45,910 - engineio.server - INFO - vgE6UBtEM-1iEeAQAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T11:24:45.909008"}]
+2025-05-25 11:24:45,910 - engineio.server - INFO - vgE6UBtEM-1iEeAQAAAA: Sending packet MESSAGE data 0{"sid":"KkowfUkqC5P1gUitAAAB"}
+2025-05-25 11:24:45,911 - engineio.server - INFO - vgE6UBtEM-1iEeAQAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 11:24:45,911 - socketio.server - INFO - received event "ping" from KkowfUkqC5P1gUitAAAB [/]
+2025-05-25 11:24:45,912 - IOT_server - INFO - Ping received from client: KkowfUkqC5P1gUitAAAB
+2025-05-25 11:24:45,912 - socketio.server - INFO - emitting event "pong" to KkowfUkqC5P1gUitAAAB [/]
+2025-05-25 11:24:45,912 - engineio.server - INFO - vgE6UBtEM-1iEeAQAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T11:24:45.912007","received":true}]
+2025-05-25 11:24:45,923 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet OPEN data {'sid': 'exgeMurVijdQSGaGAAAC', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 11:24:45,923 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received request to upgrade to websocket
+2025-05-25 11:24:45,925 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Upgrade to websocket successful
+2025-05-25 11:24:45,926 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet MESSAGE data 0
+2025-05-25 11:24:45,926 - IOT_server - INFO - Client connected: beaqqwAfTZuA6odDAAAD
+2025-05-25 11:24:45,927 - socketio.server - INFO - emitting event "connection_status" to beaqqwAfTZuA6odDAAAD [/]
+2025-05-25 11:24:45,927 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T11:24:45.926007"}]
+2025-05-25 11:24:45,927 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet MESSAGE data 0{"sid":"beaqqwAfTZuA6odDAAAD"}
+2025-05-25 11:24:45,928 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet MESSAGE data 2["ping"]
+2025-05-25 11:24:45,928 - socketio.server - INFO - received event "ping" from beaqqwAfTZuA6odDAAAD [/]
+2025-05-25 11:24:45,928 - IOT_server - INFO - Ping received from client: beaqqwAfTZuA6odDAAAD
+2025-05-25 11:24:45,929 - socketio.server - INFO - emitting event "pong" to beaqqwAfTZuA6odDAAAD [/]
+2025-05-25 11:24:45,929 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T11:24:45.929009","received":true}]
+2025-05-25 11:24:49,758 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 11:24:53,093 - IOT_server - INFO - Client disconnected: KkowfUkqC5P1gUitAAAB
+2025-05-25 11:24:54,228 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet OPEN data {'sid': 'uafbU3F5F0bYWf4uAAAE', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 11:24:54,229 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received request to upgrade to websocket
+2025-05-25 11:24:54,230 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Upgrade to websocket successful
+2025-05-25 11:24:54,231 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 0
+2025-05-25 11:24:54,233 - IOT_server - INFO - Client connected: y1KdHQZukB1Kzcm3AAAF
+2025-05-25 11:24:54,233 - socketio.server - INFO - emitting event "connection_status" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:24:54,233 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T11:24:54.233737"}]
+2025-05-25 11:24:54,234 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 0{"sid":"y1KdHQZukB1Kzcm3AAAF"}
+2025-05-25 11:24:54,234 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 2["ping"]
+2025-05-25 11:24:54,235 - socketio.server - INFO - received event "ping" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:24:54,235 - IOT_server - INFO - Ping received from client: y1KdHQZukB1Kzcm3AAAF
+2025-05-25 11:24:54,235 - socketio.server - INFO - emitting event "pong" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:24:54,236 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T11:24:54.235713","received":true}]
+2025-05-25 11:24:58,047 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 2["control_type_change",{"sector":"A","device":"Light","type":"Manual","status":true}]
+2025-05-25 11:24:58,048 - socketio.server - INFO - received event "control_type_change" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:24:58,048 - IOT_server - INFO - Control type change received at 2025-05-25T11:24:58.048908
+2025-05-25 11:24:58,049 - IOT_server - INFO - Type change details - Sector: A, Device: Light, Type: Manual
+2025-05-25 11:24:58,049 - IOT_server - INFO - Control type change - Device: A_Light, Type: Manual, Additional data: {}
+2025-05-25 11:24:58,049 - socketio.server - INFO - emitting event "type_change_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:24:58,050 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["type_change_response",{"success":true,"device":"A_Light","type":"Manual","received":true,"timestamp":"2025-05-25T11:24:58.048908","message":"Control type for Light in sector A changed to Manual"}]
+2025-05-25 11:25:02,098 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:3000
+ * Running on http://192.168.2.114:3000
+2025-05-25 11:25:02,098 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-25 11:25:02,099 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 11:25:02,631 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 11:25:02,636 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 11:25:02,643 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 11:25:06,562 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 2["control_type_change",{"sector":"A","device":"Light","type":"On/Off","status":true}]
+2025-05-25 11:25:06,563 - socketio.server - INFO - received event "control_type_change" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:25:06,563 - IOT_server - INFO - Control type change received at 2025-05-25T11:25:06.563370
+2025-05-25 11:25:06,564 - IOT_server - INFO - Type change details - Sector: A, Device: Light, Type: On/Off
+2025-05-25 11:25:06,564 - IOT_server - INFO - Control type change - Device: A_Light, Type: On/Off, Additional data: {}
+2025-05-25 11:25:06,564 - socketio.server - INFO - emitting event "type_change_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:25:06,564 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["type_change_response",{"success":true,"device":"A_Light","type":"On/Off","received":true,"timestamp":"2025-05-25T11:25:06.563370","message":"Control type for Light in sector A changed to On/Off"}]
+2025-05-25 11:25:10,929 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:25:10,929 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:25:19,245 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:25:19,246 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:25:29,082 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 20["device_command",{"sector":"A","device":"Light","status":true,"type":"On/Off","command":"start"}]
+2025-05-25 11:25:29,082 - socketio.server - INFO - received event "device_command" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:25:29,083 - IOT_server - INFO - Device command received at 2025-05-25T11:25:29.083496
+2025-05-25 11:25:29,083 - IOT_server - INFO - Command details - Sector: A, Device: Light, Status: True, Type: On/Off
+2025-05-25 11:25:29,083 - IOT_server - INFO - Additional data: {'sector': 'A', 'device': 'Light', 'status': True, 'type': 'On/Off', 'command': 'start'}
+2025-05-25 11:25:29,083 - socketio.server - INFO - emitting event "command_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:25:29,083 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["command_response",{"success":true,"device":"A_Light","status":true,"received":true,"timestamp":"2025-05-25T11:25:29.083496","message":"Command for Light in sector A processed successfully"}]
+2025-05-25 11:25:29,083 - socketio.server - INFO - emitting event "device_update" to all [/]
+2025-05-25 11:25:29,085 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet MESSAGE data 2["device_update",{"device":"A_Light","status":true,"timestamp":"2025-05-25T11:25:29.083496"}]
+2025-05-25 11:25:29,085 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["device_update",{"device":"A_Light","status":true,"timestamp":"2025-05-25T11:25:29.083496"}]
+2025-05-25 11:25:29,085 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 30[]
+2025-05-25 11:25:35,936 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:25:35,937 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:25:44,253 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:25:44,254 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:25:46,743 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 2["control_type_change",{"sector":"A","device":"Light","type":"Manual","status":true}]
+2025-05-25 11:25:46,744 - socketio.server - INFO - received event "control_type_change" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:25:46,744 - IOT_server - INFO - Control type change received at 2025-05-25T11:25:46.744360
+2025-05-25 11:25:46,744 - IOT_server - INFO - Type change details - Sector: A, Device: Light, Type: Manual
+2025-05-25 11:25:46,745 - IOT_server - INFO - Control type change - Device: A_Light, Type: Manual, Additional data: {}
+2025-05-25 11:25:46,745 - socketio.server - INFO - emitting event "type_change_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:25:46,745 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["type_change_response",{"success":true,"device":"A_Light","type":"Manual","received":true,"timestamp":"2025-05-25T11:25:46.744360","message":"Control type for Light in sector A changed to Manual"}]
+2025-05-25 11:25:58,149 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 2["control_type_change",{"sector":"A","device":"Light","type":"On/Off","status":true}]
+2025-05-25 11:25:58,150 - socketio.server - INFO - received event "control_type_change" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:25:58,150 - IOT_server - INFO - Control type change received at 2025-05-25T11:25:58.150459
+2025-05-25 11:25:58,150 - IOT_server - INFO - Type change details - Sector: A, Device: Light, Type: On/Off
+2025-05-25 11:25:58,151 - IOT_server - INFO - Control type change - Device: A_Light, Type: On/Off, Additional data: {}
+2025-05-25 11:25:58,151 - socketio.server - INFO - emitting event "type_change_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:25:58,151 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["type_change_response",{"success":true,"device":"A_Light","type":"On/Off","received":true,"timestamp":"2025-05-25T11:25:58.150459","message":"Control type for Light in sector A changed to On/Off"}]
+2025-05-25 11:26:00,941 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:26:00,943 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:26:04,758 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 2["control_type_change",{"sector":"A","device":"Light","type":"On/Off","status":true}]
+2025-05-25 11:26:04,758 - socketio.server - INFO - received event "control_type_change" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:26:04,759 - IOT_server - INFO - Control type change received at 2025-05-25T11:26:04.759686
+2025-05-25 11:26:04,759 - IOT_server - INFO - Type change details - Sector: A, Device: Light, Type: On/Off
+2025-05-25 11:26:04,759 - IOT_server - INFO - Control type change - Device: A_Light, Type: On/Off, Additional data: {}
+2025-05-25 11:26:04,760 - socketio.server - INFO - emitting event "type_change_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:26:04,760 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["type_change_response",{"success":true,"device":"A_Light","type":"On/Off","received":true,"timestamp":"2025-05-25T11:26:04.759686","message":"Control type for Light in sector A changed to On/Off"}]
+2025-05-25 11:26:07,407 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 21["device_command",{"sector":"A","device":"Light","status":true,"type":"On/Off","command":"start"}]
+2025-05-25 11:26:07,408 - socketio.server - INFO - received event "device_command" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:26:07,408 - IOT_server - INFO - Device command received at 2025-05-25T11:26:07.408173
+2025-05-25 11:26:07,409 - IOT_server - INFO - Command details - Sector: A, Device: Light, Status: True, Type: On/Off
+2025-05-25 11:26:07,409 - IOT_server - INFO - Additional data: {'sector': 'A', 'device': 'Light', 'status': True, 'type': 'On/Off', 'command': 'start'}
+2025-05-25 11:26:07,409 - socketio.server - INFO - emitting event "command_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:26:07,409 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["command_response",{"success":true,"device":"A_Light","status":true,"received":true,"timestamp":"2025-05-25T11:26:07.408173","message":"Command for Light in sector A processed successfully"}]
+2025-05-25 11:26:07,410 - socketio.server - INFO - emitting event "device_update" to all [/]
+2025-05-25 11:26:07,410 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet MESSAGE data 2["device_update",{"device":"A_Light","status":true,"timestamp":"2025-05-25T11:26:07.408173"}]
+2025-05-25 11:26:07,410 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["device_update",{"device":"A_Light","status":true,"timestamp":"2025-05-25T11:26:07.408173"}]
+2025-05-25 11:26:07,411 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 31[]
+2025-05-25 11:26:09,267 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:26:09,268 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:26:25,957 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:26:25,958 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:26:34,279 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:26:34,280 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:26:50,959 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:26:50,960 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:26:58,619 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 22["device_command",{"sector":"A","device":"Motor Fan","status":false,"type":"Schedule"}]
+2025-05-25 11:26:58,619 - socketio.server - INFO - received event "device_command" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:26:58,621 - IOT_server - INFO - Device command received at 2025-05-25T11:26:58.621469
+2025-05-25 11:26:58,621 - IOT_server - INFO - Command details - Sector: A, Device: Motor Fan, Status: False, Type: Schedule
+2025-05-25 11:26:58,622 - IOT_server - INFO - Additional data: {'sector': 'A', 'device': 'Motor Fan', 'status': False, 'type': 'Schedule'}
+2025-05-25 11:26:58,622 - socketio.server - INFO - emitting event "command_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:26:58,622 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["command_response",{"success":true,"device":"A_Motor Fan","status":false,"received":true,"timestamp":"2025-05-25T11:26:58.621469","message":"Command for Motor Fan in sector A processed successfully"}]
+2025-05-25 11:26:58,622 - socketio.server - INFO - emitting event "device_update" to all [/]
+2025-05-25 11:26:58,623 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet MESSAGE data 2["device_update",{"device":"A_Motor Fan","status":false,"timestamp":"2025-05-25T11:26:58.621469"}]
+2025-05-25 11:26:58,623 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["device_update",{"device":"A_Motor Fan","status":false,"timestamp":"2025-05-25T11:26:58.621469"}]
+2025-05-25 11:26:58,624 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 32[]
+2025-05-25 11:26:59,282 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:26:59,282 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:27:15,973 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:27:15,974 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:27:24,295 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:27:24,296 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:27:36,706 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 23["device_command",{"sector":"A","device":"Motor Fan","status":true,"type":"Schedule"}]
+2025-05-25 11:27:36,706 - socketio.server - INFO - received event "device_command" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:27:36,707 - IOT_server - INFO - Device command received at 2025-05-25T11:27:36.707444
+2025-05-25 11:27:36,707 - IOT_server - INFO - Command details - Sector: A, Device: Motor Fan, Status: True, Type: Schedule
+2025-05-25 11:27:36,708 - IOT_server - INFO - Additional data: {'sector': 'A', 'device': 'Motor Fan', 'status': True, 'type': 'Schedule'}
+2025-05-25 11:27:36,708 - socketio.server - INFO - emitting event "command_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:27:36,708 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["command_response",{"success":true,"device":"A_Motor Fan","status":true,"received":true,"timestamp":"2025-05-25T11:27:36.707444","message":"Command for Motor Fan in sector A processed successfully"}]
+2025-05-25 11:27:36,708 - socketio.server - INFO - emitting event "device_update" to all [/]
+2025-05-25 11:27:36,709 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet MESSAGE data 2["device_update",{"device":"A_Motor Fan","status":true,"timestamp":"2025-05-25T11:27:36.707444"}]
+2025-05-25 11:27:36,709 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["device_update",{"device":"A_Motor Fan","status":true,"timestamp":"2025-05-25T11:27:36.707444"}]
+2025-05-25 11:27:36,709 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 33[]
+2025-05-25 11:27:39,399 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 2["control_type_change",{"sector":"A","device":"Motor Fan","type":"Schedule","status":true,"startTime":"00:00","endTime":"23:59"}]
+2025-05-25 11:27:39,399 - socketio.server - INFO - received event "control_type_change" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:27:39,400 - IOT_server - INFO - Control type change received at 2025-05-25T11:27:39.400867
+2025-05-25 11:27:39,401 - IOT_server - INFO - Type change details - Sector: A, Device: Motor Fan, Type: Schedule
+2025-05-25 11:27:39,401 - IOT_server - INFO - Control type change - Device: A_Motor Fan, Type: Schedule, Additional data: {'startTime': '00:00', 'endTime': '23:59'}
+2025-05-25 11:27:39,401 - socketio.server - INFO - emitting event "type_change_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:27:39,401 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["type_change_response",{"success":true,"device":"A_Motor Fan","type":"Schedule","received":true,"timestamp":"2025-05-25T11:27:39.400867","message":"Control type for Motor Fan in sector A changed to Schedule"}]
+2025-05-25 11:27:40,984 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:27:40,985 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:27:49,310 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:27:49,310 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:28:05,996 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:28:05,996 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:28:14,325 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:28:14,326 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:28:31,012 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:28:31,013 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:28:39,329 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:28:39,330 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:28:56,026 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:28:56,026 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:29:04,332 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:29:04,333 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:29:21,040 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:29:21,041 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:29:29,344 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:29:29,345 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:29:46,057 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:29:46,058 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:29:54,356 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:29:54,358 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:30:11,070 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:30:11,071 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:30:19,362 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:30:19,363 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:30:36,073 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:30:36,073 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:30:44,379 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:30:44,380 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:31:01,077 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:31:01,083 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:31:09,383 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:31:09,384 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:31:26,091 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:31:26,092 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:31:34,386 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:31:34,387 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:31:51,106 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:31:51,107 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:31:59,399 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:31:59,400 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:32:16,114 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:32:16,116 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:32:18,882 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet MESSAGE data 24["device_command",{"sector":"A","device":"Light","status":true,"type":"On/Off","command":"start"}]
+2025-05-25 11:32:18,884 - socketio.server - INFO - received event "device_command" from y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:32:18,885 - IOT_server - INFO - Device command received at 2025-05-25T11:32:18.885735
+2025-05-25 11:32:18,885 - IOT_server - INFO - Command details - Sector: A, Device: Light, Status: True, Type: On/Off
+2025-05-25 11:32:18,885 - IOT_server - INFO - Additional data: {'sector': 'A', 'device': 'Light', 'status': True, 'type': 'On/Off', 'command': 'start'}
+2025-05-25 11:32:18,888 - socketio.server - INFO - emitting event "command_response" to y1KdHQZukB1Kzcm3AAAF [/]
+2025-05-25 11:32:18,889 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["command_response",{"success":true,"device":"A_Light","status":true,"received":true,"timestamp":"2025-05-25T11:32:18.885735","message":"Command for Light in sector A processed successfully"}]
+2025-05-25 11:32:18,889 - socketio.server - INFO - emitting event "device_update" to all [/]
+2025-05-25 11:32:18,890 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet MESSAGE data 2["device_update",{"device":"A_Light","status":true,"timestamp":"2025-05-25T11:32:18.885735"}]
+2025-05-25 11:32:18,890 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 2["device_update",{"device":"A_Light","status":true,"timestamp":"2025-05-25T11:32:18.885735"}]
+2025-05-25 11:32:18,891 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet MESSAGE data 34[]
+2025-05-25 11:32:24,403 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:32:24,403 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:32:41,123 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:32:41,123 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:32:49,415 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:32:49,416 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:33:06,130 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:33:06,131 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:33:14,418 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:33:14,418 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:33:31,140 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:33:31,140 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:33:39,423 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:33:39,424 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:33:56,150 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:33:56,151 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:34:04,438 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:34:04,439 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:34:21,164 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:34:21,165 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:34:29,447 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:34:29,448 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
+2025-05-25 11:34:46,168 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Sending packet PING data None
+2025-05-25 11:34:46,169 - engineio.server - INFO - exgeMurVijdQSGaGAAAC: Received packet PONG data 
+2025-05-25 11:34:54,457 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Sending packet PING data None
+2025-05-25 11:34:54,458 - engineio.server - INFO - uafbU3F5F0bYWf4uAAAE: Received packet PONG data 
