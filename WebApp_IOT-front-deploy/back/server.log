@@ -2071,3 +2071,36 @@ AssertionError: write() before start_response
 2025-05-25 15:14:04,770 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
 2025-05-25 15:14:29,780 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
 2025-05-25 15:14:29,781 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:14:54,798 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:14:54,799 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:15:19,813 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:15:19,814 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:15:44,821 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:15:44,824 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:16:09,826 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:16:09,827 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:16:34,838 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:16:34,843 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:16:59,851 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:16:59,853 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:17:24,870 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:17:24,871 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:17:49,879 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:17:49,883 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:18:14,890 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:18:14,898 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:18:39,908 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:18:39,909 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:19:04,917 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:19:04,918 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:19:29,922 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:19:29,923 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:19:54,936 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:19:54,937 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:20:19,942 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:20:19,942 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:20:44,953 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:20:44,954 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:21:09,960 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:21:09,961 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:21:26,782 - IOT_server - INFO - Client disconnected: 20Gq70n39w0XIpZQAAAB
