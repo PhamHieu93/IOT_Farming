@@ -364,17 +364,17 @@ const Control = () => {
                                             Schedule
                                         </button>
                                         <button
-                                            className={`type-btn ${group.type === "Manual" ? "active" : ""}`}
-                                            onClick={() => setControlType(index, "Manual")}
+                                            className={`type-btn ${group.type === "On" ? "active" : ""}`}
+                                            onClick={() => setControlType(index, "On")}
                                         >
-                                            Manual
+                                            On
                                         </button>
-                                        <button
-                                            className={`type-btn ${group.type === "On/Off" ? "active" : ""}`}
-                                            onClick={() => setControlType(index, "On/Off")}
+                                       <button
+                                            className={`type-btn ${group.type === "Off" ? "active" : ""}`}
+                                            onClick={() => setControlType(index, "Off")}
                                         >
-                                            On/Off
-                                        </button>
+                                            Off
+                                        </button>                                        
                                     </div>
                                     <button 
                                         className="start-btn"

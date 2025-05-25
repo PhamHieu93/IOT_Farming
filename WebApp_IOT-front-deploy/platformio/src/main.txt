@@ -1,0 +1,54 @@
+#include <Wire.h>
+#include <PN532_I2C.h>
+#include <PN532.h>
+#include <NfcAdapter.h>
+
+PN532_I2C pn532_i2c(Wire);
+NfcAdapter nfc = NfcAdapter(pn532_i2c);
+String tagId = "None";
+
+void setup(void) 
+{
+  Serial.begin(115200);
+  Serial.println("System initialized");
+
+  // I2C vẫn dùng chân 11 (SDA) và 12 (SCL)
+  Wire.begin(11, 12);
+
+  // Cấu hình các chân GPIO 48, 47, 38 làm output
+  pinMode(48, OUTPUT);
+  pinMode(47, OUTPUT);
+  pinMode(38, OUTPUT);
+
+  // Set HIGH cho các chân này
+  digitalWrite(48, HIGH);
+  digitalWrite(47, HIGH);
+  digitalWrite(38, HIGH);
+
+  // Khởi động NFC
+  nfc.begin();
+  Serial.println("Waiting for NFC tag...");
+}
+
+void readNFC() 
+{
+  if (nfc.tagPresent())
+  {
+    Serial.println("NFC tag detected!");
+    NfcTag tag = nfc.read();
+    tag.print();
+    tagId = tag.getUidString();
+    Serial.print("Tag UID: ");
+    Serial.println(tagId);
+  }
+  else
+  {
+    Serial.println("No NFC tag found.");
+  }
+  delay(2000);
+}
+
+void loop() 
+{
+  readNFC();
+}

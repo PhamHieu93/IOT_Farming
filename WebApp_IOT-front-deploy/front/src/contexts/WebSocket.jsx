@@ -16,7 +16,8 @@ export const WebSocketProvider = ({ children }) => {
     if (socketRef.current) {
       socketRef.current.disconnect();
     }    // Get the backend URL from environment variable or use a default
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin;
+    //const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin;
+    const BACKEND_URL = 'http://localhost:3000';
     console.log("Attempting Socket.IO connection to", BACKEND_URL);
     
     // Create Socket.IO connection
