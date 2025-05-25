@@ -9,13 +9,15 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import threading
 import logging
+import atexit
+import signal
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("server.log"),
+        logging.FileHandler("server.log", mode='w'),
         logging.StreamHandler()
     ]
 )
@@ -199,54 +201,6 @@ def update_device_status(device_id, device_name, device_type, current_value, uni
     finally:
         if conn is not None:
             conn.close()
-
-def simulate_telemetry():
-    """Simulate telemetry data from different devices"""
-    devices = [
-        {"id": 1, "name": "Greenhouse Temperature Sensor", "type": "temperature", "unit": "°C"},
-        {"id": 2, "name": "Humidity Monitor", "type": "humidity", "unit": "%"},
-        {"id": 3, "name": "Soil Moisture Sensor", "type": "soil_moisture", "unit": "%"}
-    ]
-    
-    print("Starting telemetry simulation...")
-    print("-" * 50)
-    
-    try:
-        # Generate 5 readings for each device
-        for _ in range(5):
-            for device in devices:
-                # Generate realistic values based on device type
-                if device["type"] == "temperature":
-                    value = round(random.uniform(15.0, 32.0), 1)  # °C
-                elif device["type"] == "humidity":
-                    value = round(random.uniform(35.0, 85.0), 1)  # %
-                elif device["type"] == "soil_moisture":
-                    value = round(random.uniform(15.0, 70.0), 1)  # %
-                else:
-                    value = round(random.uniform(0.0, 100.0), 1)
-                
-                # Send data to standard SQL table
-                data_id = send_telemetry_data(device["id"], value, device["unit"])
-                
-                # Update device status JSON
-                update_device_status(
-                    device["id"], 
-                    device["name"], 
-                    device["type"], 
-                    value,
-                    device["unit"]
-                )
-                
-                print(f"Data point ID: {data_id} sent successfully")
-                print("-" * 50)
-                
-            # Wait before next batch of readings
-            time.sleep(2)
-            
-    except Exception as e:
-        print(f"Error in telemetry simulation: {e}")
-    
-    print("Telemetry simulation completed")
 
 def add_device_activity(device_id, action, status="Active"):
     """Record device activity in the Device_Activity table"""
@@ -604,20 +558,55 @@ def api_command_history():
             'error': str(e)
         }), 500
 
+def clear_device_commands():
+    """Clear all device commands when the server shuts down"""
+    conn = None
+    try:
+        logger.info("Server shutting down - clearing device commands table")
+        conn = connect_db()
+        if conn:
+            cur = conn.cursor()
+            # First try with DELETE instead of TRUNCATE for better compatibility
+            cur.execute("DELETE FROM Device_Commands")
+            cur.execute("ALTER SEQUENCE Device_Commands_CommandID_seq RESTART WITH 1")
+
+            # Explicitly commit the transaction
+            conn.commit()
+            logger.info(f"Device commands table cleared successfully - Removed {cur.rowcount} records")
+        else:
+            logger.error("Failed to connect to database during shutdown")
+    except Exception as e:
+        logger.error(f"Error clearing device commands table: {e}")
+        # If there's an error, try to log the details
+        import traceback
+        logger.error(traceback.format_exc())
+    finally:
+        if conn is not None:
+            try:
+                conn.close()
+                logger.info("Database connection closed during shutdown")
+            except Exception as e:
+                logger.error(f"Error closing database connection: {e}")
+        print("Device commands cleanup complete")  # Print to console as a fallback
+
 def start_simulation_thread():
     # Record device activities for simulation
     for device_id in [1, 2, 3]:
         add_device_activity(device_id, "Start Telemetry")
     
-    # Start simulation
-    simulate_telemetry()
-    
-    # This won't be reached as the simulation runs indefinitely
-    for device_id in [1, 2, 3]:
-        add_device_activity(device_id, "End Telemetry")
+
+def signal_handler(sig, frame):
+    print(f"Received shutdown signal {sig}, cleaning up...")
+    clear_device_commands()
+    atexit._run_exitfuncs()# Register signal handlers
+
+for sig in [signal.SIGINT, signal.SIGTERM]:
+    signal.signal(sig, lambda sig, frame: atexit._run_exitfuncs())
 
 if __name__ == "__main__":
     # Record device activities for simulation
+    clear_device_commands()
+
     simulation_thread = threading.Thread(target=start_simulation_thread)
     simulation_thread.daemon = True  # This makes the thread exit when the main program exits
     simulation_thread.start()
