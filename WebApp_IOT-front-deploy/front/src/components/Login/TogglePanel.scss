@@ -1,0 +1,72 @@
+.toggle-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  transition: all 0.6s ease-in-out;
+  border-radius: 150px 0 0 100px;
+  z-index: 10;
+
+  .toggle {
+    background: linear-gradient(to right, #34b1dc, #287fc5);
+    height: 100%;
+    color: #fff;
+    position: relative;
+    left: -100%;
+    width: 200%;
+    transition: all 0.6s ease-in-out;
+
+    .toggle-panel {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 40px;
+      text-align: center;
+      transition: all 0.6s ease-in-out;
+
+      h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+
+      p {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 25px;
+      }
+
+      .hidden {
+        background-color: transparent;
+        border: 1px solid #fff;
+        color: #fff;
+        font-size: 13px;
+        padding: 12px 45px;
+        border-radius: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+      }
+
+      &.toggle-left {
+        /* No additional styles needed */
+      }
+
+      &.toggle-right {
+        right: 0;
+        transform: translateX(0);
+      }
+    }
+  }
+}

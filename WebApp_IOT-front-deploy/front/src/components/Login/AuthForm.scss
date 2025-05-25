@@ -1,0 +1,130 @@
+.form-container {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  transition: all 0.6s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.sign-in {
+    left: 0;
+    z-index: 2;
+  }
+
+  &.sign-up {
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+  }
+
+  form {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 0 40px;
+    width: 100%;
+    max-width: 400px;
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .social-icons {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+
+      .icon {
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background-color: #f5f5f5;
+        }
+
+        i {
+          font-family: 'Font Awesome 6 Free', 'Font Awesome 5 Free', sans-serif !important;
+        }
+      }
+    }
+
+    span {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    input,
+    select {
+      background-color: #eee;
+      border: none;
+      margin: 8px 0;
+      padding: 12px 15px;
+      font-size: 13px;
+      border-radius: 8px;
+      width: 100%;
+      outline: none;
+      box-sizing: border-box;
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(26, 136, 201, 0.2);
+      }
+    }
+
+    select {
+      appearance: none;
+      cursor: pointer;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px;
+    }
+
+    .forgot-password {
+      color: #666;
+      font-size: 13px;
+      text-decoration: none;
+      margin: 10px 0;
+      align-self: flex-start;
+      width: 100%;
+      text-align: center;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    button {
+      background-color: #1a88c9;
+      color: #fff;
+      font-size: 13px;
+      padding: 12px 0;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #1578b0;
+      }
+    }
+  }
+}
