@@ -1771,3 +1771,303 @@ AssertionError: write() before start_response
 2025-05-25 15:00:30,404 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
 2025-05-25 15:00:55,415 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Sending packet PING data None
 2025-05-25 15:00:55,416 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
+2025-05-25 15:01:20,424 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Sending packet PING data None
+2025-05-25 15:01:20,425 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
+2025-05-25 15:01:45,430 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Sending packet PING data None
+2025-05-25 15:01:45,431 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
+2025-05-25 15:02:10,445 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Sending packet PING data None
+2025-05-25 15:02:10,446 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
+2025-05-25 15:02:35,456 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Sending packet PING data None
+2025-05-25 15:02:35,457 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
+2025-05-25 15:03:00,471 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Sending packet PING data None
+2025-05-25 15:03:00,472 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
+2025-05-25 15:03:25,487 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Sending packet PING data None
+2025-05-25 15:03:25,488 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
+2025-05-25 15:03:50,501 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Sending packet PING data None
+2025-05-25 15:03:50,502 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
+2025-05-25 15:04:15,516 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Sending packet PING data None
+2025-05-25 15:04:15,517 - engineio.server - INFO - cr9UEpf8SxlFYqc_AAAB: Received packet PONG data 
+2025-05-25 15:04:37,450 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\import_db.py', reloading
+2025-05-25 15:04:38,117 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:04:38,124 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:04:38,131 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:04:40,963 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Sending packet OPEN data {'sid': 'DYZ7QwaHq0S3X_WoAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:04:40,964 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Received request to upgrade to websocket
+2025-05-25 15:04:40,965 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Upgrade to websocket successful
+2025-05-25 15:04:40,967 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Received packet MESSAGE data 0
+2025-05-25 15:04:40,968 - IOT_server - INFO - Client connected: M7HPxM8sFDT891BxAAAB
+2025-05-25 15:04:40,968 - socketio.server - INFO - emitting event "connection_status" to M7HPxM8sFDT891BxAAAB [/]
+2025-05-25 15:04:40,969 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:04:40.968326"}]
+2025-05-25 15:04:40,970 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Sending packet MESSAGE data 0{"sid":"M7HPxM8sFDT891BxAAAB"}
+2025-05-25 15:04:40,971 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:04:40,971 - socketio.server - INFO - received event "ping" from M7HPxM8sFDT891BxAAAB [/]
+2025-05-25 15:04:40,971 - IOT_server - INFO - Ping received from client: M7HPxM8sFDT891BxAAAB
+2025-05-25 15:04:40,972 - socketio.server - INFO - emitting event "pong" to M7HPxM8sFDT891BxAAAB [/]
+2025-05-25 15:04:40,972 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:04:40.972328","received":true}]
+2025-05-25 15:05:05,970 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Sending packet PING data None
+2025-05-25 15:05:05,973 - engineio.server - INFO - DYZ7QwaHq0S3X_WoAAAA: Received packet PONG data 
+2025-05-25 15:05:07,707 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\export_db.py', reloading
+2025-05-25 15:05:08,364 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:05:08,372 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:05:08,380 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:05:11,585 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Sending packet OPEN data {'sid': 'LD8RqdCvQrVWZliPAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:05:11,586 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Received request to upgrade to websocket
+2025-05-25 15:05:11,588 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Upgrade to websocket successful
+2025-05-25 15:05:11,590 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Received packet MESSAGE data 0
+2025-05-25 15:05:11,592 - IOT_server - INFO - Client connected: 6gKMiWCIDqIpW_PKAAAB
+2025-05-25 15:05:11,592 - socketio.server - INFO - emitting event "connection_status" to 6gKMiWCIDqIpW_PKAAAB [/]
+2025-05-25 15:05:11,592 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:05:11.592415"}]
+2025-05-25 15:05:11,593 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Sending packet MESSAGE data 0{"sid":"6gKMiWCIDqIpW_PKAAAB"}
+2025-05-25 15:05:11,596 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:05:11,596 - socketio.server - INFO - received event "ping" from 6gKMiWCIDqIpW_PKAAAB [/]
+2025-05-25 15:05:11,598 - IOT_server - INFO - Ping received from client: 6gKMiWCIDqIpW_PKAAAB
+2025-05-25 15:05:11,598 - socketio.server - INFO - emitting event "pong" to 6gKMiWCIDqIpW_PKAAAB [/]
+2025-05-25 15:05:11,599 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:05:11.598418","received":true}]
+2025-05-25 15:05:36,596 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Sending packet PING data None
+2025-05-25 15:05:36,597 - engineio.server - INFO - LD8RqdCvQrVWZliPAAAA: Received packet PONG data 
+2025-05-25 15:05:41,971 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\export_db.py', reloading
+2025-05-25 15:05:42,593 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:05:42,598 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:05:42,604 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:05:45,494 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Sending packet OPEN data {'sid': 'PqnwGlRsPF230yiVAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:05:45,495 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Received request to upgrade to websocket
+2025-05-25 15:05:45,497 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Upgrade to websocket successful
+2025-05-25 15:05:45,499 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Received packet MESSAGE data 0
+2025-05-25 15:05:45,500 - IOT_server - INFO - Client connected: xQMyS04O3eIz9pKUAAAB
+2025-05-25 15:05:45,500 - socketio.server - INFO - emitting event "connection_status" to xQMyS04O3eIz9pKUAAAB [/]
+2025-05-25 15:05:45,501 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:05:45.500396"}]
+2025-05-25 15:05:45,503 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Sending packet MESSAGE data 0{"sid":"xQMyS04O3eIz9pKUAAAB"}
+2025-05-25 15:05:45,505 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:05:45,506 - socketio.server - INFO - received event "ping" from xQMyS04O3eIz9pKUAAAB [/]
+2025-05-25 15:05:45,508 - IOT_server - INFO - Ping received from client: xQMyS04O3eIz9pKUAAAB
+2025-05-25 15:05:45,509 - socketio.server - INFO - emitting event "pong" to xQMyS04O3eIz9pKUAAAB [/]
+2025-05-25 15:05:45,510 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:05:45.509402","received":true}]
+2025-05-25 15:06:10,511 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Sending packet PING data None
+2025-05-25 15:06:10,512 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Received packet PONG data 
+2025-05-25 15:06:35,527 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Sending packet PING data None
+2025-05-25 15:06:35,528 - engineio.server - INFO - PqnwGlRsPF230yiVAAAA: Received packet PONG data 
+2025-05-25 15:06:39,970 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\config.py', reloading
+2025-05-25 15:06:40,663 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:06:40,670 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:06:40,676 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:06:43,646 - engineio.server - INFO - 24qAbp9Cp6emk5MJAAAA: Sending packet OPEN data {'sid': '24qAbp9Cp6emk5MJAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:06:43,647 - engineio.server - INFO - 24qAbp9Cp6emk5MJAAAA: Received request to upgrade to websocket
+2025-05-25 15:06:43,649 - engineio.server - INFO - 24qAbp9Cp6emk5MJAAAA: Upgrade to websocket successful
+2025-05-25 15:06:43,650 - engineio.server - INFO - 24qAbp9Cp6emk5MJAAAA: Received packet MESSAGE data 0
+2025-05-25 15:06:43,651 - IOT_server - INFO - Client connected: -Sc-s0xdfluqCZoJAAAB
+2025-05-25 15:06:43,652 - socketio.server - INFO - emitting event "connection_status" to -Sc-s0xdfluqCZoJAAAB [/]
+2025-05-25 15:06:43,652 - engineio.server - INFO - 24qAbp9Cp6emk5MJAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:06:43.652276"}]
+2025-05-25 15:06:43,653 - engineio.server - INFO - 24qAbp9Cp6emk5MJAAAA: Sending packet MESSAGE data 0{"sid":"-Sc-s0xdfluqCZoJAAAB"}
+2025-05-25 15:06:43,653 - engineio.server - INFO - 24qAbp9Cp6emk5MJAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:06:43,654 - socketio.server - INFO - received event "ping" from -Sc-s0xdfluqCZoJAAAB [/]
+2025-05-25 15:06:43,654 - IOT_server - INFO - Ping received from client: -Sc-s0xdfluqCZoJAAAB
+2025-05-25 15:06:43,654 - socketio.server - INFO - emitting event "pong" to -Sc-s0xdfluqCZoJAAAB [/]
+2025-05-25 15:06:43,655 - engineio.server - INFO - 24qAbp9Cp6emk5MJAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:06:43.654300","received":true}]
+2025-05-25 15:07:07,194 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\config.py', reloading
+2025-05-25 15:07:07,879 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:07:07,886 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:07:07,893 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:07:11,013 - engineio.server - INFO - DSnCMYhS27rP2QVJAAAA: Sending packet OPEN data {'sid': 'DSnCMYhS27rP2QVJAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:07:11,014 - engineio.server - INFO - DSnCMYhS27rP2QVJAAAA: Received request to upgrade to websocket
+2025-05-25 15:07:11,015 - engineio.server - INFO - DSnCMYhS27rP2QVJAAAA: Upgrade to websocket successful
+2025-05-25 15:07:11,018 - engineio.server - INFO - DSnCMYhS27rP2QVJAAAA: Received packet MESSAGE data 0
+2025-05-25 15:07:11,019 - IOT_server - INFO - Client connected: Z4DPX6nFMQ-nsiIbAAAB
+2025-05-25 15:07:11,019 - socketio.server - INFO - emitting event "connection_status" to Z4DPX6nFMQ-nsiIbAAAB [/]
+2025-05-25 15:07:11,019 - engineio.server - INFO - DSnCMYhS27rP2QVJAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:07:11.019247"}]
+2025-05-25 15:07:11,020 - engineio.server - INFO - DSnCMYhS27rP2QVJAAAA: Sending packet MESSAGE data 0{"sid":"Z4DPX6nFMQ-nsiIbAAAB"}
+2025-05-25 15:07:11,020 - engineio.server - INFO - DSnCMYhS27rP2QVJAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:07:11,021 - socketio.server - INFO - received event "ping" from Z4DPX6nFMQ-nsiIbAAAB [/]
+2025-05-25 15:07:11,021 - IOT_server - INFO - Ping received from client: Z4DPX6nFMQ-nsiIbAAAB
+2025-05-25 15:07:11,021 - socketio.server - INFO - emitting event "pong" to Z4DPX6nFMQ-nsiIbAAAB [/]
+2025-05-25 15:07:11,022 - engineio.server - INFO - DSnCMYhS27rP2QVJAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:07:11.021245","received":true}]
+2025-05-25 15:07:22,376 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\config.py', reloading
+2025-05-25 15:07:23,081 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:07:23,087 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:07:23,095 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:07:26,404 - engineio.server - INFO - X_oNbF6gsp4lTpiLAAAA: Sending packet OPEN data {'sid': 'X_oNbF6gsp4lTpiLAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:07:26,405 - engineio.server - INFO - X_oNbF6gsp4lTpiLAAAA: Received request to upgrade to websocket
+2025-05-25 15:07:26,406 - engineio.server - INFO - X_oNbF6gsp4lTpiLAAAA: Upgrade to websocket successful
+2025-05-25 15:07:26,408 - engineio.server - INFO - X_oNbF6gsp4lTpiLAAAA: Received packet MESSAGE data 0
+2025-05-25 15:07:26,409 - IOT_server - INFO - Client connected: VjtBvQmO9JKjn1MZAAAB
+2025-05-25 15:07:26,409 - socketio.server - INFO - emitting event "connection_status" to VjtBvQmO9JKjn1MZAAAB [/]
+2025-05-25 15:07:26,410 - engineio.server - INFO - X_oNbF6gsp4lTpiLAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:07:26.409683"}]
+2025-05-25 15:07:26,410 - engineio.server - INFO - X_oNbF6gsp4lTpiLAAAA: Sending packet MESSAGE data 0{"sid":"VjtBvQmO9JKjn1MZAAAB"}
+2025-05-25 15:07:26,411 - engineio.server - INFO - X_oNbF6gsp4lTpiLAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:07:26,411 - socketio.server - INFO - received event "ping" from VjtBvQmO9JKjn1MZAAAB [/]
+2025-05-25 15:07:26,412 - IOT_server - INFO - Ping received from client: VjtBvQmO9JKjn1MZAAAB
+2025-05-25 15:07:26,412 - socketio.server - INFO - emitting event "pong" to VjtBvQmO9JKjn1MZAAAB [/]
+2025-05-25 15:07:26,412 - engineio.server - INFO - X_oNbF6gsp4lTpiLAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:07:26.412684","received":true}]
+2025-05-25 15:07:29,434 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\export_db.py', reloading
+2025-05-25 15:07:30,086 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:07:30,092 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:07:30,099 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:07:33,203 - engineio.server - INFO - H5xbM_DOO8hIxw7UAAAA: Sending packet OPEN data {'sid': 'H5xbM_DOO8hIxw7UAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:07:33,204 - engineio.server - INFO - H5xbM_DOO8hIxw7UAAAA: Received request to upgrade to websocket
+2025-05-25 15:07:33,205 - engineio.server - INFO - H5xbM_DOO8hIxw7UAAAA: Upgrade to websocket successful
+2025-05-25 15:07:33,207 - engineio.server - INFO - H5xbM_DOO8hIxw7UAAAA: Received packet MESSAGE data 0
+2025-05-25 15:07:33,208 - IOT_server - INFO - Client connected: nG2qgu2aA8hJcZYDAAAB
+2025-05-25 15:07:33,208 - socketio.server - INFO - emitting event "connection_status" to nG2qgu2aA8hJcZYDAAAB [/]
+2025-05-25 15:07:33,208 - engineio.server - INFO - H5xbM_DOO8hIxw7UAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:07:33.208436"}]
+2025-05-25 15:07:33,209 - engineio.server - INFO - H5xbM_DOO8hIxw7UAAAA: Sending packet MESSAGE data 0{"sid":"nG2qgu2aA8hJcZYDAAAB"}
+2025-05-25 15:07:33,210 - engineio.server - INFO - H5xbM_DOO8hIxw7UAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:07:33,210 - socketio.server - INFO - received event "ping" from nG2qgu2aA8hJcZYDAAAB [/]
+2025-05-25 15:07:33,210 - IOT_server - INFO - Ping received from client: nG2qgu2aA8hJcZYDAAAB
+2025-05-25 15:07:33,211 - socketio.server - INFO - emitting event "pong" to nG2qgu2aA8hJcZYDAAAB [/]
+2025-05-25 15:07:33,211 - engineio.server - INFO - H5xbM_DOO8hIxw7UAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:07:33.210435","received":true}]
+2025-05-25 15:07:47,212 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\config.py', reloading
+2025-05-25 15:07:47,850 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:07:47,859 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:07:47,865 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:07:50,768 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Sending packet OPEN data {'sid': 'DNqL2KWZEE_lU9hBAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:07:50,769 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Received request to upgrade to websocket
+2025-05-25 15:07:50,771 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Upgrade to websocket successful
+2025-05-25 15:07:50,772 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Received packet MESSAGE data 0
+2025-05-25 15:07:50,773 - IOT_server - INFO - Client connected: 0zRpLUn3sBaAmpwcAAAB
+2025-05-25 15:07:50,773 - socketio.server - INFO - emitting event "connection_status" to 0zRpLUn3sBaAmpwcAAAB [/]
+2025-05-25 15:07:50,774 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:07:50.773357"}]
+2025-05-25 15:07:50,774 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Sending packet MESSAGE data 0{"sid":"0zRpLUn3sBaAmpwcAAAB"}
+2025-05-25 15:07:50,775 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:07:50,775 - socketio.server - INFO - received event "ping" from 0zRpLUn3sBaAmpwcAAAB [/]
+2025-05-25 15:07:50,775 - IOT_server - INFO - Ping received from client: 0zRpLUn3sBaAmpwcAAAB
+2025-05-25 15:07:50,776 - socketio.server - INFO - emitting event "pong" to 0zRpLUn3sBaAmpwcAAAB [/]
+2025-05-25 15:07:50,776 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:07:50.776358","received":true}]
+2025-05-25 15:08:15,770 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Sending packet PING data None
+2025-05-25 15:08:15,771 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Received packet PONG data 
+2025-05-25 15:08:40,782 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Sending packet PING data None
+2025-05-25 15:08:40,783 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Received packet PONG data 
+2025-05-25 15:08:47,990 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:09:05,788 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Sending packet PING data None
+2025-05-25 15:09:05,789 - engineio.server - INFO - DNqL2KWZEE_lU9hBAAAA: Received packet PONG data 
+2025-05-25 15:09:08,139 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\config.py', reloading
+2025-05-25 15:09:08,780 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:09:08,786 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:09:08,792 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:09:11,929 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Sending packet OPEN data {'sid': '9NkKaIcZKKfgIXYMAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:09:11,930 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Received request to upgrade to websocket
+2025-05-25 15:09:11,931 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Upgrade to websocket successful
+2025-05-25 15:09:11,934 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Received packet MESSAGE data 0
+2025-05-25 15:09:11,935 - IOT_server - INFO - Client connected: B8SiAfojWCfimLEdAAAB
+2025-05-25 15:09:11,935 - socketio.server - INFO - emitting event "connection_status" to B8SiAfojWCfimLEdAAAB [/]
+2025-05-25 15:09:11,936 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:09:11.935301"}]
+2025-05-25 15:09:11,936 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Sending packet MESSAGE data 0{"sid":"B8SiAfojWCfimLEdAAAB"}
+2025-05-25 15:09:11,937 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:09:11,938 - socketio.server - INFO - received event "ping" from B8SiAfojWCfimLEdAAAB [/]
+2025-05-25 15:09:11,938 - IOT_server - INFO - Ping received from client: B8SiAfojWCfimLEdAAAB
+2025-05-25 15:09:11,939 - socketio.server - INFO - emitting event "pong" to B8SiAfojWCfimLEdAAAB [/]
+2025-05-25 15:09:11,939 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:09:11.939346","received":true}]
+2025-05-25 15:09:17,076 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:09:29,447 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:3000
+ * Running on http://192.168.14.100:3000
+2025-05-25 15:09:29,448 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-25 15:09:29,448 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 15:09:30,051 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:09:30,058 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:09:30,064 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:09:36,941 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Sending packet PING data None
+2025-05-25 15:09:36,942 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Received packet PONG data 
+2025-05-25 15:10:01,945 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Sending packet PING data None
+2025-05-25 15:10:01,946 - engineio.server - INFO - 9NkKaIcZKKfgIXYMAAAA: Received packet PONG data 
+2025-05-25 15:10:25,221 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\export_db.py', reloading
+2025-05-25 15:10:25,279 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 15:10:25,401 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\export_db.py', reloading
+2025-05-25 15:10:25,848 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:10:25,854 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:10:25,859 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:10:26,013 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:10:26,020 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:10:26,028 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:10:28,953 - engineio.server - INFO - UacOO0Wzl2G2R1wZAAAA: Sending packet OPEN data {'sid': 'UacOO0Wzl2G2R1wZAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:10:28,954 - engineio.server - INFO - UacOO0Wzl2G2R1wZAAAA: Received request to upgrade to websocket
+2025-05-25 15:10:28,955 - engineio.server - INFO - UacOO0Wzl2G2R1wZAAAA: Upgrade to websocket successful
+2025-05-25 15:10:28,956 - engineio.server - INFO - UacOO0Wzl2G2R1wZAAAA: Received packet MESSAGE data 0
+2025-05-25 15:10:28,957 - IOT_server - INFO - Client connected: uUgDi3rif128dRBDAAAB
+2025-05-25 15:10:28,957 - socketio.server - INFO - emitting event "connection_status" to uUgDi3rif128dRBDAAAB [/]
+2025-05-25 15:10:28,958 - engineio.server - INFO - UacOO0Wzl2G2R1wZAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:10:28.957540"}]
+2025-05-25 15:10:28,958 - engineio.server - INFO - UacOO0Wzl2G2R1wZAAAA: Sending packet MESSAGE data 0{"sid":"uUgDi3rif128dRBDAAAB"}
+2025-05-25 15:10:28,960 - engineio.server - INFO - UacOO0Wzl2G2R1wZAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:10:28,966 - socketio.server - INFO - received event "ping" from uUgDi3rif128dRBDAAAB [/]
+2025-05-25 15:10:28,967 - IOT_server - INFO - Ping received from client: uUgDi3rif128dRBDAAAB
+2025-05-25 15:10:28,968 - socketio.server - INFO - emitting event "pong" to uUgDi3rif128dRBDAAAB [/]
+2025-05-25 15:10:28,969 - engineio.server - INFO - UacOO0Wzl2G2R1wZAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:10:28.968543","received":true}]
+2025-05-25 15:10:51,257 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\export_db.py', reloading
+2025-05-25 15:10:51,427 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\export_db.py', reloading
+2025-05-25 15:10:51,499 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 15:10:51,958 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:10:51,964 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:10:51,971 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:10:52,069 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:10:52,076 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:10:52,084 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:10:55,098 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Sending packet OPEN data {'sid': 'bCGRqj_GCgBnaT9jAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:10:55,099 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Received request to upgrade to websocket
+2025-05-25 15:10:55,100 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Upgrade to websocket successful
+2025-05-25 15:10:55,103 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Received packet MESSAGE data 0
+2025-05-25 15:10:55,104 - IOT_server - INFO - Client connected: DHk7gu8sSP3kQNwWAAAB
+2025-05-25 15:10:55,104 - socketio.server - INFO - emitting event "connection_status" to DHk7gu8sSP3kQNwWAAAB [/]
+2025-05-25 15:10:55,104 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:10:55.104960"}]
+2025-05-25 15:10:55,105 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Sending packet MESSAGE data 0{"sid":"DHk7gu8sSP3kQNwWAAAB"}
+2025-05-25 15:10:55,106 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:10:55,107 - socketio.server - INFO - received event "ping" from DHk7gu8sSP3kQNwWAAAB [/]
+2025-05-25 15:10:55,107 - IOT_server - INFO - Ping received from client: DHk7gu8sSP3kQNwWAAAB
+2025-05-25 15:10:55,108 - socketio.server - INFO - emitting event "pong" to DHk7gu8sSP3kQNwWAAAB [/]
+2025-05-25 15:10:55,108 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:10:55.108961","received":true}]
+2025-05-25 15:11:20,100 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Sending packet PING data None
+2025-05-25 15:11:20,102 - engineio.server - INFO - bCGRqj_GCgBnaT9jAAAA: Received packet PONG data 
+2025-05-25 15:11:31,888 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\config.py', reloading
+2025-05-25 15:11:31,950 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 15:11:32,278 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\config.py', reloading
+2025-05-25 15:11:32,537 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:11:32,544 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:11:32,551 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:11:32,930 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:11:32,936 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:11:32,942 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:11:35,887 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Sending packet OPEN data {'sid': 'zf_zJTj16NeoLQ1RAAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:11:35,887 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Received request to upgrade to websocket
+2025-05-25 15:11:35,889 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Upgrade to websocket successful
+2025-05-25 15:11:35,890 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Received packet MESSAGE data 0
+2025-05-25 15:11:35,891 - IOT_server - INFO - Client connected: ljaSlBA6lQX2havDAAAB
+2025-05-25 15:11:35,891 - socketio.server - INFO - emitting event "connection_status" to ljaSlBA6lQX2havDAAAB [/]
+2025-05-25 15:11:35,892 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:11:35.891906"}]
+2025-05-25 15:11:35,892 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Sending packet MESSAGE data 0{"sid":"ljaSlBA6lQX2havDAAAB"}
+2025-05-25 15:11:35,894 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:11:35,895 - socketio.server - INFO - received event "ping" from ljaSlBA6lQX2havDAAAB [/]
+2025-05-25 15:11:35,895 - IOT_server - INFO - Ping received from client: ljaSlBA6lQX2havDAAAB
+2025-05-25 15:11:35,896 - socketio.server - INFO - emitting event "pong" to ljaSlBA6lQX2havDAAAB [/]
+2025-05-25 15:11:35,896 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:11:35.896904","received":true}]
+2025-05-25 15:12:00,902 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Sending packet PING data None
+2025-05-25 15:12:00,903 - engineio.server - INFO - zf_zJTj16NeoLQ1RAAAA: Received packet PONG data 
+2025-05-25 15:12:19,488 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\config.py', reloading
+2025-05-25 15:12:19,554 - werkzeug - INFO -  * Restarting with stat
+2025-05-25 15:12:20,148 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:12:20,156 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:12:20,164 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:12:20,807 - werkzeug - INFO -  * Detected change in 'D:\\BACH KHOA\\IOT\\IOT_Farming\\WebApp_IOT-front-deploy\\back\\config.py', reloading
+2025-05-25 15:12:21,505 - engineio.server - INFO - Server initialized for threading.
+2025-05-25 15:12:21,511 - werkzeug - WARNING -  * Debugger is active!
+2025-05-25 15:12:21,519 - werkzeug - INFO -  * Debugger PIN: 728-356-080
+2025-05-25 15:12:24,710 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet OPEN data {'sid': 'C27O8t6o0p-QWZX_AAAA', 'upgrades': [], 'pingTimeout': 20000, 'pingInterval': 25000, 'maxPayload': 1000000}
+2025-05-25 15:12:24,711 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received request to upgrade to websocket
+2025-05-25 15:12:24,713 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Upgrade to websocket successful
+2025-05-25 15:12:24,716 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet MESSAGE data 0
+2025-05-25 15:12:24,717 - IOT_server - INFO - Client connected: 20Gq70n39w0XIpZQAAAB
+2025-05-25 15:12:24,717 - socketio.server - INFO - emitting event "connection_status" to 20Gq70n39w0XIpZQAAAB [/]
+2025-05-25 15:12:24,718 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet MESSAGE data 2["connection_status",{"status":"connected","message":"Connected to IOT Farming WebSocket server","timestamp":"2025-05-25T15:12:24.717154"}]
+2025-05-25 15:12:24,718 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet MESSAGE data 0{"sid":"20Gq70n39w0XIpZQAAAB"}
+2025-05-25 15:12:24,719 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet MESSAGE data 2["ping"]
+2025-05-25 15:12:24,719 - socketio.server - INFO - received event "ping" from 20Gq70n39w0XIpZQAAAB [/]
+2025-05-25 15:12:24,720 - IOT_server - INFO - Ping received from client: 20Gq70n39w0XIpZQAAAB
+2025-05-25 15:12:24,720 - socketio.server - INFO - emitting event "pong" to 20Gq70n39w0XIpZQAAAB [/]
+2025-05-25 15:12:24,720 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet MESSAGE data 2["pong",{"data":"Pong from server!","timestamp":"2025-05-25T15:12:24.720658","received":true}]
+2025-05-25 15:12:49,723 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:12:49,724 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:13:14,741 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:13:14,741 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:13:39,752 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:13:39,753 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:14:04,769 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:14:04,770 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
+2025-05-25 15:14:29,780 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Sending packet PING data None
+2025-05-25 15:14:29,781 - engineio.server - INFO - C27O8t6o0p-QWZX_AAAA: Received packet PONG data 
