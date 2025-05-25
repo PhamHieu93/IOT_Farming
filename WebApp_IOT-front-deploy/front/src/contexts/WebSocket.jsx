@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+// Import Socket.IO client
+import { io } from 'socket.io-client';
 
 const WebSocketContext = createContext(null);
 
@@ -6,68 +8,86 @@ export const useWebSocket = () => useContext(WebSocketContext);
 
 export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
+  const [lastMessage, setLastMessage] = useState(null);
   const socketRef = useRef(null);
-  
-  // Initialize WebSocket connection
-  useEffect(() => {
-    // Replace with your actual WebSocket server URL
-    const wsUrl = "ws://localhost:5432";
-    const socket = new WebSocket(wsUrl);
+
+  const connect = () => {
+    // Disconnect existing connection if any
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+    }
+    
+    console.log("Attempting Socket.IO connection to http://localhost:3000");
+    
+    // Create Socket.IO connection
+    const socket = io('http://localhost:3000', {
+      reconnection: true,
+      reconnectionAttempts: Infinity
+    });
+    
     socketRef.current = socket;
     
-    socket.onopen = () => {
-      console.log("WebSocket connected");
+    socket.on('connect', () => {
+      console.log("Socket.IO connected!");
       setIsConnected(true);
-    };
-    
-    socket.onclose = () => {
-      console.log("WebSocket disconnected");
-      setIsConnected(false);
       
-      // Try to reconnect after a delay
-      setTimeout(() => {
-        console.log("Attempting to reconnect...");
-        // This will trigger the useEffect again
-        setIsConnected(false);
-      }, 5000);
-    };
+      // Send a test ping once connected
+      socket.emit('ping');
+    });
     
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+    socket.on('disconnect', () => {
+      console.log("Socket.IO disconnected");
+      setIsConnected(false);
+    });
+    
+    socket.on('connect_error', (err) => {
+      console.error("Connection error:", err.message);
+    });
+    
+    // Listen for the pong response
+    socket.on('pong', (data) => {
+      console.log("Received pong:", data);
+      setLastMessage(data);
+    });
+    
+    // Listen for all messages
+    socket.onAny((event, ...args) => {
+      console.log(`Event ${event} received:`, args[0]);
+      setLastMessage({ event, data: args[0] });
+    });
+  };
+  
+  // Initialize connection
+  useEffect(() => {
+    connect();
     
     return () => {
-      if (socket) {
-        socket.close();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
       }
     };
   }, []);
   
-  // Send a message through the WebSocket
-  const sendMessage = (message) => {
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify(message));
+  // Send a message through Socket.IO
+  const sendMessage = (event, message) => {
+    if (socketRef.current && socketRef.current.connected) {
+      socketRef.current.emit(event, message);
       return true;
     } else {
-      console.error("WebSocket is not connected");
+      console.error("Socket.IO is not connected");
       return false;
     }
   };
   
   // Add a listener for specific message types
-  const addMessageListener = (callback) => {
+  const addMessageListener = (event, callback) => {
     if (socketRef.current) {
-      const messageHandler = (event) => {
-        const message = JSON.parse(event.data);
-        callback(message);
-      };
-      
-      socketRef.current.addEventListener('message', messageHandler);
+      socketRef.current.on(event, callback);
       
       // Return function to remove the listener
       return () => {
         if (socketRef.current) {
-          socketRef.current.removeEventListener('message', messageHandler);
+          socketRef.current.off(event, callback);
         }
       };
     }
@@ -76,8 +96,10 @@ export const WebSocketProvider = ({ children }) => {
   
   const value = {
     isConnected,
+    lastMessage,
     sendMessage,
-    addMessageListener
+    addMessageListener,
+    reconnect: connect
   };
   
   return (
@@ -86,3 +108,5 @@ export const WebSocketProvider = ({ children }) => {
     </WebSocketContext.Provider>
   );
 };
+
+export default WebSocketProvider;

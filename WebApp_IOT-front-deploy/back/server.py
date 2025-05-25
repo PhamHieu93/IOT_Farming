@@ -4,9 +4,25 @@ import time
 import random
 from datetime import datetime
 from config import config
+from flask import Flask, jsonify, request
+from flask_socketio import SocketIO, emit
+from flask_cors import CORS
+import threading
 
 
-
+# Initialize Flask and SocketIO
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+socketio = SocketIO(
+    app, 
+    cors_allowed_origins="*",
+    async_mode='threading',
+    path='/socket.io/',
+    logger=True,  # Enable logging
+    engineio_logger=True  # Enable Engine.IO logging
+)
+# Keep track of connected clients
+connected_clients = set()
 
 def connect_db():
     """Connect to the PostgreSQL database server"""
@@ -240,8 +256,43 @@ def add_device_activity(device_id, action, status="Active"):
     finally:
         if conn is not None:
             conn.close()
+# WebSocket event handlers
+# WebSocket event handlers
+@socketio.on('connect')
+def handle_connect():
+    sid = request.sid
+    connected_clients.add(sid)
+    print(f"Client connected: {sid}")
+    emit('connection_status', {'status': 'connected', 'message': 'Connected to IOT Farming WebSocket server'})
 
-if __name__ == "__main__":
+@socketio.on('disconnect')
+def handle_disconnect():
+    sid = request.sid
+    if sid in connected_clients:
+        connected_clients.remove(sid)
+    print(f"Client disconnected: {sid}")
+
+@socketio.on('message')
+def handle_message(data):
+    print(f"Received message: {data}")
+    emit('message', {'status': 'received', 'data': data})
+
+# Add this new test event handler here
+@socketio.on('ping')
+def handle_ping():
+    print("Ping received!")
+    emit('pong', {'data': 'Pong from server!'})
+
+# HTTP Routes
+@app.route('/api/status')
+def api_status():
+    return jsonify({
+        'status': 'online',
+        'time': datetime.now().isoformat(),
+        'clients_connected': len(connected_clients)
+    })
+
+def start_simulation_thread():
     # Record device activities for simulation
     for device_id in [1, 2, 3]:
         add_device_activity(device_id, "Start Telemetry")
@@ -249,6 +300,16 @@ if __name__ == "__main__":
     # Start simulation
     simulate_telemetry()
     
-    # Record end activities
+    # This won't be reached as the simulation runs indefinitely
     for device_id in [1, 2, 3]:
         add_device_activity(device_id, "End Telemetry")
+
+if __name__ == "__main__":
+    # Record device activities for simulation
+    simulation_thread = threading.Thread(target=start_simulation_thread)
+    simulation_thread.daemon = True  # This makes the thread exit when the main program exits
+    simulation_thread.start()
+    
+    # Start the Flask/SocketIO server
+    print("Starting WebSocket server on port 3000")
+    socketio.run(app, host='0.0.0.0', port=3000, debug=True, allow_unsafe_werkzeug=True)
