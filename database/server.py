@@ -2,26 +2,58 @@ import psycopg2
 import json
 import time
 import random
+import os
+import logging
 from datetime import datetime
 from config import config
 
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("database.log"),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger("IOT_database")
 
+# In-memory storage as fallback when database is unavailable
+fallback_storage = {
+    "telemetry_data": [],
+    "device_status": {},
+    "device_activity": []
+}
 
+# Maximum number of connection retries
+MAX_RETRIES = 3
+RETRY_DELAY = 2  # seconds
 
-def connect_db():
-    """Connect to the PostgreSQL database server"""
+def connect_db(retries=MAX_RETRIES):
+    """Connect to the PostgreSQL database server with retry logic"""
     conn = None
-    try:
-        # read connection parameters
-        params = config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-
-        return conn
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Error connecting to database: {error}")
-        return None
-
+    attempt = 0
+    
+    while attempt < retries:
+        try:
+            # Read connection parameters
+            params = config()
+            logger.info(f"Connecting to database (attempt {attempt+1}/{retries})...")
+            conn = psycopg2.connect(**params)
+            logger.info("Database connection established successfully")
+            return conn
+        except psycopg2.OperationalError as error:
+            attempt += 1
+            logger.error(f"Database connection failed (attempt {attempt}/{retries}): {error}")
+            if attempt < retries:
+                logger.info(f"Retrying in {RETRY_DELAY} seconds...")
+                time.sleep(RETRY_DELAY)
+        except Exception as error:
+            logger.error(f"Unexpected database error: {error}")
+            break
+            
+    logger.warning("All database connection attempts failed. Using fallback storage.")
+    return None
 
 def send_telemetry_data(device_id, data_value, data_unit, data_status="normal"):
     """Send telemetry data to the Data table"""
@@ -30,11 +62,23 @@ def send_telemetry_data(device_id, data_value, data_unit, data_status="normal"):
     
     try:
         conn = connect_db()
+        if conn is None:
+            # Use fallback storage if database connection fails
+            data_id = len(fallback_storage["telemetry_data"]) + 1
+            data_record = {
+                "DataID": data_id,
+                "DID": device_id,
+                "Value": data_value,
+                "Unit": data_unit,
+                "Status": data_status,
+                "Timestamp": datetime.now().isoformat()
+            }
+            fallback_storage["telemetry_data"].append(data_record)
+            logger.info(f"Telemetry data stored in fallback storage - Device: {device_id}, Value: {data_value} {data_unit}")
+            return data_id
+        
         cur = conn.cursor()
-        # with open('create.sql', 'r') as f:
-        #     sql = f.read()
-        #     cur.execute(sql)
-        # Get the next DataID (this assumes you're not using SERIAL for DataID)
+        # Get the next DataID
         cur.execute("SELECT COALESCE(MAX(DataID), 0) + 1 FROM Data")
         data_id = cur.fetchone()[0]
         
@@ -48,12 +92,27 @@ def send_telemetry_data(device_id, data_value, data_unit, data_status="normal"):
         )
         
         conn.commit()
-        print(f"Telemetry data sent - Device: {device_id}, Value: {data_value} {data_unit}, Status: {data_status}")
+        logger.info(f"Telemetry data sent to database - Device: {device_id}, Value: {data_value} {data_unit}")
         return data_id
     
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Error sending telemetry data: {error}")
-        return None
+    except Exception as error:
+        logger.error(f"Error sending telemetry data: {error}")
+        # Try fallback storage on error
+        if data_id is None:
+            data_id = len(fallback_storage["telemetry_data"]) + 1
+            
+        data_record = {
+            "DataID": data_id,
+            "DID": device_id,
+            "Value": data_value,
+            "Unit": data_unit,
+            "Status": data_status,
+            "Timestamp": datetime.now().isoformat(),
+            "Error": str(error)
+        }
+        fallback_storage["telemetry_data"].append(data_record)
+        logger.info(f"Telemetry data stored in fallback storage after error - Device: {device_id}")
+        return data_id
     finally:
         if conn is not None:
             conn.close()
@@ -63,11 +122,6 @@ def update_device_status(device_id, device_name, device_type, current_value, uni
     conn = None
     try:
         conn = connect_db()
-        cur = conn.cursor()
-        
-        # Get current device status if exists
-        cur.execute("SELECT status FROM Device WHERE DID = %s", (device_id,))
-        result = cur.fetchone()
         
         # Set thresholds based on device type
         if device_type == "temperature":
@@ -130,6 +184,17 @@ def update_device_status(device_id, device_name, device_type, current_value, uni
             "indicColor": "#FF9733" if status == "normal" else "#FF3333"
         }
         
+        if conn is None:
+            # Use fallback storage if connection fails
+            fallback_storage["device_status"][f"{device_id}"] = status_json
+            logger.info(f"Device status updated in fallback storage - Device: {device_id}, Status: {status}")
+            return True
+        
+        cur = conn.cursor()
+        # Get current device status if exists
+        cur.execute("SELECT status FROM Device WHERE DID = %s", (device_id,))
+        result = cur.fetchone()
+        
         # Insert or update device status
         if result is None:
             # Device doesn't exist, insert new record
@@ -152,12 +217,15 @@ def update_device_status(device_id, device_name, device_type, current_value, uni
             )
         
         conn.commit()
-        print(f"Device status updated - Device: {device_id}, Status: {status}")
+        logger.info(f"Device status updated in database - Device: {device_id}, Status: {status}")
         return True
     
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Error updating device status: {error}")
-        return False
+    except Exception as error:
+        logger.error(f"Error updating device status: {error}")
+        # Use fallback storage if there's an error
+        fallback_storage["device_status"][f"{device_id}"] = status_json
+        logger.info(f"Device status updated in fallback storage after error - Device: {device_id}")
+        return True
     finally:
         if conn is not None:
             conn.close()
@@ -170,8 +238,8 @@ def simulate_telemetry():
         {"id": 3, "name": "Soil Moisture Sensor", "type": "soil_moisture", "unit": "%"}
     ]
     
-    print("Starting telemetry simulation...")
-    print("-" * 50)
+    logger.info("Starting telemetry simulation...")
+    logger.info("-" * 50)
     
     try:
         # Generate 5 readings for each device
@@ -199,22 +267,37 @@ def simulate_telemetry():
                     device["unit"]
                 )
                 
-                print(f"Data point ID: {data_id} sent successfully")
-                print("-" * 50)
+                logger.info(f"Data point ID: {data_id} sent successfully")
+                logger.info("-" * 50)
                 
             # Wait before next batch of readings
             time.sleep(2)
             
     except Exception as e:
-        print(f"Error in telemetry simulation: {e}")
+        logger.error(f"Error in telemetry simulation: {e}")
     
-    print("Telemetry simulation completed")
+    logger.info("Telemetry simulation completed")
 
 def add_device_activity(device_id, action, status="Active"):
     """Record device activity in the Device_Activity table"""
     conn = None
     try:
         conn = connect_db()
+        
+        if conn is None:
+            # Use fallback storage if database connection fails
+            activity_id = len(fallback_storage["device_activity"]) + 1
+            activity_record = {
+                "ActivityID": activity_id,
+                "DID": device_id,
+                "Action": action,
+                "Status": status,
+                "Timestamp": datetime.now().isoformat()
+            }
+            fallback_storage["device_activity"].append(activity_record)
+            logger.info(f"Device activity recorded in fallback storage - Device: {device_id}, Action: {action}")
+            return True
+        
         cur = conn.cursor()
         
         # Get next activity ID
@@ -231,17 +314,45 @@ def add_device_activity(device_id, action, status="Active"):
         )
         
         conn.commit()
-        print(f"Device activity recorded - Device: {device_id}, Action: {action}, Status: {status}")
+        logger.info(f"Device activity recorded in database - Device: {device_id}, Action: {action}, Status: {status}")
         return True
     
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Error recording device activity: {error}")
-        return False
+    except Exception as error:
+        logger.error(f"Error recording device activity: {error}")
+        # Use fallback storage if there's an error
+        activity_id = len(fallback_storage["device_activity"]) + 1
+        activity_record = {
+            "ActivityID": activity_id,
+            "DID": device_id,
+            "Action": action,
+            "Status": status,
+            "Timestamp": datetime.now().isoformat(),
+            "Error": str(error)
+        }
+        fallback_storage["device_activity"].append(activity_record)
+        logger.info(f"Device activity recorded in fallback storage after error - Device: {device_id}, Action: {action}")
+        return True
     finally:
         if conn is not None:
             conn.close()
 
 if __name__ == "__main__":
+    # Display welcome message
+    print("=" * 60)
+    print("IOT FARMING DATABASE SIMULATOR".center(60))
+    print("=" * 60)
+    
+    # Check if database is available
+    test_conn = connect_db(retries=1)
+    if test_conn:
+        print("✅ Database connection successful!")
+        test_conn.close()
+    else:
+        print("⚠️  Database connection failed - using fallback storage")
+        print("   Check database.ini file or environment variables for correct credentials")
+    
+    print("\n" + "-" * 60)
+    
     # Record device activities for simulation
     for device_id in [1, 2, 3]:
         add_device_activity(device_id, "Start Telemetry")
@@ -252,3 +363,13 @@ if __name__ == "__main__":
     # Record end activities
     for device_id in [1, 2, 3]:
         add_device_activity(device_id, "End Telemetry")
+        
+    # Summary of fallback storage if used
+    if len(fallback_storage["telemetry_data"]) > 0:
+        print("\n" + "=" * 60)
+        print("FALLBACK STORAGE SUMMARY".center(60))
+        print("=" * 60)
+        print(f"Telemetry data records: {len(fallback_storage['telemetry_data'])}")
+        print(f"Device status records: {len(fallback_storage['device_status'])}")
+        print(f"Device activity records: {len(fallback_storage['device_activity'])}")
+        print("-" * 60)

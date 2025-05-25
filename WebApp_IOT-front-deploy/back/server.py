@@ -40,20 +40,27 @@ connected_clients = set()
 device_states = {}
 
 def connect_db():
-    """Connect to the PostgreSQL database server"""
+    """Connect to the PostgreSQL database server and initialize tables if needed"""
     conn = None
     try:
         # read connection parameters
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-
+        
+        # Read and execute table creation SQL
+        with open('create_tables.sql', 'r') as f:
+            create_tables_sql = f.read()
+            cur.execute(create_tables_sql)
+            conn.commit()
+            
         return conn
     except (Exception, psycopg2.DatabaseError) as error:
         print(f"Error connecting to database: {error}")
+        if conn:
+            conn.rollback()
         return None
-
-
+    # Don't close connection here as it's used by the caller
 def send_telemetry_data(device_id, data_value, data_unit, data_status="normal"):
     """Send telemetry data to the Data table"""
     conn = None
@@ -309,36 +316,124 @@ def handle_ping():
         'received': True
     })
 
+def save_device_command(sector, device, status, command_type, additional_data=None):
+    """Save device command to database"""
+    conn = None
+    try:
+        conn = connect_db()
+        cur = conn.cursor()
+        
+        # Convert status to boolean and additional data to JSON string
+        status_bool = bool(status)
+        command_data = json.dumps(additional_data) if additional_data else '{}'
+        
+        # Insert command record using string format for JSONB
+        cur.execute(
+            """
+            INSERT INTO Device_Commands (Sector, Device, Status, Type, Command_Data) 
+            VALUES (%s, %s, %s, %s, %s::jsonb)
+            RETURNING CommandID
+            """,
+            (sector, device, status_bool, command_type, command_data)
+        )
+        
+        command_id = cur.fetchone()[0]
+        conn.commit()
+        
+        logger.info(f"Command saved to database - ID: {command_id}")
+        return command_id
+        
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f"Error saving command to database: {error}")
+        if conn:
+            conn.rollback()
+        return None
+    finally:
+        if conn is not None:
+            conn.close()
+
+def get_command_history(limit=100):
+    """Get command history from database"""
+    conn = None
+    try:
+        conn = connect_db()
+        cur = conn.cursor()
+        
+        # Query commands with proper JSON handling
+        cur.execute(
+            """
+            SELECT CommandID, Sector, Device, Status, Type, 
+                   Command_Data::text, -- Convert JSONB to text
+                   Timestamp 
+            FROM Device_Commands 
+            ORDER BY Timestamp DESC 
+            LIMIT %s
+            """,
+            (limit,)
+        )
+        
+        columns = ['command_id', 'sector', 'device', 'status', 'type', 
+                  'command_data', 'timestamp']
+        results = []
+        
+        for row in cur.fetchall():
+            result = dict(zip(columns, row))
+            # Parse text JSON to dict
+            result['command_data'] = json.loads(result['command_data'])
+            result['timestamp'] = result['timestamp'].isoformat()
+            results.append(result)
+            
+        return results
+        
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f"Error getting command history: {error}")
+        return []
+    finally:
+        if conn is not None:
+            conn.close()
+
 @socketio.on('device_command')
 def handle_device_command(command):
-    """Handle device control commands from frontend with enhanced logging and acknowledgment"""
     try:
-        # Get current timestamp
         timestamp = datetime.now().isoformat()
         
-        # Log detailed information about the command
-        logger.info(f"Device command received at {timestamp}")
-        logger.info(f"Command details - Sector: {command.get('sector')}, Device: {command.get('device')}, Status: {command.get('status')}, Type: {command.get('type')}")
-        logger.info(f"Additional data: {command}")
-        
+        # Extract command data
         sector = command.get('sector')
         device = command.get('device')
         status = command.get('status')
         control_type = command.get('type')
         
+        # Get additional data
+        additional_data = {k:v for k,v in command.items() 
+                         if k not in ['sector', 'device', 'status', 'type']}
+
+        # Save command and get ID
+        command_id = save_device_command(
+            sector, device, status, control_type, additional_data
+        )
+
+        if command_id is None:
+            raise Exception("Failed to save command")
+
         # Update device state
         device_key = f"{sector}_{device}"
         device_states[device_key] = {
             'status': status,
             'type': control_type,
-            'last_updated': timestamp
+            'last_updated': timestamp,
+            'command_id': command_id
         }
         
-        # Save to database or send to actual device here
+        # Log command details
+        logger.info(f"Device command received at {timestamp}")
+        logger.info(f"Command details - ID: {command_id}, Sector: {sector}, Device: {device}")
+        logger.info(f"Status: {status}, Type: {control_type}")
+        logger.info(f"Additional data: {additional_data}")
         
-        # Send detailed acknowledgment back to client
+        # Send success response
         emit('command_response', {
             'success': True,
+            'command_id': command_id,
             'device': device_key,
             'status': status,
             'received': True,
@@ -346,11 +441,12 @@ def handle_device_command(command):
             'message': f"Command for {device} in sector {sector} processed successfully"
         })
         
-        # Broadcast to all clients that a device state has changed
+        # Broadcast update
         socketio.emit('device_update', {
             'device': device_key,
             'status': status,
-            'timestamp': timestamp
+            'timestamp': timestamp,
+            'command_id': command_id
         })
         
     except Exception as e:
@@ -448,6 +544,65 @@ def get_device_states():
         'time': datetime.now().isoformat(),
         'device_states': device_states
     })
+
+def get_command_history(limit=100):
+    """Get command history from database"""
+    conn = None
+    try:
+        conn = connect_db()
+        cur = conn.cursor()
+        
+        # Query commands with proper JSON handling
+        cur.execute(
+            """
+            SELECT CommandID, Sector, Device, Status, Type, 
+                   Command_Data::text, -- Convert JSONB to text
+                   Timestamp 
+            FROM Device_Commands 
+            ORDER BY Timestamp DESC 
+            LIMIT %s
+            """,
+            (limit,)
+        )
+        
+        columns = ['command_id', 'sector', 'device', 'status', 'type', 
+                  'command_data', 'timestamp']
+        results = []
+        
+        for row in cur.fetchall():
+            result = dict(zip(columns, row))
+            # Parse text JSON to dict
+            result['command_data'] = json.loads(result['command_data'])
+            result['timestamp'] = result['timestamp'].isoformat()
+            results.append(result)
+            
+        return results
+        
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f"Error getting command history: {error}")
+        return []
+    finally:
+        if conn is not None:
+            conn.close()
+
+# Add new route to get command history
+@app.route('/api/command-history')
+def api_command_history():
+    try:
+        history = get_command_history()
+        return jsonify({
+            'status': 'success',
+            'time': datetime.now().isoformat(),
+            'count': len(history),
+            'commands': history
+        })
+    except Exception as e:
+        logger.error(f"Error in command history API: {e}")
+        return jsonify({
+            'status': 'error',
+            'time': datetime.now().isoformat(),
+            'error': str(e)
+        }), 500
 
 def start_simulation_thread():
     # Record device activities for simulation
