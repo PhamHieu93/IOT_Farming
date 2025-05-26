@@ -799,33 +799,378 @@ def broadcast_light_updates():
             logger.error(f"Error in light broadcast thread: {e}")
             time.sleep(5)  # Wait before retrying  
 
-def signal_handler(sig, frame):
-    print(f"Received shutdown signal {sig}, cleaning up...")
-    clear_device_commands()
-    atexit._run_exitfuncs()# Register signal handlers
+# Add these functions before the if __name__ == "__main__": block
 
-for sig in [signal.SIGINT, signal.SIGTERM]:
-    signal.signal(sig, lambda sig, frame: atexit._run_exitfuncs())
+def save_temperature_data(sector, device_id, temperature):
+    """Save temperature data to database"""
+    conn = None
+    try:
+        conn = connect_db()
+        if conn is None:
+            logger.error("Failed to connect to database")
+            return False
+            
+        cur = conn.cursor()
+        
+        # Retrieve device ID from Device table or create if it doesn't exist
+        cur.execute(
+            """
+            SELECT DID FROM Device 
+            WHERE Dname = %s AND Sector = %s
+            """,
+            (device_id, sector)
+        )
+        
+        result = cur.fetchone()
+        if result:
+            did = result[0]
+        else:
+            # Create new device entry
+            cur.execute(
+                """
+                INSERT INTO Device (Dname, Type, Sector)
+                VALUES (%s, 'Temperature', %s)
+                RETURNING DID
+                """,
+                (device_id, sector)
+            )
+            did = cur.fetchone()[0]
+        
+        # Insert temperature data
+        cur.execute(
+            """
+            INSERT INTO Data_Temperature (DID, Value, Unit, Status)
+            VALUES (%s, %s, '°C', TRUE)
+            RETURNING DataID
+            """,
+            (did, temperature)
+        )
+        
+        data_id = cur.fetchone()[0]
+        conn.commit()
+        
+        logger.info(f"Temperature data saved - ID: {data_id}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error saving temperature data: {e}")
+        if conn:
+            conn.rollback()
+        return False
+    finally:
+        if conn is not None:
+            conn.close()
+
+def save_humidity_data(sector, device_id, humidity):
+    """Save humidity data to database"""
+    conn = None
+    try:
+        conn = connect_db()
+        if conn is None:
+            logger.error("Failed to connect to database")
+            return False
+            
+        cur = conn.cursor()
+        
+        # Retrieve device ID from Device table or create if it doesn't exist
+        cur.execute(
+            """
+            SELECT DID FROM Device 
+            WHERE Dname = %s AND Sector = %s
+            """,
+            (device_id, sector)
+        )
+        
+        result = cur.fetchone()
+        if result:
+            did = result[0]
+        else:
+            # Create new device entry
+            cur.execute(
+                """
+                INSERT INTO Device (Dname, Type, Sector)
+                VALUES (%s, 'Humidity', %s)
+                RETURNING DID
+                """,
+                (device_id, sector)
+            )
+            did = cur.fetchone()[0]
+        
+        # Insert humidity data
+        cur.execute(
+            """
+            INSERT INTO Data_Humidity (DID, Value, Unit, Status)
+            VALUES (%s, %s, '%', TRUE)
+            RETURNING DataID
+            """,
+            (did, humidity)
+        )
+        
+        data_id = cur.fetchone()[0]
+        conn.commit()
+        
+        logger.info(f"Humidity data saved - ID: {data_id}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error saving humidity data: {e}")
+        if conn:
+            conn.rollback()
+        return False
+    finally:
+        if conn is not None:
+            conn.close()
+
+def save_light_data(sector, device_id, light):
+    """Save light data to database"""
+    conn = None
+    try:
+        conn = connect_db()
+        if conn is None:
+            logger.error("Failed to connect to database")
+            return False
+            
+        cur = conn.cursor()
+        
+        # Retrieve device ID from Device table or create if it doesn't exist
+        cur.execute(
+            """
+            SELECT DID FROM Device 
+            WHERE Dname = %s AND Sector = %s
+            """,
+            (device_id, sector)
+        )
+        
+        result = cur.fetchone()
+        if result:
+            did = result[0]
+        else:
+            # Create new device entry
+            cur.execute(
+                """
+                INSERT INTO Device (Dname, Type, Sector)
+                VALUES (%s, 'Light', %s)
+                RETURNING DID
+                """,
+                (device_id, sector)
+            )
+            did = cur.fetchone()[0]
+        
+        # Insert light data
+        cur.execute(
+            """
+            INSERT INTO Data_Light (DID, Value, Unit, Status)
+            VALUES (%s, %s, 'lux', TRUE)
+            RETURNING DataID
+            """,
+            (did, light)
+        )
+        
+        data_id = cur.fetchone()[0]
+        conn.commit()
+        
+        logger.info(f"Light data saved - ID: {data_id}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error saving light data: {e}")
+        if conn:
+            conn.rollback()
+        return False
+    finally:
+        if conn is not None:
+            conn.close()
+
+def broadcast_sensor_update(sector, temperature=None, humidity=None, light=None):
+    """Broadcast sensor updates to all connected clients"""
+    try:
+        # Create update message with all available data
+        update_data = {
+            'sector': sector,
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        if temperature is not None:
+            update_data['temperature'] = temperature
+        
+        if humidity is not None:
+            update_data['humidity'] = humidity
+            
+        if light is not None:
+            update_data['light'] = light
+            
+        # Broadcast to all connected clients
+        socketio.emit('sensor_update', {
+            'success': True,
+            'data': update_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error broadcasting sensor update: {e}")
+
+@socketio.on('device_registration')
+def handle_device_registration(data):
+    """Handle registration from IoT hardware devices"""
+    try:
+        device_id = data.get('deviceId')
+        sector = data.get('sector', 'A')  # Default to sector A if not specified
+        
+        if not device_id:
+            logger.error("Device registration failed - missing deviceId")
+            return
+            
+        sid = request.sid
+        connected_hardware[sid] = {
+            'device_id': device_id,
+            'sector': sector,
+            'connected_at': datetime.now().isoformat(),
+            'last_data': None
+        }
+        
+        logger.info(f"Hardware device registered: {device_id} in sector {sector}")
+        
+        # Send acknowledgment to the device
+        emit('registration_response', {
+            'status': 'success',
+            'message': f'Device {device_id} registered successfully',
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error handling device registration: {e}")
+
+@socketio.on('sensor_data')
+def handle_sensor_data(data):
+    """Handle sensor data from IoT hardware devices"""
+    try:
+        sid = request.sid
+        if sid not in connected_hardware and sid not in connected_clients:
+            logger.warning(f"Received data from unregistered device: {sid}")
+            return
+            
+        device_info = connected_hardware.get(sid, {'device_id': 'unknown', 'sector': 'A'})
+        device_id = device_info['device_id']
+        sector = data.get('sector', device_info['sector'])
+        
+        # Update device info with the latest data
+        if sid in connected_hardware:
+            connected_hardware[sid]['last_data'] = datetime.now().isoformat()
+            connected_hardware[sid]['sector'] = sector
+        
+        # Extract sensor data
+        temperature = data.get('temperature')
+        humidity = data.get('humidity')
+        light = data.get('light')
+        
+        logger.info(f"Received sensor data from {device_id} - Temp: {temperature}, Humidity: {humidity}, Light: {light}")
+        
+        # Save temperature data to database
+        if temperature is not None:
+            save_temperature_data(sector, device_id, temperature)
+            
+        # Save humidity data to database
+        if humidity is not None:
+            save_humidity_data(sector, device_id, humidity)
+            
+        # Save light data to database
+        if light is not None:
+            save_light_data(sector, device_id, light)
+            
+        # Send acknowledgment to the device
+        emit('data_response', {
+            'status': 'success',
+            'message': 'Data received and processed',
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        # Broadcast sensor data to all connected clients (frontend)
+        broadcast_sensor_update(sector, temperature, humidity, light)
+        
+    except Exception as e:
+        logger.error(f"Error handling sensor data: {e}")
+        emit('data_response', {
+            'status': 'error',
+            'message': str(e),
+            'timestamp': datetime.now().isoformat()
+        })
+
+@socketio.on('data_insert')
+def handle_data_insert(data):
+    """Handle direct data insertion from IoT devices to specific tables"""
+    try:
+        table = data.get('table')
+        sector = data.get('sector', 'A')
+        device_id = data.get('device_id', 'ESP32-Main')
+        value = data.get('value')
+        unit = data.get('unit')
+        status = data.get('status', True)
+        
+        # Log the received data
+        logger.info(f"Received data insertion request for {table}: {value}{unit} from {device_id} in sector {sector}")
+        
+        if table is None or value is None:
+            logger.error("Missing required fields for data insertion")
+            emit('data_insert_response', {
+                'success': False,
+                'error': 'Missing required fields',
+                'timestamp': datetime.now().isoformat()
+            })
+            return
+            
+        # Insert data based on table type
+        if table == 'data_temperature':
+            success = save_temperature_data(sector, device_id, value)
+        elif table == 'data_humidity':
+            success = save_humidity_data(sector, device_id, value)
+        elif table == 'data_light':
+            success = save_light_data(sector, device_id, value)
+        else:
+            logger.error(f"Unknown table type: {table}")
+            emit('data_insert_response', {
+                'success': False,
+                'error': f'Unknown table type: {table}',
+                'timestamp': datetime.now().isoformat()
+            })
+            return
+            
+        if success:
+            logger.info(f"Successfully inserted {value}{unit} into {table}")
+            emit('data_insert_response', {
+                'success': True,
+                'table': table,
+                'timestamp': datetime.now().isoformat()
+            })
+            
+            # Also broadcast the update to all connected clients
+            sensor_type = table.split('_')[-1]  # Extract 'temperature', 'humidity', etc.
+            broadcast_sensor_update(sector, 
+                                   temperature=value if sensor_type == 'temperature' else None,
+                                   humidity=value if sensor_type == 'humidity' else None,
+                                   light=value if sensor_type == 'light' else None)
+        else:
+            logger.error(f"Failed to insert data into {table}")
+            emit('data_insert_response', {
+                'success': False,
+                'error': 'Database insertion failed',
+                'timestamp': datetime.now().isoformat()
+            })
+            
+    except Exception as e:
+        logger.error(f"Error handling data insertion: {e}")
+        emit('data_insert_response', {
+            'success': False,
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        })
 
 if __name__ == "__main__":
-    # Record device activities for simulation
-    clear_device_commands()
-
-    # Start temperature broadcast thread
-    temp_thread = threading.Thread(target=broadcast_temperature_updates)
-    temp_thread.daemon = True
-    temp_thread.start()
+    # Register cleanup function to run on server shutdown
+    atexit.register(clear_device_commands)
     
-    # Start humidity broadcast thread
-    humidity_thread = threading.Thread(target=broadcast_humidity_updates)
-    humidity_thread.daemon = True
-    humidity_thread.start()
+    # Start broadcasting threads
+    threading.Thread(target=broadcast_temperature_updates, daemon=True).start()
+    threading.Thread(target=broadcast_humidity_updates, daemon=True).start()
+    threading.Thread(target=broadcast_light_updates, daemon=True).start()
     
-    # Start light broadcast thread
-    light_thread = threading.Thread(target=broadcast_light_updates)
-    light_thread.daemon = True
-    light_thread.start()
-    
-    # Start the Flask/SocketIO server
-    print("Starting WebSocket server on port 3000")
-    socketio.run(app, host='0.0.0.0', port=3000, debug=True, allow_unsafe_werkzeug=True)
+    # Run the Flask app with SocketIO
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)

@@ -4,6 +4,7 @@
 #include <WiFi.h>
 #include <ArduinoHttpClient.h>
 #include <ArduinoJson.h>  // Add JSON library for better parsing
+#include "debug.h"        // Add debug utilities
 
 // Cảm biến
 DHT20 dht20(&Wire);  // Truyền tham chiếu đối tượng Wire vào
@@ -64,26 +65,132 @@ void connectWiFi() {
 
 
 void connectWebSocket() {
-  Serial.println("Starting WebSocket connection");
+  DEBUG_PRINTLN("Starting WebSocket connection");
   int result = webSocketClient.begin(websocketPath);
   
   if (result == 0) {
-    Serial.println("WebSocket connected!");
+    DEBUG_PRINTLN("WebSocket connected!");
     connected = true;
     
     // Send device registration
     webSocketClient.beginMessage(TYPE_TEXT);
     webSocketClient.print("{\"type\":\"device_registration\",\"deviceId\":\"ESP32-Main\",\"sector\":\"" + currentSector + "\"}");
     webSocketClient.endMessage();
+    
+    // Wait a bit to ensure registration message is sent
+    delay(100);
+    
+    // Send a test ping message
+    DEBUG_PRINTLN("Sending initial ping...");
+    webSocketClient.beginMessage(TYPE_TEXT);
+    webSocketClient.print("{\"type\":\"ping\",\"message\":\"Initial connection test\"}");
+    webSocketClient.endMessage();
   } else {
-    Serial.print("WebSocket connection failed with code: ");
-    Serial.println(result);
+    DEBUG_PRINT("WebSocket connection failed with code: ");
+    DEBUG_PRINTLN(result);
     connected = false;
   }
 }
 
+// Structure for formatting API requests
+struct SensorReading {
+  String sensorType;
+  float value;
+  String unit;
+  String sectorId;
+};
 
+// Send data to specific table for temperature readings
+void sendTemperatureData(float temperature) {
+  if (isnan(temperature) || !connected) {
+    return;
+  }
+  
+  // Create JSON document for temperature data
+  DynamicJsonDocument doc(256);
+  doc["type"] = "data_insert";
+  doc["table"] = "data_temperature"; // Make sure this matches exactly the table name expected by the server
+  doc["sector"] = currentSector;
+  doc["device_id"] = "ESP32-Main";
+  doc["value"] = temperature;
+  doc["unit"] = "°C";
+  doc["status"] = true;
+  
+  String message;
+  serializeJson(doc, message);
+  
+  // Send to server
+  webSocketClient.beginMessage(TYPE_TEXT);
+  webSocketClient.print(message);
+  webSocketClient.endMessage();
+  
+  Serial.print("Temperature data sent: ");
+  Serial.print(temperature);
+  Serial.println(" °C");
+}
+
+// Send data to specific table for humidity readings
+void sendHumidityData(float humidity) {
+  if (isnan(humidity) || !connected) {
+    return;
+  }
+  
+  // Create JSON document for humidity data
+  DynamicJsonDocument doc(256);
+  doc["type"] = "data_insert";
+  doc["table"] = "data_humidity"; // Make sure this matches exactly the table name expected by the server
+  doc["sector"] = currentSector;
+  doc["device_id"] = "ESP32-Main";
+  doc["value"] = humidity;
+  doc["unit"] = "%";
+  doc["status"] = true;
+  
+  String message;
+  serializeJson(doc, message);
+  
+  // Send to server
+  webSocketClient.beginMessage(TYPE_TEXT);
+  webSocketClient.print(message);
+  webSocketClient.endMessage();
+  
+  Serial.print("Humidity data sent: ");
+  Serial.print(humidity);
+  Serial.println(" %");
+}
+
+// Send data to specific table for light readings
+void sendLightData(float light) {
+  if (isnan(light) || !connected) {
+    return;
+  }
+  
+  // Create JSON document for light data
+  DynamicJsonDocument doc(256);
+  doc["type"] = "data_insert";
+  doc["table"] = "data_light"; // Make sure this matches exactly the table name expected by the server
+  doc["sector"] = currentSector;
+  doc["device_id"] = "ESP32-Main";
+  doc["value"] = light;
+  doc["unit"] = "lux";
+  doc["status"] = true;
+  
+  String message;
+  serializeJson(doc, message);
+  
+  // Send to server
+  webSocketClient.beginMessage(TYPE_TEXT);
+  webSocketClient.print(message);
+  webSocketClient.endMessage();
+  
+  Serial.print("Light data sent: ");
+  Serial.print(light);
+  Serial.println(" lux");
+}
+
+// Modify the existing sendSensorData function to use these specialized functions
 void sendSensorData() {
+  DebugTimer timer("sendSensorData");
+  
   // Read DHT20
   float dhtTemp = 0;
   float dhtHum = 0;
@@ -93,17 +200,38 @@ void sendSensorData() {
     dhtTemp = dht20.getTemperature();
     dhtHum = dht20.getHumidity();
     dhtSuccess = true;
+    DEBUG_PRINTF("DHT20 readings - Temp: %.2f°C, Humidity: %.2f%%\n", dhtTemp, dhtHum);
+  } else {
+    DEBUG_PRINTLN("Failed to read from DHT20 sensor!");
   }
   
   // Read BMP280
   float bmpTemp = bmp.readTemperature();
   float bmpPres = bmp.readPressure() / 100.0F;
   bool bmpSuccess = !isnan(bmpTemp) && !isnan(bmpPres);
+  
+  if (bmpSuccess) {
+    DEBUG_PRINTF("BMP280 readings - Temp: %.2f°C, Pressure: %.2fhPa\n", bmpTemp, bmpPres);
+  } else {
+    DEBUG_PRINTLN("Failed to read from BMP280 sensor!");
+  }
 
   // Fake light sensor value for demo (replace with actual sensor)
   float lightValue = analogRead(A0) / 4095.0 * 1000.0;  // Scale to lux range 0-1000
+  DEBUG_PRINTF("Light sensor reading: %.2f lux\n", lightValue);
   
-  // Create JSON message with proper structure for server
+  // Send data to individual tables
+  if (dhtSuccess) {
+    sendTemperatureData(dhtTemp);
+    sendHumidityData(dhtHum);
+  } else if (bmpSuccess) {
+    // Use BMP temp as backup if DHT fails
+    sendTemperatureData(bmpTemp);
+  }
+  
+  sendLightData(lightValue);
+  
+  // Also send the consolidated update for real-time frontend updates
   DynamicJsonDocument doc(1024);
   doc["type"] = "sensor_data";
   doc["sector"] = currentSector;
@@ -137,7 +265,7 @@ void sendSensorData() {
     webSocketClient.beginMessage(TYPE_TEXT);
     webSocketClient.print(message);
     webSocketClient.endMessage();
-    Serial.println("Sent: " + message);
+    Serial.println("Sent consolidated data update");
   }
 }
 
