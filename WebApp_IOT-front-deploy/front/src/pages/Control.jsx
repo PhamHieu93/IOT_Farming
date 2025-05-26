@@ -17,6 +17,7 @@ const Control = () => {
             { id: "Light", status: false, type: "Schedule" },
             { id: "Motor Fan", status: false, type: "Schedule" },
             { id: "Pump", status: false, type: "Schedule" },
+            
         ],
         'B': [
             { id: "Light", status: false, type: "Schedule" },
@@ -34,6 +35,31 @@ const Control = () => {
             { id: "Pump", status: false, type: "Schedule" },
         ]
     });
+
+    const [sectorGroupsThreshold, setSectorGroupsThreshold] = useState({
+        'A': [
+            { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
+            { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
+            { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+            
+        ],
+        'B': [
+            { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
+            { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
+            { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+        ],
+        'C': [
+            { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
+            { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
+            { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+        ],
+        'D': [
+            { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
+            { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
+            { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+        ]
+    });
+
 
     // Thời gian theo sector và thiết bị
     const [timeSettings, setTimeSettings] = useState({
@@ -149,14 +175,56 @@ const Control = () => {
         }
     };
 
-    const handleStartButton = (index) => {
-        try {
-            if (!isConnected) {
-                showNotification('Not connected to server. Attempting to reconnect...', 'error');
-                reconnect();
-                return;
-            }
+const handleStartButton = (index, isThresholdDevice = false) => {
+    try {
+        if (!isConnected) {
+            showNotification('Not connected to server. Attempting to reconnect...', 'error');
+            reconnect();
+            return;
+        }
+        
+        if (isThresholdDevice) {
+            // Handle threshold devices (Temperature, Humidity, Light)
+            const device = sectorGroupsThreshold[activeSector][index];
+            console.log(`Starting threshold monitor for ${device.id}`);
             
+            // Calculate min and max based on error percentage
+            const errorPercentage = device.errorPercentage || 10;
+            const thresholdValue = device.thresholdValue;
+            const minThreshold = thresholdValue * (1 - errorPercentage / 100);
+            const maxThreshold = thresholdValue * (1 + errorPercentage / 100);
+            
+            // Prepare payload with threshold information
+            const payload = {
+                command: "start",
+                thresholdValue: thresholdValue,
+                minThreshold: minThreshold,
+                maxThreshold: maxThreshold,
+                errorPercentage: errorPercentage,
+                unit: device.thresholdUnit
+            };
+            
+            // Send command via WebSocket
+            const success = sendDeviceCommand(
+                activeSector,
+                device.id,
+                true,
+                "Threshold", // Specific control type for thresholds
+                payload
+            );
+            
+            if (success) {
+                // Update status if needed
+                const newSectorGroupsThreshold = { ...sectorGroupsThreshold };
+                newSectorGroupsThreshold[activeSector][index].status = true;
+                setSectorGroupsThreshold(newSectorGroupsThreshold);
+                
+                showNotification(`Started ${device.id} threshold monitoring`, 'success');
+            } else {
+                showNotification('Failed to start threshold monitoring', 'error');
+            }
+        } else {
+            // Original code for regular devices (Light, Motor Fan, Pump)
             const device = sectorGroups[activeSector][index];
             console.log(`Starting ${device.id} with mode ${device.type}`);
             
@@ -171,7 +239,7 @@ const Control = () => {
             const success = sendDeviceCommand(
                 activeSector,
                 device.id,
-                true, // Set to active/on
+                true,
                 device.type,
                 payload
             );
@@ -186,11 +254,12 @@ const Control = () => {
             } else {
                 showNotification('Failed to start device - WebSocket not connected', 'error');
             }
-        } catch (error) {
-            console.error("Error starting device:", error);
-            showNotification('An error occurred while starting the device', 'error');
         }
-    };
+    } catch (error) {
+        console.error("Error starting device:", error);
+        showNotification('An error occurred while starting the device', 'error');
+    }
+};
 
     const handleSectorChange = (sector) => {
         setActiveSector(sector);
@@ -226,6 +295,71 @@ const Control = () => {
             setShowTimeModal(false);
         }
     };
+
+// Add this function before the return statement
+const handleThresholdChange = (index, value) => {
+    try {
+        // Make a copy of the current state
+        const newSectorGroupsThreshold = { ...sectorGroupsThreshold };
+        const device = newSectorGroupsThreshold[activeSector][index];
+        
+        // Update the threshold value for the specified device
+        device.thresholdValue = value;
+        
+        // If there's an error percentage set, validate the new value
+        if (device.errorPercentage && device.baseValue) {
+            // Calculate valid range
+            const minAllowed = device.baseValue * (1 - device.errorPercentage/100);
+            const maxAllowed = device.baseValue * (1 + device.errorPercentage/100);
+            
+            // Check if current value is within range
+            device.isOutOfRange = value < minAllowed || value > maxAllowed;
+            
+            // Update error message if needed
+            if (device.isOutOfRange) {
+                device.errorMessage = `Value outside ±${device.errorPercentage}% range (${minAllowed.toFixed(1)}-${maxAllowed.toFixed(1)})`;
+            } else {
+                device.errorMessage = '';
+            }
+        }
+        
+        // Set the new state
+        setSectorGroupsThreshold(newSectorGroupsThreshold);
+        
+        // Optional: If you want to send this change to the server
+        if (isConnected) {
+            console.log(`Threshold updated for ${activeSector}-${device.id}: ${value}`);
+        }
+    } catch (error) {
+        console.error("Error updating threshold value:", error);
+        showNotification('Failed to update threshold value', 'error');
+    }
+};
+
+// Add this function before the return statement
+const handleErrorPercentageChange = (index, percentage) => {
+    try {
+        // Make a copy of the current state
+        const newSectorGroupsThreshold = { ...sectorGroupsThreshold };
+        
+        // Ensure valid percentage (between 1 and 100)
+        const validPercentage = Math.max(1, Math.min(100, percentage || 10));
+        
+        // Update the error percentage for the device
+        newSectorGroupsThreshold[activeSector][index].errorPercentage = validPercentage;
+        
+        // Set the new state
+        setSectorGroupsThreshold(newSectorGroupsThreshold);
+        
+        // Log the change
+        if (isConnected) {
+            console.log(`Error range updated for ${activeSector}-${newSectorGroupsThreshold[activeSector][index].id}: ±${validPercentage}%`);
+        }
+    } catch (error) {
+        console.error("Error updating error percentage:", error);
+        showNotification('Failed to update error percentage', 'error');
+    }
+};
 
     return (
         <div className="control">
@@ -281,20 +415,20 @@ const Control = () => {
                             </span>
                         </div>
                         <h2>Sector {activeSector}</h2>
-                        <h3>Control panel lighting</h3>
+                        <h3>Control Panel</h3>
 
                         <div className="light-status">
                             <div className="light-card">
-                                <span className="light-name">Working light</span>
+                                <span className="light-name">Working</span>
                                 <div className="light-value">
-                                    <span className="on">30 on</span>
+                                    <span className="on">3 on</span>
                                     <span className="off">0 off</span>
                                 </div>
                             </div>
                             <div className="light-card">
-                                <span className="light-name">Emergency light</span>
+                                <span className="light-name">Emergency</span>
                                 <div className="light-value">
-                                    <span className="on">24 on</span>
+                                    <span className="on">3 on</span>
                                     <span className="off">0 off</span>
                                 </div>
                             </div>
@@ -334,21 +468,10 @@ const Control = () => {
                     </div>
 
                     <div className="control-right">
-                        <div className="panel-tabs">
-                            {["Panel A1", "Panel A2", "Panel A3", "Panel A4", "Panel A5"].map((panel) => (
-                                <button
-                                    key={panel}
-                                    className={`panel-tab ${activePanel === panel ? "active" : ""}`}
-                                    onClick={() => setActivePanel(panel)}
-                                >
-                                    {panel}
-                                </button>
-                            ))}
-                        </div>
 
                         <div className="control-groups">
                             <div className="group-header">
-                                <span>Group</span>
+                                <span>Device</span>
                                 <span>Type of control</span>
                                 <span>Start</span>
                                 <span>Status</span>
@@ -393,6 +516,71 @@ const Control = () => {
                                 </div>
                             ))}
                         </div>
+
+                        <div className="control-groups">
+                            <div className="group-header">
+                                <span>Device</span>
+                                <span>Threshold</span>
+                                <span>Start</span>
+                                <span>Status</span>
+                            </div>
+                            {sectorGroupsThreshold[activeSector].map((group, index) => (
+                                <div key={`${activeSector}_${group.id}`} className="group-row">
+                                    <span className="group-id">{group.id}</span>
+                            <div className="threshold-value">
+                                <div className="threshold-input-container">
+                                    <div className="threshold-controls-row">
+                                    <div className="threshold-input-wrapper">
+                                        <input
+                                            id={`threshold-${index}`}
+                                            type="number"
+                                            value={group.thresholdValue || 0}
+                                            onChange={(e) => handleThresholdChange(index, parseFloat(e.target.value))}
+                                            className="threshold-input"
+                                        />
+                                    <span className="threshold-unit-fixed">
+                                        {group.id === "Temperature" ? " °C" : 
+                                        group.id === "Humidity" ? " %" : 
+                                        group.id === "Light" ? " lux" : ""}
+                                    </span>
+                                    </div>
+
+                                    <div className="error-range-setting">
+                                        <label>±</label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="100"
+                                            value={group.errorPercentage || 10}
+                                            onChange={(e) => handleErrorPercentageChange(index, parseInt(e.target.value))}
+                                            className="error-percentage-input"
+                                        />
+                                        <span>%</span>
+                                    </div>
+                                    </div>
+                                        {group.errorMessage && <div className="threshold-error">{group.errorMessage}</div>}
+
+                                </div>
+                            </div>
+                                    <button 
+                                        className="start-btn"
+                                        onClick={() => handleStartButton(index, true)}
+                                    >
+                                        Start
+                                    </button>
+                                    <label className="switch">
+                                        <input
+                                            type="checkbox"
+                                            checked={group.status}
+                                            onChange={() => toggleStatus(index)}
+                                        />
+                                        <span className="slider"></span>
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+
+
                     </div>
                 </div>
             </div>

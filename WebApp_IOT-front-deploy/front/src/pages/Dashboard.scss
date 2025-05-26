@@ -324,5 +324,15 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: lighten(#00c6ff, 10%);
+  background: #00c6ff;
+}
+
+// Add to Dashboard.scss
+.connection-warning {
+  background-color: #ff6b6b;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin: 10px;
+  text-align: center;
 }
