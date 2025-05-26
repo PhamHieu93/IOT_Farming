@@ -660,3 +660,58 @@ body {
     margin: 0 4px;
     padding: 2px;
 }
+
+.sensor-data {
+  margin: 15px 0;
+  background-color: #f5f9fc;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.sensor-data h4 {
+  font-size: 16px;
+  margin: 0 0 12px 0;
+  color: #575757;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 8px;
+}
+
+.sensor-values {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sensor-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sensor-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #505050;
+}
+
+.sensor-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.data-timestamp {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+  font-style: italic;
+}
+
+.sensor-value .value {
+  color: #3498db;
+}

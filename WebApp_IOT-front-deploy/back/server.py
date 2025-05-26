@@ -41,6 +41,9 @@ connected_clients = set()
 # Keep track of device states
 device_states = {}
 
+# Add this to track connected hardware devices
+connected_hardware = {}
+
 def connect_db():
     """Connect to the PostgreSQL database server and initialize tables if needed"""
     conn = None
@@ -132,7 +135,44 @@ def save_device_command(sector, device, status, command_type, additional_data=No
         # Convert status to boolean and additional data to JSON string
         status_bool = bool(status)
         command_data = json.dumps(additional_data) if additional_data else '{}'
-        
+          # For threshold type, save to Device_Thresholds table
+        if command_type == "Thresholds":
+            threshold_data = additional_data or {}
+            
+            # Ensure we have valid values for mandatory fields
+            min_threshold = threshold_data.get('minThreshold')
+            if min_threshold is None:
+                min_threshold = 0  # Default value
+                logger.warning(f"No minThreshold provided for {sector}:{device}, using default value 0")
+                
+            max_threshold = threshold_data.get('maxThreshold')
+            if max_threshold is None:
+                max_threshold = 100  # Default value
+                logger.warning(f"No maxThreshold provided for {sector}:{device}, using default value 100")
+                
+            unit = threshold_data.get('unit')
+            if unit is None:
+                unit = ''  # Default empty string
+                logger.warning(f"No unit provided for {sector}:{device}, using empty string")
+            
+            cur.execute(
+                """
+                INSERT INTO Device_Thresholds (Sector, Device, MinThreshold, MaxThreshold, Unit, Status)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT (Sector, Device) 
+                DO UPDATE SET
+                    MinThreshold = EXCLUDED.MinThreshold,
+                    MaxThreshold = EXCLUDED.MaxThreshold,
+                    Unit = EXCLUDED.Unit,
+                    Status = EXCLUDED.Status,
+                    Timestamp = CURRENT_TIMESTAMP
+                RETURNING ThresholdID
+                """,
+                (sector, device, min_threshold, max_threshold, unit, status_bool)
+            )
+            threshold_id = cur.fetchone()[0]
+            command_data = json.dumps({'threshold_id': threshold_id})
+
         # Insert command record using string format for JSONB
         cur.execute(
             """
@@ -209,13 +249,51 @@ def handle_device_command(command):
         status = command.get('status')
         control_type = command.get('type')
         
-        # Get additional data
-        additional_data = {k:v for k,v in command.items() 
-                         if k not in ['sector', 'device', 'status', 'type']}
+        # Log full command data for debugging
+        logger.info(f"Received command data: {json.dumps(command)}")
+        
+        # Handle threshold type separately
+        if control_type == "Threshold":
+            # Direct access to fields for Threshold commands
+            threshold_value = command.get('thresholdValue')
+            min_threshold = command.get('minThreshold')
+            max_threshold = command.get('maxThreshold')
+            error_percentage = command.get('errorPercentage')
+            unit = command.get('unit')
+            
+            logger.info(f"Threshold command received - Device: {device}, Value: {threshold_value}, " 
+                      f"Min: {min_threshold}, Max: {max_threshold}, Unit: {unit}")
+                
+            # Save threshold data with validated parameters
+            threshold_id = save_threshold_data(
+                sector,
+                device,
+                threshold_value,
+                min_threshold,
+                max_threshold,
+                error_percentage,
+                unit
+            )
+            if threshold_id is None:
+                raise Exception("Failed to save threshold data")
+                
+            # Command data for device command table
+            command_data = {
+                'command': command.get('command'),
+                'threshold_id': threshold_id,
+                'threshold_value': threshold_value,
+                'min_threshold': min_threshold,
+                'max_threshold': max_threshold,
+                'unit': unit
+            }
+        else:
+            # Get additional data for non-threshold commands
+            command_data = {k:v for k,v in command.items() 
+                          if k not in ['sector', 'device', 'status', 'type']}
 
         # Save command and get ID
         command_id = save_device_command(
-            sector, device, status, control_type, additional_data
+            sector, device, status, control_type, command_data
         )
 
         if command_id is None:
@@ -234,7 +312,6 @@ def handle_device_command(command):
         logger.info(f"Device command received at {timestamp}")
         logger.info(f"Command details - ID: {command_id}, Sector: {sector}, Device: {device}")
         logger.info(f"Status: {status}, Type: {control_type}")
-        logger.info(f"Additional data: {additional_data}")
         
         # Send success response
         emit('command_response', {
@@ -261,8 +338,63 @@ def handle_device_command(command):
         emit('command_response', {
             'success': False,
             'error': error_msg,
+            'received': True,
             'timestamp': datetime.now().isoformat()
         })
+
+def save_threshold_data(sector, device, threshold_value, min_threshold, max_threshold, error_percentage, unit):
+    """Save threshold data to database"""
+    conn = None
+    try:
+        conn = connect_db()
+        cur = conn.cursor()
+        
+        # Ensure we have valid values for mandatory fields to avoid NULL constraint violations
+        if min_threshold is None:
+            min_threshold = 0  # Default value
+            logger.warning(f"No minThreshold provided for {sector}:{device}, using default value 0")
+            
+        if max_threshold is None:
+            max_threshold = 100  # Default value
+            logger.warning(f"No maxThreshold provided for {sector}:{device}, using default value 100")
+            
+        if unit is None:
+            unit = ''  # Default empty string
+            logger.warning(f"No unit provided for {sector}:{device}, using empty string")
+        
+        logger.info(f"Saving threshold data - Sector: {sector}, Device: {device}, " 
+                   f"Min: {min_threshold}, Max: {max_threshold}, Unit: {unit}")
+        
+        cur.execute(
+            """
+            INSERT INTO Device_Thresholds (Sector, Device, MinThreshold, MaxThreshold, Unit, Status)
+            VALUES (%s, %s, %s, %s, %s, TRUE)
+            ON CONFLICT (Sector, Device) 
+            DO UPDATE SET
+                MinThreshold = EXCLUDED.MinThreshold,
+                MaxThreshold = EXCLUDED.MaxThreshold,
+                Unit = EXCLUDED.Unit,
+                Status = TRUE,
+                Timestamp = CURRENT_TIMESTAMP
+            RETURNING ThresholdID
+            """,
+            (sector, device, min_threshold, max_threshold, unit)
+        )
+        
+        threshold_id = cur.fetchone()[0]
+        conn.commit()
+        
+        logger.info(f"Threshold data saved - ID: {threshold_id}")
+        return threshold_id
+        
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f"Error saving threshold data: {error}")
+        if conn:
+            conn.rollback()
+        return None
+    finally:
+        if conn is not None:
+            conn.close()
 
 @socketio.on('control_type_change')
 def handle_control_type_change(command):
@@ -446,30 +578,38 @@ def get_latest_temperature_data():
     """Get the latest temperature data from the Data_Temperature table"""
     conn = None
     try:
-        try:
-            conn = connect_db()
-            if not conn:
-                logger.error("Database connection returned None")
-                return None
-        except Exception as e:
-            logger.error(f"Failed to connect to database: {e}")
+        conn = connect_db()
+        if not conn:
+            logger.error("Database connection returned None")
             return None
         
         cur = conn.cursor()
         
-        # Query to get the latest temperature reading
+        # Query to get the latest temperature reading and threshold
         cur.execute("""
-            SELECT dt.DataID, dt.DID, d.Dname, dt.Value, dt.Unit, dt.Status, dt.Timestamp 
-            FROM Data_Temperature dt
-            JOIN Device d ON dt.DID = d.DID
-            ORDER BY dt.Timestamp DESC
-            LIMIT 1
+            WITH LatestTemp AS (
+                SELECT dt.DataID, dt.DID, d.Dname, dt.Value, dt.Unit, dt.Status, dt.Timestamp,
+                       ROW_NUMBER() OVER (PARTITION BY d.DID ORDER BY dt.Timestamp DESC) as rn
+                FROM Data_Temperature dt
+                JOIN Device d ON dt.DID = d.DID
+            ),
+            ThresholdData AS (
+                SELECT MinThreshold, MaxThreshold, Unit
+                FROM Device_Thresholds
+                WHERE Device = 'Temperature'
+                ORDER BY Timestamp DESC
+                LIMIT 1
+            )
+            SELECT lt.*, t.MinThreshold, t.MaxThreshold
+            FROM LatestTemp lt
+            LEFT JOIN ThresholdData t ON true
+            WHERE lt.rn = 1;
         """)
         
         result = cur.fetchone()
         
         if result:
-            # Format the data as a dictionary
+            # Format the data as a dictionary with threshold info
             data = {
                 'data_id': result[0],
                 'device_id': result[1],
@@ -477,7 +617,9 @@ def get_latest_temperature_data():
                 'value': float(result[3]),
                 'unit': result[4],
                 'status': result[5],
-                'timestamp': result[6].isoformat()
+                'timestamp': result[6].isoformat(),
+                'min_threshold': float(result[8]) if result[8] else None,
+                'max_threshold': float(result[9]) if result[9] else None
             }
             return data
         else:
@@ -490,6 +632,7 @@ def get_latest_temperature_data():
     finally:
         if conn is not None:
             conn.close()
+
 def get_latest_humidity_data():
     """Get the latest humidity data from the Data_Humidity table"""
     conn = None
@@ -501,13 +644,25 @@ def get_latest_humidity_data():
         
         cur = conn.cursor()
         
-        # Query to get the latest humidity reading
+        # Query to get the latest humidity reading and threshold
         cur.execute("""
-            SELECT dh.DataID, dh.DID, d.Dname, dh.Value, dh.Unit, dh.Status, dh.Timestamp 
-            FROM Data_Humidity dh
-            JOIN Device d ON dh.DID = d.DID
-            ORDER BY dh.Timestamp DESC
-            LIMIT 1
+            WITH LatestHumidity AS (
+                SELECT dh.DataID, dh.DID, d.Dname, dh.Value, dh.Unit, dh.Status, dh.Timestamp,
+                       ROW_NUMBER() OVER (PARTITION BY d.DID ORDER BY dh.Timestamp DESC) as rn
+                FROM Data_Humidity dh
+                JOIN Device d ON dh.DID = d.DID
+            ),
+            ThresholdData AS (
+                SELECT MinThreshold, MaxThreshold, Unit
+                FROM Device_Thresholds
+                WHERE Device = 'Humidity'
+                ORDER BY Timestamp DESC
+                LIMIT 1
+            )
+            SELECT lh.*, t.MinThreshold, t.MaxThreshold
+            FROM LatestHumidity lh
+            LEFT JOIN ThresholdData t ON true
+            WHERE lh.rn = 1;
         """)
         
         result = cur.fetchone()
@@ -521,7 +676,9 @@ def get_latest_humidity_data():
                 'value': float(result[3]),
                 'unit': result[4],
                 'status': result[5],
-                'timestamp': result[6].isoformat()
+                'timestamp': result[6].isoformat(),
+                'min_threshold': float(result[8]) if result[8] else None,
+                'max_threshold': float(result[9]) if result[9] else None
             }
             return data
         else:
@@ -546,13 +703,25 @@ def get_latest_light_data():
         
         cur = conn.cursor()
         
-        # Query to get the latest light reading
+        # Query to get the latest light reading and threshold
         cur.execute("""
-            SELECT dl.DataID, dl.DID, d.Dname, dl.Value, dl.Unit, dl.Status, dl.Timestamp 
-            FROM Data_Light dl
-            JOIN Device d ON dl.DID = d.DID
-            ORDER BY dl.Timestamp DESC
-            LIMIT 1
+            WITH LatestLight AS (
+                SELECT dl.DataID, dl.DID, d.Dname, dl.Value, dl.Unit, dl.Status, dl.Timestamp,
+                       ROW_NUMBER() OVER (PARTITION BY d.DID ORDER BY dl.Timestamp DESC) as rn
+                FROM Data_Light dl
+                JOIN Device d ON dl.DID = d.DID
+            ),
+            ThresholdData AS (
+                SELECT MinThreshold, MaxThreshold, Unit
+                FROM Device_Thresholds
+                WHERE Device = 'Light' 
+                ORDER BY Timestamp DESC
+                LIMIT 1
+            )
+            SELECT ll.*, t.MinThreshold, t.MaxThreshold
+            FROM LatestLight ll
+            LEFT JOIN ThresholdData t ON true
+            WHERE ll.rn = 1;
         """)
         
         result = cur.fetchone()
@@ -566,7 +735,9 @@ def get_latest_light_data():
                 'value': float(result[3]),
                 'unit': result[4],
                 'status': result[5],
-                'timestamp': result[6].isoformat()
+                'timestamp': result[6].isoformat(),
+                'min_threshold': float(result[8]) if result[8] else None,
+                'max_threshold': float(result[9]) if result[9] else None
             }
             return data
         else:
@@ -591,7 +762,6 @@ def broadcast_temperature_updates():
                     'data': temp_data,
                     'timestamp': datetime.now().isoformat()
                 })
-                logger.info(f"Broadcasting temperature update: {temp_data['value']}{temp_data['unit']}")
             time.sleep(10)  # Update every 10 seconds
         except Exception as e:
             logger.error(f"Error in temperature broadcast thread: {e}")
@@ -608,7 +778,6 @@ def broadcast_humidity_updates():
                     'data': humidity_data,
                     'timestamp': datetime.now().isoformat()
                 })
-                logger.info(f"Broadcasting humidity update: {humidity_data['value']}{humidity_data['unit']}")
             time.sleep(10)  # Update every 10 seconds
         except Exception as e:
             logger.error(f"Error in humidity broadcast thread: {e}")
@@ -625,7 +794,6 @@ def broadcast_light_updates():
                     'data': light_data,
                     'timestamp': datetime.now().isoformat()
                 })
-                logger.info(f"Broadcasting light update: {light_data['value']}{light_data['unit']}")
             time.sleep(10)  # Update every 10 seconds
         except Exception as e:
             logger.error(f"Error in light broadcast thread: {e}")

@@ -3,6 +3,7 @@
 #include <Adafruit_BMP280.h>
 #include <WiFi.h>
 #include <ArduinoHttpClient.h>
+#include <ArduinoJson.h>  // Add JSON library for better parsing
 
 // Cảm biến
 DHT20 dht20(&Wire);  // Truyền tham chiếu đối tượng Wire vào
@@ -12,21 +13,33 @@ Adafruit_BMP280 bmp;
 #define SDA_PIN 11
 #define SCL_PIN 12
 
+// Cấu hình chân điều khiển thiết bị
+#define LIGHT_PIN 13     // Chân điều khiển đèn
+#define FAN_PIN 14       // Chân điều khiển quạt
+#define PUMP_PIN 15      // Chân điều khiển bơm
+
 // WiFi credentials
 const char* ssid = "PHAM VAN HA";
 const char* password = "123456788";
 
-const char* websocketHost = "192.168.1.11"; // Replace with your computer's IP
+const char* websocketHost = "192.168.1.11"; // Replace with your server's IP
 const int websocketPort = 3000;
 const char* websocketPath = "/socket.io/?transport=websocket";
-
 
 WiFiClient wifi;
 WebSocketClient webSocketClient(wifi, websocketHost, websocketPort);
 
-
-
+unsigned long lastSendTime = 0;
+const unsigned long sendInterval = 10000;  // Send data every 10 seconds
+unsigned long lastPingTime = 0;
+const unsigned long pingInterval = 30000;  // Ping every 30 seconds
 bool connected = false;
+
+// Device states
+bool lightState = false;
+bool fanState = false;
+bool pumpState = false;
+String currentSector = "A";  // Default sector
 
 void connectWiFi() {
   Serial.print("Connecting to WiFi");
@@ -58,9 +71,9 @@ void connectWebSocket() {
     Serial.println("WebSocket connected!");
     connected = true;
     
-    // Send a ping message
+    // Send device registration
     webSocketClient.beginMessage(TYPE_TEXT);
-    webSocketClient.print("{\"type\":\"ping\"}");
+    webSocketClient.print("{\"type\":\"device_registration\",\"deviceId\":\"ESP32-Main\",\"sector\":\"" + currentSector + "\"}");
     webSocketClient.endMessage();
   } else {
     Serial.print("WebSocket connection failed with code: ");
@@ -86,22 +99,38 @@ void sendSensorData() {
   float bmpTemp = bmp.readTemperature();
   float bmpPres = bmp.readPressure() / 100.0F;
   bool bmpSuccess = !isnan(bmpTemp) && !isnan(bmpPres);
+
+  // Fake light sensor value for demo (replace with actual sensor)
+  float lightValue = analogRead(A0) / 4095.0 * 1000.0;  // Scale to lux range 0-1000
   
-  // Create JSON message
-  String message = "{\"data\":{";
+  // Create JSON message with proper structure for server
+  DynamicJsonDocument doc(1024);
+  doc["type"] = "sensor_data";
+  doc["sector"] = currentSector;
   
   if (dhtSuccess) {
-    message += "\"dht20\":{\"temperature\":" + String(dhtTemp) + 
-              ",\"humidity\":" + String(dhtHum) + "}";
-    if (bmpSuccess) message += ",";
+    doc["temperature"] = dhtTemp;
+    doc["humidity"] = dhtHum;
   }
   
   if (bmpSuccess) {
-    message += "\"bmp280\":{\"temperature\":" + String(bmpTemp) + 
-              ",\"pressure\":" + String(bmpPres) + "}";
+    // Use BMP temp as backup if DHT fails
+    if (!dhtSuccess) {
+      doc["temperature"] = bmpTemp;
+    }
+    doc["pressure"] = bmpPres;
   }
   
-  message += "}}";
+  doc["light"] = lightValue;
+  
+  // Also send current device states
+  JsonObject devices = doc.createNestedObject("devices");
+  devices["Light"] = lightState;
+  devices["Motor Fan"] = fanState;
+  devices["Pump"] = pumpState;
+  
+  String message;
+  serializeJson(doc, message);
   
   // Send data over WebSocket
   if (connected) {
@@ -112,35 +141,71 @@ void sendSensorData() {
   }
 }
 
-void setup() {
-  Serial.begin(115200);
-  delay(1000);
-
-  // Khởi động I2C với chân tùy chỉnh
-  Wire.begin(SDA_PIN, SCL_PIN);
-  Serial.println("Đã khởi động I2C.");
-
-  // Khởi động DHT20
-  if (!dht20.begin()) {
-    Serial.println("Không tìm thấy DHT20!");
-  } else {
-    Serial.println("Đã kết nối DHT20.");
+void processCommand(String command) {
+  DynamicJsonDocument doc(1024);
+  DeserializationError error = deserializeJson(doc, command);
+  
+  if (error) {
+    Serial.print("deserializeJson() failed: ");
+    Serial.println(error.c_str());
+    return;
   }
-
-  // Khởi động BMP280
-  if (!bmp.begin(0x76)) {
-    Serial.println("Không tìm thấy BMP280!");
-  } else {
-    Serial.println("Đã kết nối BMP280.");
-    bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,
-                    Adafruit_BMP280::SAMPLING_X2,
-                    Adafruit_BMP280::SAMPLING_X16,
-                    Adafruit_BMP280::FILTER_X16,
-                    Adafruit_BMP280::STANDBY_MS_500);
+  
+  // Check if this is a command message
+  if (doc.containsKey("type") && doc["type"] == "device_command") {
+    String sector = doc["sector"];
+    String device = doc["device"];
+    bool status = doc["status"];
+    String controlType = doc["type"];
+    
+    Serial.print("Received command for device: ");
+    Serial.print(device);
+    Serial.print(" in sector: ");
+    Serial.print(sector);
+    Serial.print(" - Status: ");
+    Serial.print(status ? "ON" : "OFF");
+    Serial.print(" - Type: ");
+    Serial.println(controlType);
+    
+    // Update the current sector if it's different
+    if (sector != currentSector) {
+      currentSector = sector;
+      Serial.print("Sector changed to: ");
+      Serial.println(currentSector);
+    }
+    
+    // Handle device commands
+    if (device == "Light") {
+      lightState = status;
+      digitalWrite(LIGHT_PIN, lightState ? HIGH : LOW);
+      Serial.println(lightState ? "Light turned ON" : "Light turned OFF");
+    }
+    else if (device == "Motor Fan") {
+      fanState = status;
+      digitalWrite(FAN_PIN, fanState ? HIGH : LOW);
+      Serial.println(fanState ? "Fan turned ON" : "Fan turned OFF");
+    }
+    else if (device == "Pump") {
+      pumpState = status;
+      digitalWrite(PUMP_PIN, pumpState ? HIGH : LOW);
+      Serial.println(pumpState ? "Pump turned ON" : "Pump turned OFF");
+    }
+    
+    // Send acknowledgment
+    DynamicJsonDocument ackDoc(256);
+    ackDoc["type"] = "command_ack";
+    ackDoc["device"] = device;
+    ackDoc["status"] = status;
+    ackDoc["success"] = true;
+    
+    String ackMessage;
+    serializeJson(ackDoc, ackMessage);
+    
+    webSocketClient.beginMessage(TYPE_TEXT);
+    webSocketClient.print(ackMessage);
+    webSocketClient.endMessage();
   }
-  connectWiFi();
 }
-
 
 void receiveMessages() {
   int messageSize = webSocketClient.parseMessage();
@@ -150,7 +215,8 @@ void receiveMessages() {
     String message = webSocketClient.readString();
     Serial.println(message);
     
-    // Here you could parse and handle commands from the server
+    // Process the received message
+    processCommand(message);
   }
 }
 
@@ -194,8 +260,47 @@ bool pingServer() {
   }
 }
 
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  // Configure device control pins
+  pinMode(LIGHT_PIN, OUTPUT);
+  pinMode(FAN_PIN, OUTPUT);
+  pinMode(PUMP_PIN, OUTPUT);
+  
+  // Initialize all devices to OFF
+  digitalWrite(LIGHT_PIN, LOW);
+  digitalWrite(FAN_PIN, LOW);
+  digitalWrite(PUMP_PIN, LOW);
+
+  // Khởi động I2C với chân tùy chỉnh
+  Wire.begin(SDA_PIN, SCL_PIN);
+  Serial.println("Đã khởi động I2C.");
+
+  // Khởi động DHT20
+  if (!dht20.begin()) {
+    Serial.println("Không tìm thấy DHT20!");
+  } else {
+    Serial.println("Đã kết nối DHT20.");
+  }
+
+  // Khởi động BMP280
+  if (!bmp.begin(0x76)) {
+    Serial.println("Không tìm thấy BMP280!");
+  } else {
+    Serial.println("Đã kết nối BMP280.");
+    bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,
+                    Adafruit_BMP280::SAMPLING_X2,
+                    Adafruit_BMP280::SAMPLING_X16,
+                    Adafruit_BMP280::FILTER_X16,
+                    Adafruit_BMP280::STANDBY_MS_500);
+  }
+  connectWiFi();
+}
+
 void loop() {
-  Serial.println("----- Đọc dữ liệu -----");
+  unsigned long currentMillis = millis();
 
   if (WiFi.status() != WL_CONNECTED) {
     connected = false;
@@ -216,41 +321,19 @@ void loop() {
       }
     }
   } else {
+    // Check for incoming messages
+    receiveMessages();
+    
+    // Send sensor data on interval
+    if (currentMillis - lastSendTime >= sendInterval) {
+      lastSendTime = currentMillis;
+      sendSensorData();
+    }
+    
     // Periodically ping to verify connection is still alive
-    static unsigned long lastPingTime = 0;
-    if (millis() - lastPingTime > 30000) { // Ping every 30 seconds
-      lastPingTime = millis();
+    if (currentMillis - lastPingTime >= pingInterval) {
+      lastPingTime = currentMillis;
       pingServer();
     }
   }
-
-  // unsigned long currentMillis = millis();
-  // if (currentMillis - lastSendTime >= sendInterval) {
-  //   lastSendTime = currentMillis;
-  //   sendSensorData();
-  // }
-
-  // Đọc DHT20
-  if (dht20.read() == DHT20_OK) {
-    float dhtTemp = dht20.getTemperature();
-    float dhtHum  = dht20.getHumidity();
-    Serial.print("[DHT20] Nhiệt độ: "); Serial.print(dhtTemp); Serial.println(" °C");
-    Serial.print("[DHT20] Độ ẩm:    "); Serial.print(dhtHum); Serial.println(" %");
-  } else {
-    Serial.println("[DHT20] Lỗi đọc dữ liệu!");
-  }
-
-  // Đọc BMP280
-  float bmpTemp = bmp.readTemperature();
-  float bmpPres = bmp.readPressure() / 100.0F;
-
-  if (isnan(bmpTemp) || isnan(bmpPres)) {
-    Serial.println("[BMP280] Lỗi đọc dữ liệu!");
-  } else {
-    Serial.print("[BMP280] Nhiệt độ: "); Serial.print(bmpTemp); Serial.println(" °C");
-    Serial.print("[BMP280] Áp suất:  "); Serial.print(bmpPres); Serial.println(" hPa");
-  }
-
-  Serial.println("------------------------\n");
-  delay(3000);
 }

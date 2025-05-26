@@ -9,13 +9,25 @@ export const useWebSocket = () => useContext(WebSocketContext);
 export const WebSocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [lastMessage, setLastMessage] = useState(null);
+  const [sectorStates, setSectorStates] = useState({});
+  
+  // Add state for sensor data
+  const [sensorData, setSensorData] = useState({
+    temperature: null,
+    humidity: null,
+    light: null,
+    lastUpdated: null
+  });
+  
   const socketRef = useRef(null);
 
   const connect = () => {
     // Disconnect existing connection if any
     if (socketRef.current) {
       socketRef.current.disconnect();
-    }    // Get the backend URL from environment variable or use a default
+    }    
+    
+    // Get the backend URL from environment variable or use a default
     //const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin;
     const BACKEND_URL = 'http://localhost:3000';
     console.log("Attempting Socket.IO connection to", BACKEND_URL);
@@ -68,6 +80,56 @@ export const WebSocketProvider = ({ children }) => {
     socket.onAny((event, ...args) => {
       console.log(`Event ${event} received:`, args[0]);
       setLastMessage({ event, data: args[0] });
+    });
+    
+    // Add listeners for sensor data updates
+    socket.on('temperature_data', (data) => {
+      console.log('Temperature data received:', data);
+      if (data && data.data) {
+        setSensorData(prev => ({
+          ...prev,
+          temperature: data.data.value,
+          lastUpdated: new Date()
+        }));
+      }
+    });
+    
+    socket.on('humidity_data', (data) => {
+      console.log('Humidity data received:', data);
+      if (data && data.data) {
+        setSensorData(prev => ({
+          ...prev,
+          humidity: data.data.value,
+          lastUpdated: new Date()
+        }));
+      }
+    });
+    
+    socket.on('light_data', (data) => {
+      console.log('Light data received:', data);
+      if (data && data.data) {
+        setSensorData(prev => ({
+          ...prev,
+          light: data.data.value,
+          lastUpdated: new Date()
+        }));
+      }
+    });
+    
+    // Combined sensor update from hardware
+    socket.on('sensor_update', (data) => {
+      console.log('Sensor update received:', data);
+      if (data && data.data) {
+        const updateData = data.data;
+        setSensorData(prev => ({
+          ...prev,
+          temperature: updateData.temperature || prev.temperature,
+          humidity: updateData.humidity || prev.humidity,
+          light: updateData.light || prev.light,
+          sector: updateData.sector,
+          lastUpdated: new Date()
+        }));
+      }
     });
   };
   
@@ -152,9 +214,12 @@ export const WebSocketProvider = ({ children }) => {
     }
     return () => {};
   };
-    const value = {
+  const value = {
     isConnected,
     lastMessage,
+    sensorData,
+    sectorStates,
+    setSectorStates,
     sendMessage,
     sendDeviceCommand,
     changeControlType,

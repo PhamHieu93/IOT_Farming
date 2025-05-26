@@ -6,87 +6,116 @@ import { FaArrowLeft, FaArrowRight, FaTimes } from "react-icons/fa";
 import Header from "../components/Header.jsx";
 
 const Control = () => {
-    const { sendDeviceCommand, changeControlType, isConnected, reconnect } = useWebSocket();
+    const { sendDeviceCommand, changeControlType, isConnected, reconnect, sensorData } = useWebSocket();
     const [activePanel, setActivePanel] = useState("Panel A1");
-    const [activeSector, setActiveSector] = useState("A");
+    const [activeSector, setActiveSector] = useState(() => {
+        // Load last active sector from localStorage or default to "A"
+        return localStorage.getItem('lastActiveSector') || "A";
+    });
     const [notification, setNotification] = useState({ show: false, message: '', type: 'info' });
     
-    // Thay đổi cách lưu trữ state của groups theo sector
-    const [sectorGroups, setSectorGroups] = useState({
-        'A': [
-            { id: "Light", status: false, type: "Schedule" },
-            { id: "Motor Fan", status: false, type: "Schedule" },
-            { id: "Pump", status: false, type: "Schedule" },
-            
-        ],
-        'B': [
-            { id: "Light", status: false, type: "Schedule" },
-            { id: "Motor Fan", status: false, type: "Schedule" },
-            { id: "Pump", status: false, type: "Schedule" },
-        ],
-        'C': [
-            { id: "Light", status: false, type: "Schedule" },
-            { id: "Motor Fan", status: false, type: "Schedule" },
-            { id: "Pump", status: false, type: "Schedule" },
-        ],
-        'D': [
-            { id: "Light", status: false, type: "Schedule" },
-            { id: "Motor Fan", status: false, type: "Schedule" },
-            { id: "Pump", status: false, type: "Schedule" },
-        ]
+    // Load sector groups from localStorage or use defaults
+    const [sectorGroups, setSectorGroups] = useState(() => {
+        const savedSectorGroups = localStorage.getItem('sectorGroups');
+        return savedSectorGroups ? JSON.parse(savedSectorGroups) : {
+            'A': [
+                { id: "Light", status: false, type: "Schedule" },
+                { id: "Motor Fan", status: false, type: "Schedule" },
+                { id: "Pump", status: false, type: "Schedule" },
+                
+            ],
+            'B': [
+                { id: "Light", status: false, type: "Schedule" },
+                { id: "Motor Fan", status: false, type: "Schedule" },
+                { id: "Pump", status: false, type: "Schedule" },
+            ],
+            'C': [
+                { id: "Light", status: false, type: "Schedule" },
+                { id: "Motor Fan", status: false, type: "Schedule" },
+                { id: "Pump", status: false, type: "Schedule" },
+            ],
+            'D': [
+                { id: "Light", status: false, type: "Schedule" },
+                { id: "Motor Fan", status: false, type: "Schedule" },
+                { id: "Pump", status: false, type: "Schedule" },
+            ]
+        };
     });
 
-    const [sectorGroupsThreshold, setSectorGroupsThreshold] = useState({
-        'A': [
-            { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
-            { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
-            { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
-            
-        ],
-        'B': [
-            { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
-            { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
-            { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
-        ],
-        'C': [
-            { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
-            { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
-            { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
-        ],
-        'D': [
-            { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
-            { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
-            { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
-        ]
+    // Load threshold groups from localStorage or use defaults
+    const [sectorGroupsThreshold, setSectorGroupsThreshold] = useState(() => {
+        const savedThresholds = localStorage.getItem('sectorGroupsThreshold');
+        return savedThresholds ? JSON.parse(savedThresholds) : {
+            'A': [
+                { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
+                { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
+                { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+                
+            ],
+            'B': [
+                { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
+                { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
+                { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+            ],
+            'C': [
+                { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
+                { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
+                { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+            ],
+            'D': [
+                { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
+                { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
+                { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+            ]
+        };
     });
 
-
-    // Thời gian theo sector và thiết bị
-    const [timeSettings, setTimeSettings] = useState({
-        'A': [
-            { startTime: "00:00", endTime: "23:59" },
-            { startTime: "00:00", endTime: "23:59" },
-            { startTime: "00:00", endTime: "23:59" }
-        ],
-        'B': [
-            { startTime: "00:00", endTime: "23:59" },
-            { startTime: "00:00", endTime: "23:59" },
-            { startTime: "00:00", endTime: "23:59" }
-        ],
-        'C': [
-            { startTime: "00:00", endTime: "23:59" },
-            { startTime: "00:00", endTime: "23:59" },
-            { startTime: "00:00", endTime: "23:59" }
-        ],
-        'D': [
-            { startTime: "00:00", endTime: "23:59" },
-            { startTime: "00:00", endTime: "23:59" },
-            { startTime: "00:00", endTime: "23:59" }
-        ]
+    // Load time settings from localStorage or use defaults  
+    const [timeSettings, setTimeSettings] = useState(() => {
+        const savedTimeSettings = localStorage.getItem('timeSettings');
+        return savedTimeSettings ? JSON.parse(savedTimeSettings) : {
+            'A': [
+                { startTime: "00:00", endTime: "23:59" },
+                { startTime: "00:00", endTime: "23:59" },
+                { startTime: "00:00", endTime: "23:59" }
+            ],
+            'B': [
+                { startTime: "00:00", endTime: "23:59" },
+                { startTime: "00:00", endTime: "23:59" },
+                { startTime: "00:00", endTime: "23:59" }
+            ],
+            'C': [
+                { startTime: "00:00", endTime: "23:59" },
+                { startTime: "00:00", endTime: "23:59" },
+                { startTime: "00:00", endTime: "23:59" }
+            ],
+            'D': [
+                { startTime: "00:00", endTime: "23:59" },
+                { startTime: "00:00", endTime: "23:59" },
+                { startTime: "00:00", endTime: "23:59" }
+            ]
+        };
     });
 
     const [showTimeModal, setShowTimeModal] = useState(false);
     const [selectedGroupIndex, setSelectedGroupIndex] = useState(null);
+
+    // Save state to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('sectorGroups', JSON.stringify(sectorGroups));
+    }, [sectorGroups]);
+
+    useEffect(() => {
+        localStorage.setItem('sectorGroupsThreshold', JSON.stringify(sectorGroupsThreshold));
+    }, [sectorGroupsThreshold]);
+
+    useEffect(() => {
+        localStorage.setItem('timeSettings', JSON.stringify(timeSettings));
+    }, [timeSettings]);
+
+    useEffect(() => {
+        localStorage.setItem('lastActiveSector', activeSector);
+    }, [activeSector]);
 
     // Attempt to reconnect if not connected
     useEffect(() => {
@@ -105,7 +134,7 @@ const Control = () => {
         setTimeout(() => setNotification({ show: false, message: '', type: 'info' }), 3000);
     };
 
-    const toggleStatus = (index) => {
+    const toggleStatus = (index, isThresholdDevice = false) => {
         try {
             if (!isConnected) {
                 showNotification('Not connected to server. Attempting to reconnect...', 'error');
@@ -113,23 +142,78 @@ const Control = () => {
                 return;
             }
 
-            const newSectorGroups = { ...sectorGroups };
-            newSectorGroups[activeSector][index].status = !newSectorGroups[activeSector][index].status;
-            setSectorGroups(newSectorGroups);
+            if (isThresholdDevice) {
+                // Handle threshold device toggling
+                const newSectorGroupsThreshold = { ...sectorGroupsThreshold };
+                newSectorGroupsThreshold[activeSector][index].status = !newSectorGroupsThreshold[activeSector][index].status;
+                setSectorGroupsThreshold(newSectorGroupsThreshold);
 
-            const device = newSectorGroups[activeSector][index];
-            
-            const success = sendDeviceCommand(
-                activeSector,
-                device.id,
-                device.status,
-                device.type
-            );
-            
-            if (success) {
-                showNotification(`${device.id} ${device.status ? 'turned on' : 'turned off'}`, 'success');
+                const device = newSectorGroupsThreshold[activeSector][index];
+                
+                // If turning on, we need to send threshold data
+                if (device.status) {
+                    // Calculate thresholds
+                    const errorPercentage = device.errorPercentage || 10;
+                    const thresholdValue = device.thresholdValue;
+                    const minThreshold = thresholdValue * (1 - errorPercentage / 100);
+                    const maxThreshold = thresholdValue * (1 + errorPercentage / 100);
+                    
+                    // Send command with threshold data
+                    const success = sendDeviceCommand(
+                        activeSector,
+                        device.id,
+                        device.status,
+                        "Threshold",
+                        {
+                            command: device.status ? "start" : "stop",
+                            thresholdValue: thresholdValue,
+                            minThreshold: minThreshold,
+                            maxThreshold: maxThreshold,
+                            errorPercentage: errorPercentage,
+                            unit: device.thresholdUnit
+                        }
+                    );
+                    
+                    if (success) {
+                        showNotification(`${device.id} threshold monitoring ${device.status ? 'activated' : 'deactivated'}`, 'success');
+                    } else {
+                        showNotification('Failed to toggle threshold monitoring', 'error');
+                    }
+                } else {
+                    // Simple off command for threshold device
+                    const success = sendDeviceCommand(
+                        activeSector,
+                        device.id,
+                        false,
+                        "Threshold"
+                    );
+                    
+                    if (success) {
+                        showNotification(`${device.id} threshold monitoring deactivated`, 'success');
+                    } else {
+                        showNotification('Failed to deactivate threshold monitoring', 'error');
+                    }
+                }
             } else {
-                showNotification('Failed to send command to server', 'error');
+                // Handle regular device toggling (existing code)
+                const newSectorGroups = { ...sectorGroups };
+                newSectorGroups[activeSector][index].status = !newSectorGroups[activeSector][index].status;
+                setSectorGroups(newSectorGroups);
+
+                const device = newSectorGroups[activeSector][index];
+                
+                const success = sendDeviceCommand(
+                    activeSector,
+                    device.id,
+                    device.status,
+                    device.type
+                );
+                
+                if (success) {
+                    showNotification(`${device.id} ${device.status ? 'turned on' : 'turned off'}`, 'success');
+                } else {
+                    showNotification('Failed to send command to server', 'error');
+                }
             }
         } catch (error) {
             console.error("Error toggling device status:", error);
@@ -194,23 +278,21 @@ const handleStartButton = (index, isThresholdDevice = false) => {
             const minThreshold = thresholdValue * (1 - errorPercentage / 100);
             const maxThreshold = thresholdValue * (1 + errorPercentage / 100);
             
-            // Prepare payload with threshold information
-            const payload = {
-                command: "start",
-                thresholdValue: thresholdValue,
-                minThreshold: minThreshold,
-                maxThreshold: maxThreshold,
-                errorPercentage: errorPercentage,
-                unit: device.thresholdUnit
-            };
-            
-            // Send command via WebSocket
+            // Send threshold values directly in the root of the command object
+            // This makes them accessible directly in the backend
             const success = sendDeviceCommand(
                 activeSector,
                 device.id,
                 true,
                 "Threshold", // Specific control type for thresholds
-                payload
+                {
+                    command: "start",
+                    thresholdValue: thresholdValue,
+                    minThreshold: minThreshold,
+                    maxThreshold: maxThreshold,
+                    errorPercentage: errorPercentage,
+                    unit: device.thresholdUnit
+                }
             );
             
             if (success) {
@@ -262,6 +344,8 @@ const handleStartButton = (index, isThresholdDevice = false) => {
 };
 
     const handleSectorChange = (sector) => {
+        // Simply change the active sector - we don't need to save/load sector-specific
+        // settings anymore since everything is kept in localStorage
         setActiveSector(sector);
     };
     
@@ -417,6 +501,49 @@ const handleErrorPercentageChange = (index, percentage) => {
                         <h2>Sector {activeSector}</h2>
                         <h3>Control Panel</h3>
 
+                        {/* Add sensor data display section */}
+                        <div className="sensor-data">
+                            <h4>Real-time Sensor Data</h4>
+                            <div className="sensor-values">
+                                <div className="sensor-card">
+                                    <span className="sensor-name">Temperature</span>
+                                    <div className="sensor-value">
+                                        <span className="value">
+                                            {sensorData.temperature !== null 
+                                                ? `${sensorData.temperature.toFixed(1)} °C` 
+                                                : "N/A"}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="sensor-card">
+                                    <span className="sensor-name">Humidity</span>
+                                    <div className="sensor-value">
+                                        <span className="value">
+                                            {sensorData.humidity !== null 
+                                                ? `${sensorData.humidity.toFixed(1)} %` 
+                                                : "N/A"}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="sensor-card">
+                                    <span className="sensor-name">Light</span>
+                                    <div className="sensor-value">
+                                        <span className="value">
+                                            {sensorData.light !== null 
+                                                ? `${sensorData.light.toFixed(1)} lux` 
+                                                : "N/A"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {sensorData.lastUpdated && (
+                                <div className="data-timestamp">
+                                    Last updated: {new Date(sensorData.lastUpdated).toLocaleTimeString()}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Existing light-status div */}
                         <div className="light-status">
                             <div className="light-card">
                                 <span className="light-name">Working</span>
@@ -509,7 +636,7 @@ const handleErrorPercentageChange = (index, percentage) => {
                                         <input
                                             type="checkbox"
                                             checked={group.status}
-                                            onChange={() => toggleStatus(index)}
+                                            onChange={() => toggleStatus(index, false)}
                                         />
                                         <span className="slider"></span>
                                     </label>
@@ -572,7 +699,7 @@ const handleErrorPercentageChange = (index, percentage) => {
                                         <input
                                             type="checkbox"
                                             checked={group.status}
-                                            onChange={() => toggleStatus(index)}
+                                            onChange={() => toggleStatus(index, true)}
                                         />
                                         <span className="slider"></span>
                                     </label>
