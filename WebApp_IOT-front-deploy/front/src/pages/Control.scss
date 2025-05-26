@@ -454,7 +454,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: lighten(#00c6ff, 10%);
+  background: #00c6ff;
 }
 
 // Time modal styles
@@ -587,4 +587,76 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+.threshold-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  
+    .threshold-input-wrapper {
+        display: flex;
+        width: 70%;
+        margin:  0 auto;
+        
+        .threshold-input {
+            flex: 1;
+            padding: 11px 8px; // Fixed padding values
+            border: 1px solid #ddd;
+            border-radius: 6px 0 0 4px;
+            text-align: center; // Changed from right to center
+            font-size: 13px; // Slightly smaller font
+            max-width: 100px; // Limit the maximum width
+            
+            &:focus {
+                outline: none;
+                border-color: #0099ff;
+            }
+        }
+        
+    }
+}
+
+.threshold-unit-fixed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    background-color: #484646;
+    font-size: 14px;
+}
+// Add to Control.scss
+// Add to Control.scss
+.threshold-controls-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    
+}
+
+.threshold-input-wrapper {
+    display: flex;
+    align-items: center;
+    
+}
+
+.error-range-setting {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    
+}
+
+.error-percentage-input {
+    width: 45px;
+    text-align: center;
+    margin: 0 4px;
+    padding: 2px;
 }

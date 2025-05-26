@@ -1,4 +1,4 @@
-import React, { useState, memo } from "react";
+import React, { useState, memo, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import "./Dashboard.scss";
@@ -8,6 +8,7 @@ import {
 } from "recharts";
 import { FiArrowUp, FiArrowDown } from "react-icons/fi";
 import { FaWater } from "react-icons/fa";
+import { useWebSocket } from '../contexts/WebSocket';
 
 const SensorCard = memo(({ sensor }) => {
     const getSensorData = (id) => {
@@ -103,12 +104,153 @@ const humidityData = [
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState("Month");
     const [activeLineTab, setActiveLineTab] = useState("Day");
+ // Add these lines to use WebSocket
+    const { isConnected, addMessageListener, lastMessage, sendMessage } = useWebSocket();
+    const [temperatureData, setTemperatureData] = useState(null);
+    const [humidityData, setHumidityData] = useState(null);
+    const [lightData, setLightData] = useState(null);
+
+        // Listen for temperature data updates
+    useEffect(() => {
+        const unsubscribe = addMessageListener('temperature_data', (data) => {
+            if (data && data.success) {
+                console.log("Received temperature data:", data);
+                setTemperatureData(data.data);
+            }
+        });        
+        // Clean up listener when component unmounts
+        return unsubscribe;
+    }, [addMessageListener]);
+    
+    // Listen for humidity data updates
+    useEffect(() => {
+        const unsubscribe = addMessageListener('humidity_data', (data) => {
+            if (data && data.success) {
+                console.log("Received humidity data:", data);
+                setHumidityData(data.data);
+            }
+        });
+        
+        return unsubscribe;
+    }, [addMessageListener]);
+    
+    // Listen for light data updates
+    useEffect(() => {
+        const unsubscribe = addMessageListener('light_data', (data) => {
+            if (data && data.success) {
+                console.log("Received light data:", data);
+                setLightData(data.data);
+            }
+        });
+        
+        return unsubscribe;
+    }, [addMessageListener]);
+
+    // Request sensor data when connected
+    useEffect(() => {
+        if (isConnected) {
+            console.log("Requesting sensor data from server");
+            try {
+                sendMessage('get_temperature', {});
+                sendMessage('get_humidity', {});
+                sendMessage('get_light', {});
+                console.log("Requests sent successfully");
+            } catch (error) {
+                console.error("Error sending data requests:", error);
+            }
+        }
+    }, [isConnected, sendMessage]);
+    
+    useEffect(() => {
+        console.log("Current WebSocket state:", { isConnected });
+        console.log("Current sensor data:", { temperatureData, humidityData, lightData });
+    }, [isConnected, temperatureData, humidityData, lightData]);
+
+    // Handle all incoming messages
+    useEffect(() => {
+        if (lastMessage) {
+            console.log("New WebSocket message:", lastMessage.event);
+            
+            switch(lastMessage.event) {
+                case 'temperature_data':
+                    if (lastMessage.data && lastMessage.data.success) {
+                        setTemperatureData(lastMessage.data.data);
+                    }
+                    break;
+                case 'humidity_data':
+                    if (lastMessage.data && lastMessage.data.success) {
+                        setHumidityData(lastMessage.data.data);
+                    }
+                    break;
+                case 'light_data':
+                    if (lastMessage.data && lastMessage.data.success) {
+                        setLightData(lastMessage.data.data);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }, [lastMessage]);
+
+    // Format temperature for display (convert if needed)
+    const getFormattedTemperature = () => {
+        console.log("Formatting temperature data:", temperatureData);
+        
+        if (!temperatureData) return { value: '--', unit: '°C' };
+        
+        // Make sure value exists and is a number before using toFixed
+        const value = temperatureData.value;
+        if (value === undefined || value === null) return { value: '--', unit: '°C' };
+        
+        return { 
+            value: typeof value === 'number' ? value.toFixed(1) : value.toString(), 
+            unit: temperatureData.unit || '°C'
+        };
+    };
+
+    // Format humidity for display
+    const getFormattedHumidity = () => {
+        if (!humidityData) return { value: '--', unit: '%' };
+        
+        const value = humidityData.value;
+        if (value === undefined || value === null) return { value: '--', unit: '%' };
+        
+        return { 
+            value: typeof value === 'number' ? value.toFixed(1) : value.toString(), 
+            unit: humidityData.unit || '%'
+        };
+    };
+    
+    // Format light for display
+    const getFormattedLight = () => {
+        if (!lightData) return { value: '--', unit: 'lx' };
+        
+        const value = lightData.value;
+        if (value === undefined || value === null) return { value: '--', unit: 'lx' };
+        
+        return { 
+            value: typeof value === 'number' ? value.toFixed(0) : value.toString(), 
+            unit: lightData.unit || 'lx'
+        };
+    };
+
+    // Get the formatted temperature
+    const tempDisplay = getFormattedTemperature();
+    const humidityDisplay = getFormattedHumidity();
+    const lightDisplay = getFormattedLight();
 
     return (
         <div className="dashboard">
             <Sidebar />
             <div className="dashboard-content">
                 <Header />
+                {!isConnected && (
+                    <div className="connection-warning">
+                        Attempting to connect to server...
+                    </div>
+                )}
+
                 <div className="charts-container">
                     <div className="chart-card main-chart">
                         <div className="chart-header">
@@ -200,13 +342,41 @@ const Dashboard = () => {
 
                 <div className="sensor-cards">
                     {[
-                        {id: 'temp', name: 'Temperature', value: '72', change: 2.5, positive: true, unit: '°F'},
-                        {id: 'humidity', name: 'Humidity', value: '65', change: 1.2, positive: false, unit: '%'},
+                        {
+                            id: 'temp', 
+                            name: 'Temperature', 
+                            value: temperatureData ? tempDisplay.value : '--', 
+                            change: temperatureData ? 2.5 : null, 
+                            positive: true, 
+                            unit: temperatureData ? tempDisplay.unit : '°C'
+                        },                        
+                        {
+                            id: 'humidity', 
+                            name: 'Humidity', 
+                            value: humidityDisplay.value, 
+                            change: humidityData ? 1.2 : null, 
+                            positive: false, 
+                            unit: humidityDisplay.unit
+                        },                        
                         {id: 'co2', name: 'CO2', value: '420', change: 0.8, positive: true, unit: 'ppm'},
-                        {id: 'lux', name: 'Lux', value: '1250', change: 3.1, positive: true, unit: 'lx'},
+                        {
+                            id: 'lux', 
+                            name: 'Lux', 
+                            value: lightDisplay.value, 
+                            change: lightData ? 3.1 : null, 
+                            positive: true, 
+                            unit: lightDisplay.unit
+                        },                        
                         {id: 'vpd', name: 'VPD', value: '1.2', change: 0.3, positive: false, unit: 'kPa'},
-                        {id: 'wifi', name: 'WiFi', value: 'Good', change: null, positive: null, unit: ''},
-                    ].map((sensor) => (
+                        {
+                            id: 'wifi', 
+                            name: 'WiFi', 
+                            value: isConnected ? 'Good' : 'Bad', 
+                            change: null, 
+                            positive: null, 
+                            unit: ''
+                        },
+                        ].map((sensor) => (
                         <SensorCard key={sensor.id} sensor={sensor}/>
                     ))}
                 </div>

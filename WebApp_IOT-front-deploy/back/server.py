@@ -48,14 +48,7 @@ def connect_db():
         # read connection parameters
         params = config()
         conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        
-        # Read and execute table creation SQL
-        with open('create_tables.sql', 'r') as f:
-            create_tables_sql = f.read()
-            cur.execute(create_tables_sql)
-            conn.commit()
-            
+        cur = conn.cursor()            
         return conn
     except (Exception, psycopg2.DatabaseError) as error:
         print(f"Error connecting to database: {error}")
@@ -63,176 +56,7 @@ def connect_db():
             conn.rollback()
         return None
     # Don't close connection here as it's used by the caller
-def send_telemetry_data(device_id, data_value, data_unit, data_status="normal"):
-    """Send telemetry data to the Data table"""
-    conn = None
-    data_id = None
-    
-    try:
-        conn = connect_db()
-        cur = conn.cursor()
-        # with open('create.sql', 'r') as f:
-        #     sql = f.read()
-        #     cur.execute(sql)
-        # Get the next DataID (this assumes you're not using SERIAL for DataID)
-        cur.execute("SELECT COALESCE(MAX(DataID), 0) + 1 FROM Data")
-        data_id = cur.fetchone()[0]
-        
-        # Insert telemetry data into Data table
-        cur.execute(
-            """
-            INSERT INTO Data (DataID, DID, Value, Unit, Status)
-            VALUES (%s, %s, %s, %s, %s)
-            """,
-            (data_id, device_id, data_value, data_unit, data_status)
-        )
-        
-        conn.commit()
-        print(f"Telemetry data sent - Device: {device_id}, Value: {data_value} {data_unit}, Status: {data_status}")
-        return data_id
-    
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Error sending telemetry data: {error}")
-        return None
-    finally:
-        if conn is not None:
-            conn.close()
 
-def update_device_status(device_id, device_name, device_type, current_value, unit):
-    """Update device status in JSON format"""
-    conn = None
-    try:
-        conn = connect_db()
-        cur = conn.cursor()
-        
-        # Get current device status if exists
-        cur.execute("SELECT status FROM Device WHERE DID = %s", (device_id,))
-        result = cur.fetchone()
-        
-        # Set thresholds based on device type
-        if device_type == "temperature":
-            thresholds = {
-                "min": 18, "max": 28, 
-                "warningMin": 20, "warningMax": 26,
-                "criticalMin": 15, "criticalMax": 30
-            }
-            location = {"zone": "Greenhouse", "area": "North", "position": "Wall"}
-        elif device_type == "humidity":
-            thresholds = {
-                "min": 40, "max": 80,
-                "warningMin": 45, "warningMax": 75,
-                "criticalMin": 30, "criticalMax": 85
-            }
-            location = {"zone": "Greenhouse", "area": "Center", "position": "Ceiling"}
-        elif device_type == "soil_moisture":
-            thresholds = {
-                "min": 20, "max": 60,
-                "warningMin": 25, "warningMax": 55,
-                "criticalMin": 15, "criticalMax": 65
-            }
-            location = {"zone": "Field", "area": "East", "position": "Ground"}
-        else:
-            thresholds = {
-                "min": 0, "max": 100,
-                "warningMin": 10, "warningMax": 90,
-                "criticalMin": 5, "criticalMax": 95
-            }
-            location = {"zone": "Unknown", "area": "Unknown", "position": "Unknown"}
-        
-        # Determine status based on current value and thresholds
-        if current_value < thresholds["criticalMin"] or current_value > thresholds["criticalMax"]:
-            status = "critical"
-        elif current_value < thresholds["warningMin"] or current_value > thresholds["warningMax"]:
-            status = "warning"
-        else:
-            status = "normal"
-            
-        # Battery level simulation (decreases over time)
-        battery_level = random.randint(75, 100)
-        
-        # Create status JSON
-        status_json = {
-            "id": f"{device_type}{device_id:03}",
-            "name": device_name,
-            "type": device_type,
-            "model": "IOT Farming Sensor v2",
-            "serialNumber": f"IOT-2025-{device_id:04}",
-            "location": location,
-            "status": status,
-            "lastValue": current_value,
-            "unit": unit,
-            "lastUpdated": datetime.now().isoformat(),
-            "installDate": "2024-01-15",
-            "threshold": thresholds,
-            "readingInterval": 5,
-            "batteryLevel": battery_level,
-            "firmwareVersion": "2.1.0",
-            "indicColor": "#FF9733" if status == "normal" else "#FF3333"
-        }
-        
-        # Insert or update device status
-        if result is None:
-            # Device doesn't exist, insert new record
-            cur.execute(
-                """
-                INSERT INTO Device (DID, Dname, Location, Type, status)
-                VALUES (%s, %s, %s, %s, %s::jsonb)
-                """,
-                (device_id, device_name, location["zone"], device_type, json.dumps(status_json))
-            )
-        else:
-            # Update existing device
-            cur.execute(
-                """
-                UPDATE Device
-                SET Dname = %s, Location = %s, Type = %s, status = %s::jsonb
-                WHERE DID = %s
-                """,
-                (device_name, location["zone"], device_type, json.dumps(status_json), device_id)
-            )
-        
-        conn.commit()
-        print(f"Device status updated - Device: {device_id}, Status: {status}")
-        return True
-    
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Error updating device status: {error}")
-        return False
-    finally:
-        if conn is not None:
-            conn.close()
-
-def add_device_activity(device_id, action, status="Active"):
-    """Record device activity in the Device_Activity table"""
-    conn = None
-    try:
-        conn = connect_db()
-        cur = conn.cursor()
-        
-        # Get next activity ID
-        cur.execute("SELECT COALESCE(MAX(ActivityID), 0) + 1 FROM Device_Activity")
-        activity_id = cur.fetchone()[0]
-        
-        # Insert activity record
-        cur.execute(
-            """
-            INSERT INTO Device_Activity (ActivityID, DID, Action, Status)
-            VALUES (%s, %s, %s, %s)
-            """,
-            (activity_id, device_id, action, status)
-        )
-        
-        conn.commit()
-        print(f"Device activity recorded - Device: {device_id}, Action: {action}, Status: {status}")
-        return True
-    
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(f"Error recording device activity: {error}")
-        return False
-    finally:
-        if conn is not None:
-            conn.close()
-# Enhanced WebSocket event handlers
 @socketio.on('connect')
 def handle_connect():
     sid = request.sid
@@ -243,6 +67,34 @@ def handle_connect():
         'message': 'Connected to IOT Farming WebSocket server',
         'timestamp': datetime.now().isoformat()
     })
+    # Send latest temperature data on connect
+    temp_data = get_latest_temperature_data()
+    if temp_data:
+        emit('temperature_data', {
+            'success': True,
+            'data': temp_data,
+            'timestamp': datetime.now().isoformat(),
+            'initial': True
+        })
+    # Send latest humidity data
+    humidity_data = get_latest_humidity_data()
+    if humidity_data:
+        emit('humidity_data', {
+            'success': True,
+            'data': humidity_data,
+            'timestamp': datetime.now().isoformat(),
+            'initial': True
+        })
+    
+    # Send latest light data
+    light_data = get_latest_light_data()
+    if light_data:
+        emit('light_data', {
+            'success': True,
+            'data': light_data,
+            'timestamp': datetime.now().isoformat(),
+            'initial': True
+        })
 
 @socketio.on('disconnect')
 def handle_disconnect():
@@ -589,11 +441,195 @@ def clear_device_commands():
                 logger.error(f"Error closing database connection: {e}")
         print("Device commands cleanup complete")  # Print to console as a fallback
 
-def start_simulation_thread():
-    # Record device activities for simulation
-    for device_id in [1, 2, 3]:
-        add_device_activity(device_id, "Start Telemetry")
-    
+
+def get_latest_temperature_data():
+    """Get the latest temperature data from the Data_Temperature table"""
+    conn = None
+    try:
+        try:
+            conn = connect_db()
+            if not conn:
+                logger.error("Database connection returned None")
+                return None
+        except Exception as e:
+            logger.error(f"Failed to connect to database: {e}")
+            return None
+        
+        cur = conn.cursor()
+        
+        # Query to get the latest temperature reading
+        cur.execute("""
+            SELECT dt.DataID, dt.DID, d.Dname, dt.Value, dt.Unit, dt.Status, dt.Timestamp 
+            FROM Data_Temperature dt
+            JOIN Device d ON dt.DID = d.DID
+            ORDER BY dt.Timestamp DESC
+            LIMIT 1
+        """)
+        
+        result = cur.fetchone()
+        
+        if result:
+            # Format the data as a dictionary
+            data = {
+                'data_id': result[0],
+                'device_id': result[1],
+                'device_name': result[2],
+                'value': float(result[3]),
+                'unit': result[4],
+                'status': result[5],
+                'timestamp': result[6].isoformat()
+            }
+            return data
+        else:
+            logger.warning("No temperature data found in database")
+            return None
+            
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f"Error retrieving latest temperature data: {error}")
+        return None
+    finally:
+        if conn is not None:
+            conn.close()
+def get_latest_humidity_data():
+    """Get the latest humidity data from the Data_Humidity table"""
+    conn = None
+    try:
+        conn = connect_db()
+        if not conn:
+            logger.error("Database connection returned None")
+            return None
+        
+        cur = conn.cursor()
+        
+        # Query to get the latest humidity reading
+        cur.execute("""
+            SELECT dh.DataID, dh.DID, d.Dname, dh.Value, dh.Unit, dh.Status, dh.Timestamp 
+            FROM Data_Humidity dh
+            JOIN Device d ON dh.DID = d.DID
+            ORDER BY dh.Timestamp DESC
+            LIMIT 1
+        """)
+        
+        result = cur.fetchone()
+        
+        if result:
+            # Format the data as a dictionary
+            data = {
+                'data_id': result[0],
+                'device_id': result[1],
+                'device_name': result[2],
+                'value': float(result[3]),
+                'unit': result[4],
+                'status': result[5],
+                'timestamp': result[6].isoformat()
+            }
+            return data
+        else:
+            logger.warning("No humidity data found in database")
+            return None
+            
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f"Error retrieving latest humidity data: {error}")
+        return None
+    finally:
+        if conn is not None:
+            conn.close()
+
+def get_latest_light_data():
+    """Get the latest light data from the Data_Light table"""
+    conn = None
+    try:
+        conn = connect_db()
+        if not conn:
+            logger.error("Database connection returned None")
+            return None
+        
+        cur = conn.cursor()
+        
+        # Query to get the latest light reading
+        cur.execute("""
+            SELECT dl.DataID, dl.DID, d.Dname, dl.Value, dl.Unit, dl.Status, dl.Timestamp 
+            FROM Data_Light dl
+            JOIN Device d ON dl.DID = d.DID
+            ORDER BY dl.Timestamp DESC
+            LIMIT 1
+        """)
+        
+        result = cur.fetchone()
+        
+        if result:
+            # Format the data as a dictionary
+            data = {
+                'data_id': result[0],
+                'device_id': result[1],
+                'device_name': result[2],
+                'value': float(result[3]),
+                'unit': result[4],
+                'status': result[5],
+                'timestamp': result[6].isoformat()
+            }
+            return data
+        else:
+            logger.warning("No light data found in database")
+            return None
+            
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(f"Error retrieving latest light data: {error}")
+        return None
+    finally:
+        if conn is not None:
+            conn.close()
+
+def broadcast_temperature_updates():
+    """Periodically broadcast temperature updates to all clients"""
+    while True:
+        try:
+            temp_data = get_latest_temperature_data()
+            if temp_data and connected_clients:
+                socketio.emit('temperature_data', {
+                    'success': True,
+                    'data': temp_data,
+                    'timestamp': datetime.now().isoformat()
+                })
+                logger.info(f"Broadcasting temperature update: {temp_data['value']}{temp_data['unit']}")
+            time.sleep(10)  # Update every 10 seconds
+        except Exception as e:
+            logger.error(f"Error in temperature broadcast thread: {e}")
+            time.sleep(5)  # Wait before retrying
+
+def broadcast_humidity_updates():
+    """Periodically broadcast humidity updates to all clients"""
+    while True:
+        try:
+            humidity_data = get_latest_humidity_data()
+            if humidity_data and connected_clients:
+                socketio.emit('humidity_data', {
+                    'success': True,
+                    'data': humidity_data,
+                    'timestamp': datetime.now().isoformat()
+                })
+                logger.info(f"Broadcasting humidity update: {humidity_data['value']}{humidity_data['unit']}")
+            time.sleep(10)  # Update every 10 seconds
+        except Exception as e:
+            logger.error(f"Error in humidity broadcast thread: {e}")
+            time.sleep(5)  # Wait before retrying
+
+def broadcast_light_updates():
+    """Periodically broadcast light updates to all clients"""
+    while True:
+        try:
+            light_data = get_latest_light_data()
+            if light_data and connected_clients:
+                socketio.emit('light_data', {
+                    'success': True,
+                    'data': light_data,
+                    'timestamp': datetime.now().isoformat()
+                })
+                logger.info(f"Broadcasting light update: {light_data['value']}{light_data['unit']}")
+            time.sleep(10)  # Update every 10 seconds
+        except Exception as e:
+            logger.error(f"Error in light broadcast thread: {e}")
+            time.sleep(5)  # Wait before retrying  
 
 def signal_handler(sig, frame):
     print(f"Received shutdown signal {sig}, cleaning up...")
@@ -607,9 +643,20 @@ if __name__ == "__main__":
     # Record device activities for simulation
     clear_device_commands()
 
-    simulation_thread = threading.Thread(target=start_simulation_thread)
-    simulation_thread.daemon = True  # This makes the thread exit when the main program exits
-    simulation_thread.start()
+    # Start temperature broadcast thread
+    temp_thread = threading.Thread(target=broadcast_temperature_updates)
+    temp_thread.daemon = True
+    temp_thread.start()
+    
+    # Start humidity broadcast thread
+    humidity_thread = threading.Thread(target=broadcast_humidity_updates)
+    humidity_thread.daemon = True
+    humidity_thread.start()
+    
+    # Start light broadcast thread
+    light_thread = threading.Thread(target=broadcast_light_updates)
+    light_thread.daemon = True
+    light_thread.start()
     
     # Start the Flask/SocketIO server
     print("Starting WebSocket server on port 3000")

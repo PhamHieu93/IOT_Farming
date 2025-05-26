@@ -7,8 +7,28 @@ CREATE TABLE IF NOT EXISTS Device (
     status JSONB
 );
 
--- Create Data table
-CREATE TABLE IF NOT EXISTS Data (
+
+-- Create Data table for temperature
+CREATE TABLE IF NOT EXISTS Data_Temperature (
+    DataID INTEGER PRIMARY KEY,
+    DID INTEGER REFERENCES Device(DID),
+    Value DECIMAL,
+    Unit VARCHAR(10),
+    Status VARCHAR(20),
+    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS Data_Humidity (
+    DataID INTEGER PRIMARY KEY,
+    DID INTEGER REFERENCES Device(DID),
+    Value DECIMAL,
+    Unit VARCHAR(10),
+    Status VARCHAR(20),
+    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS Data_Light (
     DataID INTEGER PRIMARY KEY,
     DID INTEGER REFERENCES Device(DID),
     Value DECIMAL,
@@ -41,6 +61,33 @@ CREATE TABLE IF NOT EXISTS Device_Commands (
 CREATE INDEX IF NOT EXISTS idx_device_commands_timestamp 
 ON Device_Commands(Timestamp DESC);
 
+CREATE TABLE IF NOT EXISTS Device_Thresholds (
+    ThresholdID SERIAL PRIMARY KEY,
+    Sector VARCHAR(255) NOT NULL,
+    Device VARCHAR(255) NOT NULL,
+    MinThreshold DECIMAL(10, 2) NOT NULL,
+    MaxThreshold DECIMAL(10, 2) NOT NULL,
+    Unit VARCHAR(50),
+    Status BOOLEAN DEFAULT TRUE,
+    Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(Sector, Device)
+);
+
 -- Create index for searching by sector and device
 CREATE INDEX IF NOT EXISTS idx_device_commands_sector_device 
 ON Device_Commands(Sector, Device);
+
+INSERT INTO Device (DID, Dname, Location, Type, status)
+VALUES (1, 'Temperature Sensor 1', 'HCMUT', 'Sensor', '{"active": true}'::jsonb);
+
+INSERT INTO Data_Temperature (DataID, DID, Value, Unit, Status)
+VALUES (1, 1, 23.5, '°C', 'Normal');
+
+INSERT INTO Data_Light (DataID, DID, Value, Unit, Status)
+VALUES (1, 1, 245, 'lux', 'Normal');
+
+INSERT INTO Data_Humidity (DataID, DID, Value, Unit, Status)
+VALUES (1, 1, 60, '%', 'Normal');
+
+SELECT * FROM public.device
+ORDER BY DID ASC
