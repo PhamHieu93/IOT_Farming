@@ -1,467 +1,216 @@
-#include <Wire.h>
-#include <DHT20.h>
-#include <Adafruit_BMP280.h>
+#define LED_PIN 48
+#define SDA_PIN GPIO_NUM_11
+#define SCL_PIN GPIO_NUM_12
+#define LIGHT_SENSOR_PIN GPIO_NUM_1
+#define MOISTURE_PIN GPIO_NUM_2
+
 #include <WiFi.h>
-#include <ArduinoHttpClient.h>
-#include <ArduinoJson.h>  // Add JSON library for better parsing
-#include "debug.h"        // Add debug utilities
+#include <Arduino_MQTT_Client.h>
+#include <ThingsBoard.h>
+#include "DHT20.h"
+#include "Wire.h"
+#include <ArduinoOTA.h>
 
-// Cảm biến
-DHT20 dht20(&Wire);  // Truyền tham chiếu đối tượng Wire vào
-Adafruit_BMP280 bmp;
+constexpr char WIFI_SSID[] = "Hiuu";
+constexpr char WIFI_PASSWORD[] = "phamhiu93";
 
-// Cấu hình chân I2C tùy chỉnh
-#define SDA_PIN 11
-#define SCL_PIN 12
+constexpr char TOKEN[] = "ttrv0asoe3tln5zqjswc";
 
-// Cấu hình chân điều khiển thiết bị
-#define LIGHT_PIN 13     // Chân điều khiển đèn
-#define FAN_PIN 14       // Chân điều khiển quạt
-#define PUMP_PIN 15      // Chân điều khiển bơm
+constexpr char THINGSBOARD_SERVER[] = "app.coreiot.io";
+constexpr uint16_t THINGSBOARD_PORT = 1883U;
 
-// WiFi credentials
-const char* ssid = "PHAM VAN HA";
-const char* password = "123456788";
+constexpr uint32_t MAX_MESSAGE_SIZE = 1024U;
+constexpr uint32_t SERIAL_DEBUG_BAUD = 115200U;
 
-const char* websocketHost = "192.168.1.11"; // Replace with your server's IP
-const int websocketPort = 3000;
-const char* websocketPath = "/socket.io/?transport=websocket";
+constexpr char BLINKING_INTERVAL_ATTR[] = "blinkingInterval";
+constexpr char LED_MODE_ATTR[] = "ledMode";
+constexpr char LED_STATE_ATTR[] = "ledState";
 
-WiFiClient wifi;
-WebSocketClient webSocketClient(wifi, websocketHost, websocketPort);
+volatile bool attributesChanged = false;
+volatile int ledMode = 0;
+volatile bool ledState = false;
 
-unsigned long lastSendTime = 0;
-const unsigned long sendInterval = 10000;  // Send data every 10 seconds
-unsigned long lastPingTime = 0;
-const unsigned long pingInterval = 30000;  // Ping every 30 seconds
-bool connected = false;
+constexpr uint16_t BLINKING_INTERVAL_MS_MIN = 10U;
+constexpr uint16_t BLINKING_INTERVAL_MS_MAX = 60000U;
+volatile uint16_t blinkingInterval = 1000U;
 
-// Device states
-bool lightState = false;
-bool fanState = false;
-bool pumpState = false;
-String currentSector = "A";  // Default sector
+uint32_t previousStateChange;
 
-void connectWiFi() {
-  Serial.print("Connecting to WiFi");
-  WiFi.begin(ssid, password);
-  
-  // Wait for connection
-  int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED && attempts < 20) {
-    delay(500);
-    Serial.print(".");
-    attempts++;
-  }
-  
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("\nWiFi connected");
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
-  } else {
-    Serial.println("\nWiFi connection failed");
-  }
-}
+constexpr int16_t telemetrySendInterval = 10000U;
+uint32_t previousDataSend;
 
-
-void connectWebSocket() {
-  DEBUG_PRINTLN("Starting WebSocket connection");
-  int result = webSocketClient.begin(websocketPath);
-  
-  if (result == 0) {
-    DEBUG_PRINTLN("WebSocket connected!");
-    connected = true;
-    
-    // Send device registration
-    webSocketClient.beginMessage(TYPE_TEXT);
-    webSocketClient.print("{\"type\":\"device_registration\",\"deviceId\":\"ESP32-Main\",\"sector\":\"" + currentSector + "\"}");
-    webSocketClient.endMessage();
-    
-    // Wait a bit to ensure registration message is sent
-    delay(100);
-    
-    // Send a test ping message
-    DEBUG_PRINTLN("Sending initial ping...");
-    webSocketClient.beginMessage(TYPE_TEXT);
-    webSocketClient.print("{\"type\":\"ping\",\"message\":\"Initial connection test\"}");
-    webSocketClient.endMessage();
-  } else {
-    DEBUG_PRINT("WebSocket connection failed with code: ");
-    DEBUG_PRINTLN(result);
-    connected = false;
-  }
-}
-
-// Structure for formatting API requests
-struct SensorReading {
-  String sensorType;
-  float value;
-  String unit;
-  String sectorId;
+constexpr std::array<const char *, 2U> SHARED_ATTRIBUTES_LIST = {
+  LED_STATE_ATTR,
+  BLINKING_INTERVAL_ATTR
 };
 
-// Send data to specific table for temperature readings
-void sendTemperatureData(float temperature) {
-  if (isnan(temperature) || !connected) {
-    return;
-  }
-  
-  // Create JSON document for temperature data
-  DynamicJsonDocument doc(256);
-  doc["type"] = "data_insert";
-  doc["table"] = "data_temperature"; // Make sure this matches exactly the table name expected by the server
-  doc["sector"] = currentSector;
-  doc["device_id"] = "ESP32-Main";
-  doc["value"] = temperature;
-  doc["unit"] = "°C";
-  doc["status"] = true;
-  
-  String message;
-  serializeJson(doc, message);
-  
-  // Send to server
-  webSocketClient.beginMessage(TYPE_TEXT);
-  webSocketClient.print(message);
-  webSocketClient.endMessage();
-  
-  Serial.print("Temperature data sent: ");
-  Serial.print(temperature);
-  Serial.println(" °C");
+WiFiClient wifiClient;
+Arduino_MQTT_Client mqttClient(wifiClient);
+ThingsBoard tb(mqttClient, MAX_MESSAGE_SIZE);
+
+DHT20 dht20;
+
+RPC_Response setLedSwitchState(const RPC_Data &data) {
+    Serial.println("Received Switch state");
+    bool newState = data;
+    Serial.print("Switch state change: ");
+    Serial.println(newState);
+    digitalWrite(LED_PIN, newState);
+    attributesChanged = true;
+    return RPC_Response("setLedSwitchValue", newState);
 }
 
-// Send data to specific table for humidity readings
-void sendHumidityData(float humidity) {
-  if (isnan(humidity) || !connected) {
-    return;
+const std::array<RPC_Callback, 1U> callbacks = {
+  RPC_Callback{ "setLedSwitchValue", setLedSwitchState }
+};
+
+void processSharedAttributes(const Shared_Attribute_Data &data) {
+  for (auto it = data.begin(); it != data.end(); ++it) {
+    if (strcmp(it->key().c_str(), BLINKING_INTERVAL_ATTR) == 0) {
+      const uint16_t new_interval = it->value().as<uint16_t>();
+      if (new_interval >= BLINKING_INTERVAL_MS_MIN && new_interval <= BLINKING_INTERVAL_MS_MAX) {
+        blinkingInterval = new_interval;
+        Serial.print("Blinking interval is set to: ");
+        Serial.println(new_interval);
+      }
+    } else if (strcmp(it->key().c_str(), LED_STATE_ATTR) == 0) {
+      ledState = it->value().as<bool>();
+      digitalWrite(LED_PIN, ledState);
+      Serial.print("LED state is set to: ");
+      Serial.println(ledState);
+    }
   }
-  
-  // Create JSON document for humidity data
-  DynamicJsonDocument doc(256);
-  doc["type"] = "data_insert";
-  doc["table"] = "data_humidity"; // Make sure this matches exactly the table name expected by the server
-  doc["sector"] = currentSector;
-  doc["device_id"] = "ESP32-Main";
-  doc["value"] = humidity;
-  doc["unit"] = "%";
-  doc["status"] = true;
-  
-  String message;
-  serializeJson(doc, message);
-  
-  // Send to server
-  webSocketClient.beginMessage(TYPE_TEXT);
-  webSocketClient.print(message);
-  webSocketClient.endMessage();
-  
-  Serial.print("Humidity data sent: ");
-  Serial.print(humidity);
-  Serial.println(" %");
+  attributesChanged = true;
 }
 
-// Send data to specific table for light readings
-void sendLightData(float light) {
-  if (isnan(light) || !connected) {
-    return;
+const Shared_Attribute_Callback attributes_callback(&processSharedAttributes, SHARED_ATTRIBUTES_LIST.cbegin(), SHARED_ATTRIBUTES_LIST.cend());
+const Attribute_Request_Callback attribute_shared_request_callback(&processSharedAttributes, SHARED_ATTRIBUTES_LIST.cbegin(), SHARED_ATTRIBUTES_LIST.cend());
+
+void InitWiFi() {
+  Serial.println("Connecting to AP ...");
+  // Attempting to establish a connection to the given WiFi network
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
+    // Delay 500ms until a connection has been successfully established
+    delay(500);
+    Serial.print(".");
   }
-  
-  // Create JSON document for light data
-  DynamicJsonDocument doc(256);
-  doc["type"] = "data_insert";
-  doc["table"] = "data_light"; // Make sure this matches exactly the table name expected by the server
-  doc["sector"] = currentSector;
-  doc["device_id"] = "ESP32-Main";
-  doc["value"] = light;
-  doc["unit"] = "lux";
-  doc["status"] = true;
-  
-  String message;
-  serializeJson(doc, message);
-  
-  // Send to server
-  webSocketClient.beginMessage(TYPE_TEXT);
-  webSocketClient.print(message);
-  webSocketClient.endMessage();
-  
-  Serial.print("Light data sent: ");
-  Serial.print(light);
-  Serial.println(" lux");
+  Serial.println("Connected to AP");
 }
 
-// Modify the existing sendSensorData function to use these specialized functions
-void sendSensorData() {
-  DebugTimer timer("sendSensorData");
-  
-  // Read DHT20
-  float dhtTemp = 0;
-  float dhtHum = 0;
-  bool dhtSuccess = false;
-  
-  if (dht20.read() == DHT20_OK) {
-    dhtTemp = dht20.getTemperature();
-    dhtHum = dht20.getHumidity();
-    dhtSuccess = true;
-    DEBUG_PRINTF("DHT20 readings - Temp: %.2f°C, Humidity: %.2f%%\n", dhtTemp, dhtHum);
-  } else {
-    DEBUG_PRINTLN("Failed to read from DHT20 sensor!");
-  }
-  
-  // Read BMP280
-  float bmpTemp = bmp.readTemperature();
-  float bmpPres = bmp.readPressure() / 100.0F;
-  bool bmpSuccess = !isnan(bmpTemp) && !isnan(bmpPres);
-  
-  if (bmpSuccess) {
-    DEBUG_PRINTF("BMP280 readings - Temp: %.2f°C, Pressure: %.2fhPa\n", bmpTemp, bmpPres);
-  } else {
-    DEBUG_PRINTLN("Failed to read from BMP280 sensor!");
-  }
-
-  // Fake light sensor value for demo (replace with actual sensor)
-  float lightValue = analogRead(A0) / 4095.0 * 1000.0;  // Scale to lux range 0-1000
-  DEBUG_PRINTF("Light sensor reading: %.2f lux\n", lightValue);
-  
-  // Send data to individual tables
-  if (dhtSuccess) {
-    sendTemperatureData(dhtTemp);
-    sendHumidityData(dhtHum);
-  } else if (bmpSuccess) {
-    // Use BMP temp as backup if DHT fails
-    sendTemperatureData(bmpTemp);
-  }
-  
-  sendLightData(lightValue);
-  
-  // Also send the consolidated update for real-time frontend updates
-  DynamicJsonDocument doc(1024);
-  doc["type"] = "sensor_data";
-  doc["sector"] = currentSector;
-  
-  if (dhtSuccess) {
-    doc["temperature"] = dhtTemp;
-    doc["humidity"] = dhtHum;
-  }
-  
-  if (bmpSuccess) {
-    // Use BMP temp as backup if DHT fails
-    if (!dhtSuccess) {
-      doc["temperature"] = bmpTemp;
-    }
-    doc["pressure"] = bmpPres;
-  }
-  
-  doc["light"] = lightValue;
-  
-  // Also send current device states
-  JsonObject devices = doc.createNestedObject("devices");
-  devices["Light"] = lightState;
-  devices["Motor Fan"] = fanState;
-  devices["Pump"] = pumpState;
-  
-  String message;
-  serializeJson(doc, message);
-  
-  // Send data over WebSocket
-  if (connected) {
-    webSocketClient.beginMessage(TYPE_TEXT);
-    webSocketClient.print(message);
-    webSocketClient.endMessage();
-    Serial.println("Sent consolidated data update");
-  }
-}
-
-void processCommand(String command) {
-  DynamicJsonDocument doc(1024);
-  DeserializationError error = deserializeJson(doc, command);
-  
-  if (error) {
-    Serial.print("deserializeJson() failed: ");
-    Serial.println(error.c_str());
-    return;
-  }
-  
-  // Check if this is a command message
-  if (doc.containsKey("type") && doc["type"] == "device_command") {
-    String sector = doc["sector"];
-    String device = doc["device"];
-    bool status = doc["status"];
-    String controlType = doc["type"];
-    
-    Serial.print("Received command for device: ");
-    Serial.print(device);
-    Serial.print(" in sector: ");
-    Serial.print(sector);
-    Serial.print(" - Status: ");
-    Serial.print(status ? "ON" : "OFF");
-    Serial.print(" - Type: ");
-    Serial.println(controlType);
-    
-    // Update the current sector if it's different
-    if (sector != currentSector) {
-      currentSector = sector;
-      Serial.print("Sector changed to: ");
-      Serial.println(currentSector);
-    }
-    
-    // Handle device commands
-    if (device == "Light") {
-      lightState = status;
-      digitalWrite(LIGHT_PIN, lightState ? HIGH : LOW);
-      Serial.println(lightState ? "Light turned ON" : "Light turned OFF");
-    }
-    else if (device == "Motor Fan") {
-      fanState = status;
-      digitalWrite(FAN_PIN, fanState ? HIGH : LOW);
-      Serial.println(fanState ? "Fan turned ON" : "Fan turned OFF");
-    }
-    else if (device == "Pump") {
-      pumpState = status;
-      digitalWrite(PUMP_PIN, pumpState ? HIGH : LOW);
-      Serial.println(pumpState ? "Pump turned ON" : "Pump turned OFF");
-    }
-    
-    // Send acknowledgment
-    DynamicJsonDocument ackDoc(256);
-    ackDoc["type"] = "command_ack";
-    ackDoc["device"] = device;
-    ackDoc["status"] = status;
-    ackDoc["success"] = true;
-    
-    String ackMessage;
-    serializeJson(ackDoc, ackMessage);
-    
-    webSocketClient.beginMessage(TYPE_TEXT);
-    webSocketClient.print(ackMessage);
-    webSocketClient.endMessage();
-  }
-}
-
-void receiveMessages() {
-  int messageSize = webSocketClient.parseMessage();
-  
-  if (messageSize > 0) {
-    Serial.print("Received WebSocket message: ");
-    String message = webSocketClient.readString();
-    Serial.println(message);
-    
-    // Process the received message
-    processCommand(message);
-  }
-}
-
-bool pingServer() {
-  if (!connected) {
-    Serial.println("Not connected to WebSocket server. Cannot ping.");
-    return false;
-  }
-  
-  Serial.println("Pinging WebSocket server...");
-  
-  // Send a ping message
-  webSocketClient.beginMessage(TYPE_TEXT);
-  webSocketClient.print("{\"type\":\"ping\"}");
-  webSocketClient.endMessage();
-  
-  // Wait briefly for a response
-  unsigned long pingStart = millis();
-  bool receivedResponse = false;
-  
-  // Check for response with timeout
-  while (millis() - pingStart < 3000) {
-    int messageSize = webSocketClient.parseMessage();
-    
-    if (messageSize > 0) {
-      String response = webSocketClient.readString();
-      Serial.println("Received response: " + response);
-      receivedResponse = true;
-      break;
-    }
-    delay(50);
-  }
-  
-  if (receivedResponse) {
-    Serial.println("Ping successful!");
+const bool reconnect() {
+  // Check to ensure we aren't connected yet
+  const wl_status_t status = WiFi.status();
+  if (status == WL_CONNECTED) {
     return true;
-  } else {
-    Serial.println("Ping timeout - no response from server");
-    connected = false;
-    return false;
   }
+  // If we aren't establish a new connection to the given WiFi network
+  InitWiFi();
+  return true;
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(SERIAL_DEBUG_BAUD);
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(LIGHT_SENSOR_PIN, INPUT);  
+  pinMode(MOISTURE_PIN, INPUT);  
   delay(1000);
+  InitWiFi();
 
-  // Configure device control pins
-  pinMode(LIGHT_PIN, OUTPUT);
-  pinMode(FAN_PIN, OUTPUT);
-  pinMode(PUMP_PIN, OUTPUT);
-  
-  // Initialize all devices to OFF
-  digitalWrite(LIGHT_PIN, LOW);
-  digitalWrite(FAN_PIN, LOW);
-  digitalWrite(PUMP_PIN, LOW);
-
-  // Khởi động I2C với chân tùy chỉnh
   Wire.begin(SDA_PIN, SCL_PIN);
-  Serial.println("Đã khởi động I2C.");
+  dht20.begin();
 
-  // Khởi động DHT20
-  if (!dht20.begin()) {
-    Serial.println("Không tìm thấy DHT20!");
-  } else {
-    Serial.println("Đã kết nối DHT20.");
-  }
-
-  // Khởi động BMP280
-  if (!bmp.begin(0x76)) {
-    Serial.println("Không tìm thấy BMP280!");
-  } else {
-    Serial.println("Đã kết nối BMP280.");
-    bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,
-                    Adafruit_BMP280::SAMPLING_X2,
-                    Adafruit_BMP280::SAMPLING_X16,
-                    Adafruit_BMP280::FILTER_X16,
-                    Adafruit_BMP280::STANDBY_MS_500);
-  }
-  connectWiFi();
+  
 }
 
 void loop() {
-  unsigned long currentMillis = millis();
+  delay(10);
 
-  if (WiFi.status() != WL_CONNECTED) {
-    connected = false;
-    Serial.println("WiFi disconnected, reconnecting...");
-    connectWiFi();
+  if (!reconnect()) {
     return;
   }
 
-  if (!connected) {
-    connectWebSocket();
-    delay(1000);
-    
-    // Test the connection with a ping
-    if (connected) {
-      bool pingSuccess = pingServer();
-      if (!pingSuccess) {
-        Serial.println("Ping failed, socket may not be working properly");
-      }
+  if (!tb.connected()) {
+    Serial.print("Connecting to: ");
+    Serial.print(THINGSBOARD_SERVER);
+    Serial.print(" with token ");
+    Serial.println(TOKEN);
+    if (!tb.connect(THINGSBOARD_SERVER, TOKEN, THINGSBOARD_PORT)) {
+      Serial.println("Failed to connect");
+      return;
     }
-  } else {
-    // Check for incoming messages
-    receiveMessages();
-    
-    // Send sensor data on interval
-    if (currentMillis - lastSendTime >= sendInterval) {
-      lastSendTime = currentMillis;
-      sendSensorData();
+
+    tb.sendAttributeData("macAddress", WiFi.macAddress().c_str());
+
+    Serial.println("Subscribing for RPC...");
+    if (!tb.RPC_Subscribe(callbacks.cbegin(), callbacks.cend())) {
+      Serial.println("Failed to subscribe for RPC");
+      return;
     }
-    
-    // Periodically ping to verify connection is still alive
-    if (currentMillis - lastPingTime >= pingInterval) {
-      lastPingTime = currentMillis;
-      pingServer();
+
+    if (!tb.Shared_Attributes_Subscribe(attributes_callback)) {
+      Serial.println("Failed to subscribe for shared attribute updates");
+      return;
+    }
+
+    Serial.println("Subscribe done");
+
+    if (!tb.Shared_Attributes_Request(attribute_shared_request_callback)) {
+      Serial.println("Failed to request for shared attributes");
+      return;
     }
   }
+
+  if (attributesChanged) {
+    attributesChanged = false;
+    tb.sendAttributeData(LED_STATE_ATTR, digitalRead(LED_PIN));
+  }
+
+  // if (ledMode == 1 && millis() - previousStateChange > blinkingInterval) {
+  //   previousStateChange = millis();
+  //   digitalWrite(LED_PIN, !digitalRead(LED_PIN));
+  //   Serial.print("LED state changed to: ");
+  //   Serial.println(!digitalRead(LED_PIN));
+  // }
+
+  if (millis() - previousDataSend > telemetrySendInterval) {
+    previousDataSend = millis();
+
+    dht20.read();
+    
+    float temperature = dht20.getTemperature();
+    float humidity = dht20.getHumidity();
+    float light = analogRead(LIGHT_SENSOR_PIN);  // Read analog value from light sensor
+    float moisture = analogRead(MOISTURE_PIN);  // Read analog value from light sensor
+
+    if (isnan(temperature) || isnan(humidity) || isnan(light) || isnan(moisture)) {
+      Serial.println("Failed to read from DHT20 sensor!");
+    } else {
+
+      float lightPercent = map(light, 0, 4095, 0, 100);
+
+
+      Serial.print("Temperature: ");
+      Serial.print(temperature);
+      Serial.print(" °C, Humidity: ");
+      Serial.print(humidity);
+      Serial.println(" %");
+      Serial.print(" lux, Light: ");
+      Serial.println(light);  // Print raw analog value
+
+      tb.sendTelemetryData("temperature", temperature);
+      tb.sendTelemetryData("humidity", humidity);
+      tb.sendTelemetryData("light", lightPercent);
+      tb.sendTelemetryData("moisture", moisture);
+ 
+    }
+
+    tb.sendAttributeData("rssi", WiFi.RSSI());
+    tb.sendAttributeData("channel", WiFi.channel());
+    tb.sendAttributeData("bssid", WiFi.BSSIDstr().c_str());
+    tb.sendAttributeData("localIp", WiFi.localIP().toString().c_str());
+    tb.sendAttributeData("ssid", WiFi.SSID().c_str());
+  }
+
+  tb.loop();
 }

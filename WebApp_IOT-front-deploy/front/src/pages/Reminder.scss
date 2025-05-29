@@ -1,0 +1,385 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.history {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #13131f;
+  position: fixed;
+  top: 0;
+  left: 0;
+  color: var(--text-primary);
+
+  .history-content {
+    flex: 1;
+    padding: 30px;
+    margin-left: 240px;
+    overflow-y: auto;
+    height: 100vh;
+    width: calc(100vw - 240px);
+    box-sizing: border-box;
+  }
+
+  .history-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .history-header {
+    margin-bottom: 30px;
+
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+  }
+
+  .boards {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--secondary-light);
+
+    .board-options {
+      display: flex;
+      gap: 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+
+      span {
+        cursor: pointer;
+        transition: var(--transition);
+
+        &:hover {
+          color: var(--primary);
+        }
+      }
+    }
+  }
+
+  .requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+
+    .request-card {
+      background: var(--secondary);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      cursor: pointer; // Add cursor pointer to indicate clickable
+      border-left: 3px solid transparent; // Add transparent border for smooth transition
+
+    &.selected {
+      background: rgba(0, 157, 255, 0.1); // Light blue background
+      border-left: 3px solid var(--primary); // Blue border on the left side
+    }
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      }
+
+      .request-content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .request-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        order: 0;
+        min-width: 106px;
+
+        .status-icon {
+          font-size: 16px;
+
+          &.completed {
+            color: var(--success);
+          }
+          &.in-progress {
+            color: var(--primary);
+          }
+          &.planned {
+            color: var(--warning);
+          }
+          &.reviewing {
+            color: #ff7300;
+          }
+          &.pending {
+            color: var(--text-secondary);
+          }
+          &.closed {
+            color: var(--error);
+          }
+        }
+
+        .status-badge {
+          font-size: 12px;
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-weight: 500;
+
+          &.completed {
+            background: rgba(0, 196, 159, 0.1);
+            color: var(--success);
+          }
+          &.in-progress {
+            background: rgba(0, 198, 255, 0.1);
+            color: var(--primary);
+          }
+          &.planned {
+            background: rgba(255, 187, 40, 0.1);
+            color: var(--warning);
+          }
+          &.reviewing {
+            background: rgba(255, 115, 0, 0.1);
+            color: #ff7300;
+          }
+          &.pending {
+            background: rgba(161, 161, 181, 0.1);
+            color: var(--text-secondary);
+          }
+          &.closed {
+            background: rgba(255, 77, 79, 0.1);
+            color: var(--error);
+          }
+        }
+      }
+
+      .request-details {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+      }
+
+      .request-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+        color: #ffffff;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        order: 1;
+      }
+
+      .request-meta {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        color: var(--text-secondary);
+        gap: 15px;
+        margin-left: auto;
+        order: 2;
+
+        .request-date {
+          white-space: nowrap;
+        }
+
+        .request-stats {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          .note-time {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+            
+            .time-icon {
+              margin-right: 4px;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Add these styles at the end of the file
+
+.status-tabs {
+  display: flex; // Add this to make it a flex container
+  justify-content: space-between; // This pushes filter buttons left and action buttons right
+  align-items: center; // Vertical alignment
+  margin-bottom: 20px; // Add some space below
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  .filter-buttons {
+    display: flex;
+    gap: 8px; // Add more space between buttons
+  }
+  .add-note-btn, .delete-all-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    
+    svg {
+      font-size: 18px;
+    }
+  }
+  
+  .add-note-btn {
+    background-color: #4caf50;
+    color: white;
+    
+    &:hover {
+      background-color: #45a049;
+    }
+  }
+  
+  .delete-all-btn {
+    background-color: transparent;
+    color: #ff5252;
+    border: 1px solid #ff5252;
+    
+    &:hover {
+      background-color: rgba(255, 82, 82, 0.1);
+    }
+  }
+}
+
+// Add these styles for the modal
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.add-note-modal {
+   background-color: var(--secondary);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  padding: 24px;
+  width: 360px;
+  max-width: 90%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-1px);
+      }
+      
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+    
+    .cancel-button {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+      }
+    }
+    
+    .add-button {
+      background-color: #4caf50; // Green color for add
+      color: #ffffff;
+      
+      &:hover {
+        background-color: #45a049; // Slightly darker on hover
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+      }
+      
+      &:disabled {
+        background-color: rgba(76, 175, 80, 0.5);
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #ffffff; // Changed to white to be visible on dark background
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--secondary-light);
+      border: 1px solid var(--secondary-light);
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 14px;
+      margin-bottom: 0; // Remove extra margin
+      
+      &:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+    }
+   
+
+    .date-input-wrapper, .time-input-wrapper {
+      position: relative;
+      
+      .input-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+      }
+      
+      input {
+        padding-left: 34px;
+      }
+    }
+  }
+}

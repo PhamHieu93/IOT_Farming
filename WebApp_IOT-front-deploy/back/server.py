@@ -1163,6 +1163,244 @@ def handle_data_insert(data):
             'timestamp': datetime.now().isoformat()
         })
 
+import csv
+import os
+from datetime import datetime
+
+# Add these functions before the if __name__ == "__main__": block
+
+def ensure_notes_csv_exists():
+    """Create the notes CSV file if it doesn't exist"""
+    csv_path = "notes_data.csv"
+    if not os.path.exists(csv_path):
+        with open(csv_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(['ID', 'Content', 'Date', 'Time'])
+        logger.info(f"Created new notes CSV file at {csv_path}")
+    return csv_path
+
+def add_note_to_csv(note_id, content, date, time):
+    """Add a new note to the CSV file with 4 columns"""
+    try:
+        csv_path = ensure_notes_csv_exists()
+        
+        with open(csv_path, 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow([note_id, content, date, time])
+            
+        logger.info(f"Added new note to CSV: ID={note_id}, Content={content}, Date={date}, Time={time}")
+        return True
+    except Exception as e:
+        logger.error(f"Error adding note to CSV: {e}")
+        return False
+
+def delete_note_from_csv(note_id):
+    """Delete a note from the CSV file by matching ID"""
+    try:
+        csv_path = ensure_notes_csv_exists()
+        
+        # Read all notes
+        rows = []
+        deleted = False
+        with open(csv_path, 'r', newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            header = next(reader)  # Save header
+            for row in reader:
+                # If this row's ID (column 0) doesn't match what we want to delete, keep it
+                if len(row) > 0 and str(row[0]) != str(note_id):
+                    rows.append(row)
+                else:
+                    deleted = True
+                    logger.info(f"Found and will delete note: {row}")
+        
+        # Write back all rows except the deleted one
+        with open(csv_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(header)
+            writer.writerows(rows)
+        
+        if deleted:
+            logger.info(f"Deleted note with ID '{note_id}' from CSV")
+            return True
+        else:
+            logger.warning(f"No note with ID '{note_id}' found")
+            return False
+            
+    except Exception as e:
+        logger.error(f"Error deleting note from CSV: {e}")
+        return False
+
+@app.route('/api/telemetry', methods=['POST'])
+def receive_telemetry():
+    """Handle telemetry data sent from CoreIOT via REST API"""
+    try:
+        # Get the JSON payload from the request
+        data = request.get_json()
+        logger.info(f"Received telemetry data from CoreIOT: {data}")
+        
+        # Extract key values from the payload
+        device_id = data.get('deviceName', 'unknown')
+        sector = data.get('sector', 'A')  # Default sector if not provided
+        
+        # Extract sensor readings if available
+        temperature = data.get('temperature')
+        humidity = data.get('humidity')
+        light = data.get('light')
+        
+        # Process and save sensor data if available
+        if temperature is not None:
+            save_temperature_data(sector, device_id, temperature)
+            
+        if humidity is not None:
+            save_humidity_data(sector, device_id, humidity)
+            
+        if light is not None:
+            save_light_data(sector, device_id, light)
+            
+        # Broadcast updates to connected clients
+        broadcast_sensor_update(sector, temperature, humidity, light)
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Telemetry data received and processed',
+            'timestamp': datetime.now().isoformat()
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error processing telemetry data: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 500
+
+
+@socketio.on('add_note')
+def handle_add_note(data):
+    """Handle adding a new note with the updated message format"""
+    try:
+        # Extract note data
+        note_id = data.get('id')
+        content = data.get('title', '')
+        date = data.get('date', '')
+        time = data.get('time', '')
+        
+        logger.info(f"Received add_note request: ID={note_id}, Content={content}, Date={date}, Time={time}")
+        
+        # Save to CSV file with the new structure
+        success = add_note_to_csv(note_id, content, date, time)
+        
+        # Send response back to client
+        emit('note_response', {
+            'success': success,
+            'action': 'add',
+            'message': 'Note added successfully' if success else 'Failed to add note',
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error handling add_note: {e}")
+        emit('note_response', {
+            'success': False,
+            'action': 'add',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        })
+
+@socketio.on('delete_note')
+def handle_delete_note(data):
+    """Handle deleting a note by ID"""
+    try:
+        # Extract note ID
+        note_id = data.get('noteId')
+        
+        if not note_id:
+            logger.error("No ID provided to delete note")
+            emit('note_response', {
+                'success': False,
+                'action': 'delete',
+                'error': 'No ID provided to identify note',
+                'timestamp': datetime.now().isoformat()
+            })
+            return
+            
+        logger.info(f"Received delete_note request for ID: {note_id}")
+        
+        # Delete from CSV file by ID
+        success = delete_note_from_csv(note_id)
+        
+        # Send response back to client
+        emit('note_response', {
+            'success': success,
+            'action': 'delete',
+            'message': 'Note deleted successfully' if success else 'Failed to delete note',
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logger.error(f"Error handling delete_note: {e}")
+        emit('note_response', {
+            'success': False,
+            'action': 'delete',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        })
+
+def get_notes_from_csv():
+    """Read all notes from the CSV file and format them for the frontend"""
+    try:
+        csv_path = ensure_notes_csv_exists()
+        notes = []
+        
+        with open(csv_path, 'r', newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            header = next(reader)  # Skip header row
+            
+            for row in reader:
+                if len(row) >= 4:  # Make sure we have all required columns
+                    note = {
+                        'id': int(row[0]) if row[0].isdigit() else row[0],
+                        'title': row[1],  # Content maps to title in frontend
+                        'date': row[2],   # Date column
+                        'timeToDo': f"{row[2]} {row[3]}",  # Combine date and time
+                        'status': "Planned"  # Default status as it's not in CSV
+                    }
+                    notes.append(note)
+                    
+        logger.info(f"Read {len(notes)} notes from CSV")
+        return notes
+    except Exception as e:
+        logger.error(f"Error reading notes from CSV: {e}")
+        return []
+
+@socketio.on('get_csv_note')
+def handle_get_csv_note(data):
+    """Handle request to get all notes from CSV file"""
+    try:
+        # Get notes from CSV file
+        notes = get_notes_from_csv()
+        
+        # Send notes to client
+        emit('csv_note_response', {
+            'type': 'csv_note_response',
+            'data': notes,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+        logger.info(f"Sent {len(notes)} notes to client")
+        
+    except Exception as e:
+        logger.error(f"Error handling get_csv_note: {e}")
+        emit('csv_note_response', {
+            'type': 'csv_note_response',
+            'error': str(e),
+            'data': [],
+            'timestamp': datetime.now().isoformat()
+        })
+
+
+# This code should be placed before the if __name__ == "__main__": block
+
 if __name__ == "__main__":
     # Register cleanup function to run on server shutdown
     atexit.register(clear_device_commands)
@@ -1173,4 +1411,4 @@ if __name__ == "__main__":
     threading.Thread(target=broadcast_light_updates, daemon=True).start()
     
     # Run the Flask app with SocketIO
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=3000, debug=True)

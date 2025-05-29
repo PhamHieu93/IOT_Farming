@@ -13,11 +13,11 @@ const Sidebar = () => {
             case "/dashboard":
                 return "SENSORS";
             case "/control":
-                return "GROW SESSIONS";
+                return "CONTROL PANEL";
             case "/history":
-                return "DEVICES";
-            case "/":
-                return "BILLINGS";
+                return "NOTIFICATIONS";
+            case "/reminders":
+                return "REMINDERS";
             case "/settings":
                 return "SETTINGS";
             default:
@@ -46,25 +46,25 @@ const Sidebar = () => {
                     <span>SENSORS</span>
                 </li>
                 <li
-                    className={activeTab === "GROW SESSIONS" ? "active" : ""}
-                    onClick={() => handleNavigation("GROW SESSIONS", "/control")}
+                    className={activeTab === "CONTROL PANEL" ? "active" : ""}
+                    onClick={() => handleNavigation("CONTROL PANEL", "/control")}
                 >
                     <FaLeaf className="icon" />
-                    <span>GROW SESSIONS</span>
+                    <span>CONTROL PANEL</span>
                 </li>
                 <li
-                    className={activeTab === "DEVICES" ? "active" : ""}
-                    onClick={() => handleNavigation("DEVICES", "/history")}
+                    className={activeTab === "NOTIFICATIONS" ? "active" : ""}
+                    onClick={() => handleNavigation("NOTIFICATIONS", "/notifications")}
                 >
                     <FaThermometerHalf className="icon" />
-                    <span>DEVICES</span>
+                    <span>NOTIFICATIONS</span>
                 </li>
                 <li
-                    className={activeTab === "BILLINGS" ? "active" : ""}
-                    onClick={() => handleNavigation("BILLINGS", "/")}
+                    className={activeTab === "REMINDERS" ? "active" : ""}
+                    onClick={() => handleNavigation("REMINDERS", "/reminders")}
                 >
                     <FaFileInvoiceDollar className="icon" />
-                    <span>BILLINGS</span>
+                    <span>REMINDERS</span>
                 </li>
                 <li
                     className={activeTab === "SETTINGS" ? "active" : ""}
