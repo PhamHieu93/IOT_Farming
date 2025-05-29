@@ -4,6 +4,8 @@
 #define LIGHT_SENSOR_PIN GPIO_NUM_1
 #define MOISTURE_PIN GPIO_NUM_2
 
+
+
 #include <WiFi.h>
 #include <Arduino_MQTT_Client.h>
 #include <ThingsBoard.h>
@@ -49,6 +51,10 @@ Arduino_MQTT_Client mqttClient(wifiClient);
 ThingsBoard tb(mqttClient, MAX_MESSAGE_SIZE);
 
 DHT20 dht20;
+
+
+const double long_HCMUT = 106.65789107082472;
+const double lat_HCMUT = 10.772175109674038;
 
 RPC_Response setLedSwitchState(const RPC_Data &data) {
     Serial.println("Received Switch state");
@@ -210,6 +216,9 @@ void loop() {
     tb.sendAttributeData("bssid", WiFi.BSSIDstr().c_str());
     tb.sendAttributeData("localIp", WiFi.localIP().toString().c_str());
     tb.sendAttributeData("ssid", WiFi.SSID().c_str());
+    tb.sendAttributeData("long_HCMUT", long_HCMUT);
+    tb.sendAttributeData("lat_HCMUT", lat_HCMUT);
+
   }
 
   tb.loop();
