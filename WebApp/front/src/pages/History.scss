@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.history {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #13131f;
+  position: fixed;
+  top: 0;
+  left: 0;
+  color: var(--text-primary);
+
+  .history-content {
+    flex: 1;
+    padding: 30px;
+    margin-left: 240px;
+    overflow-y: auto;
+    height: 100vh;
+    width: calc(100vw - 240px);
+    box-sizing: border-box;
+  }
+
+  .history-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .history-header {
+    margin-bottom: 30px;
+
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+  }
+
+  .boards {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--secondary-light);
+
+    .board-options {
+      display: flex;
+      gap: 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+
+      span {
+        cursor: pointer;
+        transition: var(--transition);
+
+        &:hover {
+          color: var(--primary);
+        }
+      }
+    }
+  }
+
+  .status-tabs {
+    display: flex; // Add this to make it a flex container
+    justify-content: space-between; // This pushes filter buttons left and action buttons right
+    align-items: center; // Vertical alignment
+    margin-bottom: 20px; // Add some space below
+    .status-tab {
+      gap: px;
+      padding: 8px 16px;
+      border: none;
+      background: var(--secondary-light);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+
+      &.active {
+        background: rgba(0, 198, 255, 0.2);
+        color: var(--primary);
+      }
+
+      &:hover:not(.active) {
+        color: var(--text-primary);
+      }
+    }
+  }   
+
+  .requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+
+    .request-card {
+      background: var(--secondary);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      }
+
+      .request-content {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .request-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        order: 0;
+        min-width: 106px;
+
+        .status-icon {
+          font-size: 16px;
+
+          &.completed {
+            color: var(--success);
+          }
+          &.in-progress {
+            color: var(--primary);
+          }
+          &.planned {
+            color: var(--warning);
+          }
+          &.reviewing {
+            color: #ff7300;
+          }
+          &.pending {
+            color: var(--text-secondary);
+          }
+          &.closed {
+            color: var(--error);
+          }
+        }
+
+        .status-badge {
+          font-size: 12px;
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-weight: 500;
+
+          &.completed {
+            background: rgba(0, 196, 159, 0.1);
+            color: var(--success);
+          }
+          &.in-progress {
+            background: rgba(0, 198, 255, 0.1);
+            color: var(--primary);
+          }
+          &.planned {
+            background: rgba(255, 187, 40, 0.1);
+            color: var(--warning);
+          }
+          &.reviewing {
+            background: rgba(255, 115, 0, 0.1);
+            color: #ff7300;
+          }
+          &.pending {
+            background: rgba(161, 161, 181, 0.1);
+            color: var(--text-secondary);
+          }
+          &.closed {
+            background: rgba(255, 77, 79, 0.1);
+            color: var(--error);
+          }
+        }
+      }
+
+      .request-details {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+      }
+
+      .request-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+        color: #ffffff;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        order: 1;
+      }
+
+      .request-meta {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        color: var(--text-secondary);
+        gap: 15px;
+        margin-left: auto;
+        order: 2;
+
+        .request-date {
+          white-space: nowrap;
+        }
+
+        .request-stats {
+          display: flex;
+          gap: 12px;
+
+          .upvotes,
+          .comments {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+id,datetime,content,status
+2,2025-05-31T19:38:00.000Z,water the plant,Completed
+3,Jun 1,Set threshold for Temperature to 27 °C in Sector A,Completed
+4,Jun 1,Set threshold for Temperature to 32 °C in Sector A,Completed
+5,Jun 1,Set threshold for Humidity to 68 % in Sector A,Completed
+6,Jun 1,Started Motor Fan in On mode in Sector A,Completed
+7,Jun 1,Started Pump in On mode in Sector A,Completed
+8,Jun 1,Started Light in Off mode in Sector A,Completed
+9,Jun 1,Started Pump in On mode in Sector A,Completed
+10,Jun 1,Started Motor Fan in Off mode in Sector A,Completed
+11,Jun 1,Started Motor Fan in On mode in Sector A,Completed
+12,Jun 1,Started Motor Fan in Off mode in Sector A,Completed
+13,Jun 1,Started Motor Fan in On mode in Sector A,Completed
+14,Jun 1,Started Motor Fan in On mode in Sector A,Completed
+15,Jun 1,Started Pump in On mode in Sector A,Completed
+16,Jun 1,Started Motor Fan in Off mode in Sector A,Completed
+17,Jun 1,Started Pump in On mode in Sector A,Completed
+18,Jun 1,Started Light in On mode in Sector A,Completed
+19,Jun 1,Started Motor Fan in On mode in Sector A,Completed
+20,Jun 1,Started Pump in On mode in Sector A,Completed
