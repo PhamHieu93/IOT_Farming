@@ -1,4 +1,4 @@
 attribute,minValue,value,maxValue
+Temperature,22.5,25,27.5
+Humidity,54.0,60,66.0
 Light,450.0,500,550.0
-Temperature,28.8,32,35.2
-Humidity,61.2,68,74.8

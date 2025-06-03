@@ -3,8 +3,8 @@
 #define SCL_PIN GPIO_NUM_12
 #define LIGHT_SENSOR_PIN GPIO_NUM_1
 #define MOISTURE_PIN GPIO_NUM_2
-
-
+#define PUMP_MOTOR 18  // D9 trên board của bạn là GPIO18
+#define FAN_MOTOR 10
 
 #include <WiFi.h>
 #include <Arduino_MQTT_Client.h>
@@ -14,8 +14,8 @@
 #include <ArduinoOTA.h>
 #include <ArduinoJson.h>
 
-constexpr char WIFI_SSID[] = "Hiuu";
-constexpr char WIFI_PASSWORD[] = "phamhiu93";
+constexpr char WIFI_SSID[] = "Trang Food";
+constexpr char WIFI_PASSWORD[] = "27102023";
 
 // constexpr char TOKEN[] = "ttrv0asoe3tln5zqjswc";
 
@@ -129,35 +129,29 @@ const bool reconnect() {
   return true;
 }
 
-// void processGetJson(const JsonVariantConst &data, JsonDocument &response) {
-// //   Serial.println("Received the json RPC method");
-
-//   // Size of the response document needs to be configured to the size of the innerDoc + 1.
-//   StaticJsonDocument<JSON_OBJECT_SIZE(128)> innerDoc;
-//   innerDoc["string"] = "exampleResponseString";
-//   innerDoc["int"] = 5;
-//   innerDoc["float"] = 5.0f;
-//   innerDoc["bool"] = true;
-//   response["json_data"] = innerDoc;
-// }
-
-
-
 void setup() {
   Serial.begin(SERIAL_DEBUG_BAUD);
   delay(500);  // Đợi Serial ổn định
   
   Serial.println("\n\n--- ESP32 Sensor System Starting ---");
   Serial.println("Serial command handler enabled. Send {\"switch\":true} or {\"switch\":false} to control LED.");
+  Serial.println("Send {\"pump\":true} or {\"pump\":false} to control PUMP.");
   
   pinMode(LED_PIN, OUTPUT);
+  pinMode(PUMP_MOTOR, OUTPUT);  // Thêm pinMode cho bơm
+  pinMode(FAN_MOTOR, OUTPUT);  // Thêm pinMode cho quạt
+
   pinMode(LIGHT_SENSOR_PIN, INPUT);  
   pinMode(MOISTURE_PIN, INPUT);  
   
   // Turn on LED initially
   digitalWrite(LED_PIN, HIGH);
+  digitalWrite(PUMP_MOTOR, LOW);  // Bắt đầu với bơm TẮT (LOW)
+  digitalWrite(FAN_MOTOR, LOW);  // Bắt đầu với quạt TẮT (LOW)
+
   ledState = true;
   Serial.println("LED initialized to ON state");
+  Serial.printf("PUMP initialized to on state on GPIO%d\n", PUMP_MOTOR);
   
   delay(1000);
   Serial.println("Initializing WiFi...");
@@ -209,6 +203,17 @@ void taskSerialCommand(void *parameter) {
                     digitalWrite(LED_PIN, sw ? HIGH : LOW);
                     Serial.printf("Set LED by serial: %s\n", sw ? "ON" : "OFF");
                 }
+                if (!err && doc.containsKey("pump")) {
+                    bool sw = doc["pump"];
+                    digitalWrite(PUMP_MOTOR, sw ? HIGH : LOW);
+                    Serial.printf("Set Pump by serial: %s\n", sw ? "ON" : "OFF");
+                }
+                if (!err && doc.containsKey("fan")) {
+                    bool sw = doc["fan"];
+                    digitalWrite(FAN_MOTOR, sw ? HIGH : LOW);
+                    Serial.printf("Set Fan by serial: %s\n", sw ? "ON" : "OFF");
+                }
+
                 input = "";
             } else {
                 input += c;

@@ -102,7 +102,7 @@ const Alert = () => {
                         </div>
                         <div className="action-buttons">
                             <button 
-                                className="delete-btn" 
+                                className="delete-all-btn" 
                                 onClick={handleDeleteSelected}
                                 disabled={selectedAlertId === null}
                             >

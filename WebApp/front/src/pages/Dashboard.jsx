@@ -43,7 +43,6 @@ const SensorCard = memo(({ sensor }) => {
             .then(thresholdData => {
                 const thresholds = thresholdData.find(t => t.attribute === sensorName);
                 if (!thresholds) {
-                    console.log(`No thresholds found for ${sensorName}`);
                     return;
                 }
 
@@ -54,9 +53,7 @@ const SensorCard = memo(({ sensor }) => {
                     current: value,
                     min: minValue,
                     threshold: thresholdValue
-                });
-
-                // Check if we need to create an alert
+                });                // Check if we need to create an alert
                 if (value >= thresholdValue || value <= minValue) {
                     // Create alert in the server
                     fetch('http://localhost:3000/api/alerts', {
@@ -65,9 +62,9 @@ const SensorCard = memo(({ sensor }) => {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            sensor: sensorName,
+                            sensor: sensorName,  // This will be 'Temperature', 'Humidity', or 'Light'
                             value,
-                            threshold: thresholdValue
+                            threshold: value >= thresholdValue ? thresholdValue : minValue
                         })
                     })
                     .then(response => response.json())

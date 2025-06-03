@@ -154,7 +154,12 @@ def on_message(client, userdata, message):
         if payload.get("method") == "setSwitch":
             switch_state = payload.get("params")
             ser.write((json.dumps({"switch": switch_state}) + "\n").encode())
-            print(f"Đã gửi lệnh bật/tắt switch: {switch_state} đến CoreIOT")
+        if payload.get("method") == "setPump":
+            switch_state = payload.get("params")
+            ser.write((json.dumps({"pump": switch_state}) + "\n").encode())
+        if payload.get("method") == "setFan":
+            switch_state = payload.get("params")
+            ser.write((json.dumps({"fan": switch_state}) + "\n").encode())
     except Exception as e:
         print("RPC error:", e)
 

@@ -3,18 +3,10 @@ id,datetime,content,status
 2,May 31,User logged in,Completed
 3,May 31,User logged in,Completed
 4,May 31,User logged in,Completed
-5,May 31,User logged in,Completed
-6,Jun 1,User logged in,Completed
-7,Jun 1,User logged in,Completed
-8,Jun 1,User logged in,Completed
-9,Jun 1,User logged in,Completed
-10,Jun 1,User logged in,Completed
-11,Jun 1,User logged in,Completed
-12,Jun 1,User logged in,Completed
-13,Jun 1,User logged in,Completed
-14,Jun 1,User logged in,Completed
-15,Jun 1,User logged in,Completed
-16,Jun 1,User logged in,Completed
-17,Jun 1,User logged in,Completed
-18,Jun 1,User logged in,Completed
-19,Jun 1,User logged in,Completed
+5,Jun 2,User logged in,Completed
+6,Jun 3,User logged in,Completed
+7,Jun 3,User logged in,Completed
+8,Jun 3,Started Light in On mode in Sector A,Completed
+9,Jun 3,Set threshold for Temperature to 25 °C in Sector A,Completed
+10,Jun 3,Set threshold for Humidity to 60 % in Sector A,Completed
+11,Jun 3,Set threshold for Light to 500 lux in Sector A,Completed

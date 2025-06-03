@@ -56,23 +56,23 @@ const Control = () => {
             'A': [
                 { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
                 { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
-                { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+                { id: "Light", thresholdValue: 300, thresholdUnit: "lux" },
                 
             ],
             'B': [
                 { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
                 { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
-                { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+                { id: "Light", thresholdValue: 300, thresholdUnit: "lux" },
             ],
             'C': [
                 { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
                 { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
-                { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+                { id: "Light", thresholdValue: 300, thresholdUnit: "lux" },
             ],
             'D': [
                 { id: "Temperature", thresholdValue: 25, thresholdUnit: "°C" },
                 { id: "Humidity", thresholdValue: 60, thresholdUnit: "%" },
-                { id: "Light", thresholdValue: 500, thresholdUnit: "lux" },
+                { id: "Light", thresholdValue: 300, thresholdUnit: "lux" },
             ]
         };
     });
@@ -117,9 +117,8 @@ const Control = () => {
     const showNotification = (message, type = 'info') => {
         setNotification({ show: true, message, type });
         setTimeout(() => setNotification({ show: false, message: '', type: 'info' }), 3000);
-    };
-
-    const toggleStatus = (index, isThresholdDevice = false) => {
+    };    
+    const toggleStatus = async (index, isThresholdDevice = false) => {
         try {
             if (isThresholdDevice) {
                 const newSectorGroupsThreshold = { ...sectorGroupsThreshold };
@@ -127,6 +126,19 @@ const Control = () => {
                 setSectorGroupsThreshold(newSectorGroupsThreshold);
                 localStorage.setItem('sectorGroupsThreshold', JSON.stringify(newSectorGroupsThreshold));
                 const device = newSectorGroupsThreshold[activeSector][index];
+                
+                // Save notification for threshold device toggle
+                const notificationContent = `${device.id} threshold monitoring ${device.status ? 'activated' : 'deactivated'} in Sector ${activeSector}`;
+                await fetch('http://localhost:3000/api/notifications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        datetime: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric' }),
+                        content: notificationContent,
+                        status: "Completed"
+                    })
+                });
+                
                 showNotification(`${device.id} threshold monitoring ${device.status ? 'activated' : 'deactivated'}`, 'success');
             } else {
                 const newSectorGroups = { ...sectorGroups };
@@ -134,6 +146,19 @@ const Control = () => {
                 setSectorGroups(newSectorGroups);
                 localStorage.setItem('sectorGroups', JSON.stringify(newSectorGroups));
                 const device = newSectorGroups[activeSector][index];
+                
+                // Save notification for device toggle
+                const notificationContent = `${device.id} ${device.status ? 'turned on' : 'turned off'} in Sector ${activeSector}`;
+                await fetch('http://localhost:3000/api/notifications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        datetime: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric' }),
+                        content: notificationContent,
+                        status: "Completed"
+                    })
+                });
+                
                 showNotification(`${device.id} ${device.status ? 'turned on' : 'turned off'}`, 'success');
             }
         } catch (error) {
@@ -187,27 +212,31 @@ const Control = () => {
                 await fetchThresholds();
 
                 // Save notification for threshold action
-                const date = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric' });
-                const notificationContent = `Set threshold for ${device.id} to ${device.thresholdValue} ${device.id === "Temperature" ? "°C" : device.id === "Humidity" ? "%" : "lux"} in Sector ${activeSector}`;
-                await fetch('http://localhost:3000/api/notes', {
+                const notificationResponse = await fetch('http://localhost:3000/api/notifications', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        datetime: date,
-                        content: notificationContent,
+                        datetime: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric' }),
+                        content: `Set threshold for ${device.id} to ${device.thresholdValue} ${device.id === "Temperature" ? "°C" : device.id === "Humidity" ? "%" : "lux"} in Sector ${activeSector}`,
                         status: "Completed"
                     })
                 });
 
+                if (!notificationResponse.ok) {
+                    throw new Error('Failed to save notification');
+                }
+
                 const newSectorGroupsThreshold = { ...sectorGroupsThreshold };
                 newSectorGroupsThreshold[activeSector][index].status = true;
                 setSectorGroupsThreshold(newSectorGroupsThreshold);
+                localStorage.setItem('sectorGroupsThreshold', JSON.stringify(newSectorGroupsThreshold));
                 showNotification(`Started ${device.id} threshold monitoring and saved threshold values`, 'success');
-            } else {                const device = sectorGroups[activeSector][index];
+            } else {
+                const device = sectorGroups[activeSector][index];
                 
-                // Nếu chế độ là On hoặc Off, gửi dữ liệu tới CoreIOT
+                // If type is On or Off, send data to CoreIOT
                 if (device.type === "On" || device.type === "Off") {
                     const entityType = 'DEVICE';
                     const entityId = DEVICE_INFO['1'].entityId;
@@ -236,24 +265,26 @@ const Control = () => {
                         attributeData
                     });
 
-                    // Gửi dữ liệu sử dụng hàm sendAttributes từ coreIOT.jsx
+                    // Send data using sendAttributes from coreIOT.jsx
                     await sendAttributes(entityType, entityId, attributeData);
                 }
                 
                 // Save notification for device action
-                const date = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric' });
-                const notificationContent = `Started ${device.id} in ${device.type} mode in Sector ${activeSector}`;
-                await fetch('http://localhost:3000/api/notes', {
+                const notificationResponse = await fetch('http://localhost:3000/api/notifications', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        datetime: date,
-                        content: notificationContent,
+                        datetime: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric' }),
+                        content: `Started ${device.id} in ${device.type} mode in Sector ${activeSector}`,
                         status: "Completed"
                     })
                 });
+
+                if (!notificationResponse.ok) {
+                    throw new Error('Failed to save notification');
+                }
 
                 const newSectorGroups = { ...sectorGroups };
                 newSectorGroups[activeSector][index].status = true;
@@ -284,10 +315,24 @@ const Control = () => {
             setTimeSettings(newTimeSettings);
         }
     };
-    
-    const saveTimeSettings = () => {
+
+    const saveTimeSettings = async () => {
         if (selectedGroupIndex !== null) {
             const device = sectorGroups[activeSector][selectedGroupIndex];
+            const timeRange = timeSettings[activeSector][selectedGroupIndex];
+            
+            // Save schedule action to notifications
+            const notificationContent = `Scheduled ${device.id} from ${timeRange.startTime} to ${timeRange.endTime} in Sector ${activeSector}`;
+            await fetch('http://localhost:3000/api/notifications', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    datetime: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric' }),
+                    content: notificationContent,
+                    status: "Completed"
+                })
+            });
+            
             showNotification(`Schedule settings saved for ${device.id}`, 'success');
             setShowTimeModal(false);
             localStorage.setItem('timeSettings', JSON.stringify(timeSettings));
@@ -297,39 +342,37 @@ const Control = () => {
     };
 
     // Add this function before the return statement
-    const handleThresholdChange = (index, value) => {
+    const handleThresholdChange = async (index, value) => {
         try {
-            // Make a copy of the current state
             const newSectorGroupsThreshold = { ...sectorGroupsThreshold };
             const device = newSectorGroupsThreshold[activeSector][index];
             
-            // Update the threshold value for the specified device
+            // Update the threshold value
             device.thresholdValue = value;
             
-            // If there's an error percentage set, validate the new value
+            // Save threshold adjustment to notifications
+            const notificationContent = `Adjusted ${device.id} threshold to ${value} ${device.thresholdUnit} in Sector ${activeSector}`;
+            await fetch('http://localhost:3000/api/notifications', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    datetime: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric' }),
+                    content: notificationContent,
+                    status: "Pending"  // Changes to "Completed" when threshold is actually applied
+                })
+            });
+            
+            // Update state and validate as before
             if (device.errorPercentage && device.baseValue) {
-                // Calculate valid range
                 const minAllowed = device.baseValue * (1 - device.errorPercentage/100);
                 const maxAllowed = device.baseValue * (1 + device.errorPercentage/100);
-                
-                // Check if current value is within range
                 device.isOutOfRange = value < minAllowed || value > maxAllowed;
-                
-                // Update error message if needed
-                if (device.isOutOfRange) {
-                    device.errorMessage = `Value outside ±${device.errorPercentage}% range (${minAllowed.toFixed(1)}-${maxAllowed.toFixed(1)})`;
-                } else {
-                    device.errorMessage = '';
-                }
+                device.errorMessage = device.isOutOfRange ? 
+                    `Value outside ±${device.errorPercentage}% range (${minAllowed.toFixed(1)}-${maxAllowed.toFixed(1)})` : '';
             }
             
-            // Set the new state
             setSectorGroupsThreshold(newSectorGroupsThreshold);
             
-            // Optional: If you want to send this change to the server
-            if (isConnected) {
-                console.log(`Threshold updated for ${activeSector}-${device.id}: ${value}`);
-            }
         } catch (error) {
             console.error("Error updating threshold value:", error);
             showNotification('Failed to update threshold value', 'error');

@@ -354,6 +354,43 @@ app.get('/api/notifications', (req, res) => {
     }
 });
 
+// POST endpoint to add new notifications
+app.post('/api/notifications', (req, res) => {
+    try {
+        const { datetime, content, status } = req.body;
+        
+        // Ensure file exists with header
+        if (!fs.existsSync(NOTIFICATIONS_CSV_PATH)) {
+            fs.writeFileSync(NOTIFICATIONS_CSV_PATH, 'id,datetime,content,status\n');
+        }
+
+        // Read existing notifications to determine next ID
+        const fileContent = fs.readFileSync(NOTIFICATIONS_CSV_PATH, 'utf-8');
+        let nextId = 1;
+        
+        if (fileContent.trim()) {
+            const records = csv.parse(fileContent, {
+                columns: true,
+                skip_empty_lines: true
+            });
+            if (records.length > 0) {
+                nextId = Math.max(...records.map(r => parseInt(r.id))) + 1;
+            }
+        }
+
+        // Create CSV line
+        const csvLine = `${nextId},${datetime},${content},${status}\n`;
+        
+        // Append new notification
+        fs.appendFileSync(NOTIFICATIONS_CSV_PATH, csvLine);
+        
+        res.json({ success: true, id: nextId });
+    } catch (error) {
+        console.error('Error saving notification:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Alert endpoints
 app.post('/api/alerts', (req, res) => {
     try {
@@ -361,7 +398,9 @@ app.post('/api/alerts', (req, res) => {
         
         // Create alert in the proper format
         const datetime = new Date().toISOString();
-        const content = `Temperature ${value <= threshold ? 'is near' : 'has reached'} the threshold`;
+        
+        // Handle different sensor types
+        const content = `${sensor} ${value <= threshold ? 'is near' : 'has reached'} the threshold`;
         const status = value <= threshold ? 'warning' : 'critical';
         
         // Ensure file exists with header
