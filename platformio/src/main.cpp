@@ -14,8 +14,8 @@
 #include <ArduinoOTA.h>
 #include <ArduinoJson.h>
 
-constexpr char WIFI_SSID[] = "Trang Food";
-constexpr char WIFI_PASSWORD[] = "27102023";
+constexpr char WIFI_SSID[] = "P4.11";
+constexpr char WIFI_PASSWORD[] = "123456788";
 
 // constexpr char TOKEN[] = "ttrv0asoe3tln5zqjswc";
 

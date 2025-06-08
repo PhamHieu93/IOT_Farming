@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Fire Detection Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .device-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #28a745;
+        }
+        
+        .device-card.offline {
+            border-left-color: #dc3545;
+        }
+        
+        .device-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-online {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-offline {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .detection-item {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #6c757d;
+            transition: all 0.3s ease;
+        }
+        
+        .detection-item.fire-detected {
+            border-left-color: #dc3545;
+            background: linear-gradient(90deg, rgba(220, 53, 69, 0.1) 0%, rgba(255, 255, 255, 1) 20%);
+        }
+        
+        .detection-item.fire-detected:hover {
+            box-shadow: 0 4px 16px rgba(220, 53, 69, 0.2);
+        }
+        
+        .alert-level {
+            padding: 0.2rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .alert-critical {
+            background: #dc3545;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .alert-high {
+            background: #fd7e14;
+            color: white;
+        }
+        
+        .alert-medium {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .alert-low {
+            background: #20c997;
+            color: white;
+        }
+        
+        .alert-none {
+            background: #6c757d;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .upload-zone {
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(0, 123, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-zone:hover {
+            border-color: #0056b3;
+            background: rgba(0, 123, 255, 0.1);
+        }
+        
+        .upload-zone.dragover {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+        
+        .connection-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .processing-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .processing-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+        
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            margin: 1rem 0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .detection-results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .bbox-overlay {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .bbox-box {
+            position: absolute;
+            border: 3px solid #dc3545;
+            background: rgba(220, 53, 69, 0.2);
+            border-radius: 4px;
+            pointer-events: none;
+        }
+        
+        /* Camera Preview Styles */
+        #cameraStream {
+            transition: all 0.3s ease;
+        }
+        
+        #cameraStream:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .camera-controls {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0 0 8px 8px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        #cameraToggleBtn {
+            transition: all 0.3s ease;
+        }
+        
+        #cameraToggleBtn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        #cameraPlaceholder:hover {
+            background: #e9ecef !important;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Connection Indicator -->
+    <div class="connection-indicator">
+        <span id="connectionStatus" class="badge bg-secondary">
+            <i class="fas fa-circle"></i> Connecting...
+        </span>
+    </div>
+    
+    <!-- Processing Overlay -->
+    <div id="processingOverlay" class="processing-overlay">
+        <div class="processing-content">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5>Processing Image...</h5>
+            <p class="text-muted">Analyzing image for fire detection</p>
+        </div>
+    </div>
+    
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="mb-0">
+                        <i class="fas fa-fire text-danger"></i>
+                        Fire Detection Dashboard
+                    </h1>
+                    <p class="mb-0 opacity-75">Real-time ESP32-CAM fire monitoring system</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <span id="lastUpdate" class="text-light">
+                        <i class="fas fa-clock"></i> Last update: --
+                    </span>
+                    <br>
+                    <span id="aiServerStatus" class="badge bg-secondary">
+                        <i class="fas fa-server"></i> AI Server: Checking...
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Statistics Cards -->
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card text-center">
+                    <div class="stat-number text-primary" id="totalDetections">--</div>
+                    <div class="stat-label">Total Detections (24h)</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card text-center">
+                    <div class="stat-number text-danger" id="fireAlerts">--</div>
+                    <div class="stat-label">Fire Alerts (24h)</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card text-center">
+                    <div class="stat-number text-success" id="activeDevices">--</div>
+                    <div class="stat-label">Active Devices</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-card text-center">
+                    <div class="stat-number text-warning" id="alertRate">--%</div>
+                    <div class="stat-label">Alert Rate</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="row">
+            <!-- Device Status -->
+            <div class="col-lg-12">
+                <div class="stat-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-camera text-primary"></i>
+                        Device Status
+                    </h5>
+                    <div id="deviceList">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading devices...
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        <!-- Camera Preview - Full Width -->
+        <div class="row">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-video text-info"></i>
+                        📹 Live Camera Preview
+                        <button id="cameraToggleBtn" class="btn btn-outline-primary btn-sm float-end">
+                            <i class="fas fa-play"></i> Start Camera
+                        </button>
+                    </h5>
+                    
+                    <div id="cameraContainer">
+                        <div id="cameraPreview" style="display: none;">
+                            <img id="cameraStream" src="/video_feed" 
+                                 style="width: 100%; max-width: 640px; border-radius: 8px; border: 2px solid #28a745;"
+                                 alt="Camera Stream">
+                            <div class="mt-2">
+                                <span id="cameraStatus" class="badge bg-success">
+                                    <i class="fas fa-circle"></i> Camera Active - Live Feed
+                                </span>
+                                <small class="text-muted ms-2">
+                                    Live feed from laptop camera • Position your phone with fire images here
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div id="cameraPlaceholder" class="text-center p-4" style="border: 2px dashed #007bff; border-radius: 8px; background: #e7f3ff;">
+                            <i class="fas fa-camera fa-4x text-primary mb-3"></i>
+                            <h4 class="text-primary mb-2">📱 Position Your Phone Here!</h4>
+                            <h6 class="text-muted">Camera Preview</h6>
+                            <p class="text-muted mb-3">Click "Start Camera" to see live preview and position your phone with fire images</p>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Tip:</strong> Start the camera to see exactly where to hold your phone for fire detection testing!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Recent Detections -->
+            <div class="col-lg-12">
+                <div class="stat-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-history text-success"></i>
+                        Recent Detections
+                    </h5>
+                    <div id="recentDetections" style="max-height: 400px; overflow-y: auto;">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading detections...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Detection Chart -->
+        <div class="row">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-chart-line text-info"></i>
+                        Detection Activity (24 hours)
+                    </h5>
+                    <div class="chart-container">
+                        <canvas id="detectionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Image Testing -->
+        <div class="row">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-vial text-warning"></i>
+                        Test Fire Detection
+                    </h5>
+                    
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                        <h5>Upload Image for Testing</h5>
+                        <p class="text-muted">Drag and drop an image here, or click to select</p>
+                        <input type="file" id="imageInput" class="d-none" accept="image/*">
+                    </div>
+                    
+                    <div id="testResults" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Original Image:</h6>
+                                <div class="bbox-overlay">
+                                    <img id="imagePreview" class="img-fluid">
+                                    <div id="bboxOverlays"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Detection Results:</h6>
+                                <div id="detectionResults" class="detection-results">
+                                    <!-- Results will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Initialize Socket.IO connection
+        const socket = io();
+        let detectionChart;
+        
+        // Connection status handling
+        socket.on('connect', function() {
+            updateConnectionStatus('connected');
+            console.log('Connected to dashboard server');
+        });
+        
+        socket.on('disconnect', function() {
+            updateConnectionStatus('disconnected');
+            console.log('Disconnected from dashboard server');
+        });
+        
+        // Status update handler
+        socket.on('status_update', function(data) {
+            updateDashboard(data);
+        });
+        
+        // New detection handler
+        socket.on('new_detection', function(data) {
+            console.log('New detection:', data);
+            // Add notification for new detections
+            if (data.result && data.result.detections && data.result.detections.length > 0) {
+                showNotification('New detection from ' + data.device_id, 'info');
+            }
+        });
+        
+        function updateConnectionStatus(status) {
+            const indicator = document.getElementById('connectionStatus');
+            if (status === 'connected') {
+                indicator.className = 'badge bg-success';
+                indicator.innerHTML = '<i class="fas fa-circle"></i> Connected';
+            } else {
+                indicator.className = 'badge bg-danger';
+                indicator.innerHTML = '<i class="fas fa-circle"></i> Disconnected';
+            }
+        }
+        
+        function updateDashboard(data) {
+            // Update timestamp
+            const now = new Date().toLocaleString();
+            document.getElementById('lastUpdate').innerHTML = 
+                '<i class="fas fa-clock"></i> Last update: ' + now;
+            
+            // Update AI server status
+            updateAIServerStatus(data.ai_server);
+            
+            // Update statistics (fetch from API)
+            fetchStatistics();
+            
+            // Update device list
+            updateDeviceList(data.devices);
+            
+            // Update recent detections
+            updateRecentDetections(data.recent_detections);
+        }
+        
+        function updateAIServerStatus(status) {
+            const element = document.getElementById('aiServerStatus');
+            if (status.status === 'online') {
+                element.className = 'badge bg-success';
+                element.innerHTML = '<i class="fas fa-server"></i> AI Server: Online';
+            } else {
+                element.className = 'badge bg-danger';
+                element.innerHTML = '<i class="fas fa-server"></i> AI Server: ' + status.status;
+            }
+        }
+        
+        function fetchStatistics() {
+            fetch('/api/statistics')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalDetections').textContent = data.total_detections || 0;
+                    document.getElementById('fireAlerts').textContent = data.fire_alerts || 0;
+                    document.getElementById('activeDevices').textContent = data.active_devices || 0;
+                    document.getElementById('alertRate').textContent = (data.alert_rate || 0) + '%';
+                    
+                    // Update chart
+                    updateDetectionChart(data.hourly_data || []);
+                })
+                .catch(error => console.error('Error fetching statistics:', error));
+        }
+        
+        function updateDeviceList(devices) {
+            const container = document.getElementById('deviceList');
+            
+            if (!devices || devices.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted">No devices found</div>';
+                return;
+            }
+            
+            container.innerHTML = devices.map(device => {
+                const statusClass = device.status === 'ACTIVE' ? 'status-online' : 'status-offline';
+                const cardClass = device.status === 'ACTIVE' ? 'device-card' : 'device-card offline';
+                
+                return `
+                    <div class="${cardClass}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${device.device_id}</strong>
+                                <br>
+                                <small class="text-muted">
+                                    Last seen: ${device.minutes_since_last_seen}min ago
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="status-badge ${statusClass}">${device.status}</span>
+                                <br>
+                                <small class="text-muted">
+                                    ${device.total_detections} detections | ${device.fire_alerts} alerts
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateRecentDetections(detections) {
+            const container = document.getElementById('recentDetections');
+            
+            if (!detections || detections.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted">No recent detections</div>';
+                return;
+            }
+            
+            container.innerHTML = detections.map(detection => {
+                const itemClass = detection.fire_detected ? 'detection-item fire-detected' : 'detection-item';
+                const alertClass = 'alert-' + detection.alert_level.toLowerCase();
+                const timeAgo = new Date(detection.timestamp).toLocaleString();
+                
+                return `
+                    <div class="${itemClass}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>${detection.device_id}</strong>
+                                <br>
+                                <small class="text-muted">${timeAgo}</small>
+                                ${detection.fire_detected ? 
+                                    `<br><small class="text-danger">
+                                        <i class="fas fa-fire"></i> Fire detected (${(detection.confidence * 100).toFixed(1)}%)
+                                    </small>` : 
+                                    '<br><small class="text-success"><i class="fas fa-check"></i> No fire detected</small>'
+                                }
+                            </div>
+                            <div class="text-end">
+                                <span class="alert-level ${alertClass}">${detection.alert_level}</span>
+                                <br>
+                                <small class="text-muted">${detection.processing_time_ms.toFixed(0)}ms</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateDetectionChart(hourlyData) {
+            const ctx = document.getElementById('detectionChart').getContext('2d');
+            
+            // Prepare data for 24 hours
+            const hours = Array.from({length: 24}, (_, i) => i.toString().padStart(2, '0'));
+            const totalData = new Array(24).fill(0);
+            const fireData = new Array(24).fill(0);
+            
+            // Fill with actual data
+            hourlyData.forEach(item => {
+                const hourIndex = parseInt(item.hour);
+                totalData[hourIndex] = item.total;
+                fireData[hourIndex] = item.fire;
+            });
+            
+            if (detectionChart) {
+                detectionChart.destroy();
+            }
+            
+            detectionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: hours.map(h => h + ':00'),
+                    datasets: [{
+                        label: 'Total Detections',
+                        data: totalData,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Fire Detections',
+                        data: fireData,
+                        borderColor: '#dc3545',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Image upload handling
+        const uploadZone = document.getElementById('uploadZone');
+        const imageInput = document.getElementById('imageInput');
+        
+        uploadZone.addEventListener('click', () => imageInput.click());
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleImageUpload(files[0]);
+            }
+        });
+        
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleImageUpload(e.target.files[0]);
+            }
+        });
+        
+        function handleImageUpload(file) {
+            if (!file.type.startsWith('image/')) {
+                showNotification('Please upload a valid image file', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const base64Data = e.target.result.split(',')[1];
+                processTestImage(base64Data, e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function processTestImage(base64Data, imageUrl) {
+            // Show processing overlay
+            document.getElementById('processingOverlay').style.display = 'flex';
+            
+            // Show image preview
+            const preview = document.getElementById('imagePreview');
+            preview.src = imageUrl;
+            document.getElementById('testResults').style.display = 'block';
+            
+            // Send to server for processing
+            fetch('/api/test-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    image: base64Data,
+                    device_id: 'DASHBOARD_TEST'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayTestResults(data);
+                document.getElementById('processingOverlay').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error processing image:', error);
+                showNotification('Error processing image: ' + error.message, 'error');
+                document.getElementById('processingOverlay').style.display = 'none';
+            });
+        }
+        
+        function displayTestResults(result) {
+            const container = document.getElementById('detectionResults');
+            
+            if (result.error) {
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Error: ${result.error}
+                    </div>
+                `;
+                return;
+            }
+            
+            // Clear previous bounding boxes
+            document.getElementById('bboxOverlays').innerHTML = '';
+            
+            let html = `
+                <div class="row">
+                    <div class="col-6">
+                        <strong>Processing Time:</strong><br>
+                        ${result.processing_time_ms?.toFixed(0) || 0}ms
+                    </div>
+                    <div class="col-6">
+                        <strong>Image Size:</strong><br>
+                        ${result.image_size?.width || 0} × ${result.image_size?.height || 0}
+                    </div>
+                </div>
+                <hr>
+            `;
+            
+            if (result.detections && result.detections.length > 0) {
+                html += '<h6><i class="fas fa-fire text-danger"></i> Detections Found:</h6>';
+                
+                result.detections.forEach((detection, index) => {
+                    const isFireClass = detection.class === "1";
+                    const className = isFireClass ? "FIRE" : "NO_FIRE";
+                    const iconClass = isFireClass ? "fas fa-fire text-danger" : "fas fa-check text-success";
+                    const confidence = (detection.confidence * 100).toFixed(1);
+                    
+                    html += `
+                        <div class="alert ${isFireClass ? 'alert-danger' : 'alert-success'} mb-2">
+                            <i class="${iconClass}"></i>
+                            <strong>${className}</strong> (${confidence}% confidence)
+                            ${detection.bbox ? `
+                                <br><small>Location: (${detection.bbox.x1}, ${detection.bbox.y1}) to (${detection.bbox.x2}, ${detection.bbox.y2})</small>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    // Draw bounding box if available
+                    if (detection.bbox && isFireClass) {
+                        drawBoundingBox(detection.bbox, result.image_size);
+                    }
+                });
+            } else {
+                html += `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check"></i>
+                        <strong>No fire detected</strong>
+                    </div>
+                `;
+            }
+            
+            // Show alerts if any
+            if (result.alerts && result.alerts.length > 0) {
+                html += '<h6><i class="fas fa-exclamation-triangle text-warning"></i> Alerts:</h6>';
+                result.alerts.forEach(alert => {
+                    html += `
+                        <div class="alert alert-warning mb-2">
+                            <strong>${alert.type}:</strong> ${alert.severity} severity<br>
+                            <small>${alert.recommended_action}</small>
+                        </div>
+                    `;
+                });
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function drawBoundingBox(bbox, imageSize) {
+            const preview = document.getElementById('imagePreview');
+            const overlay = document.getElementById('bboxOverlays');
+            
+            // Calculate scaling factors
+            const scaleX = preview.offsetWidth / imageSize.width;
+            const scaleY = preview.offsetHeight / imageSize.height;
+            
+            // Create bounding box element
+            const box = document.createElement('div');
+            box.className = 'bbox-box';
+            box.style.left = (bbox.x1 * scaleX) + 'px';
+            box.style.top = (bbox.y1 * scaleY) + 'px';
+            box.style.width = ((bbox.x2 - bbox.x1) * scaleX) + 'px';
+            box.style.height = ((bbox.y2 - bbox.y1) * scaleY) + 'px';
+            
+            overlay.appendChild(box);
+        }
+        
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.left = '20px';
+            notification.style.zIndex = '9999';
+            notification.style.minWidth = '300px';
+            
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+        
+        // Camera Preview Functionality
+        let cameraActive = false;
+        
+        function initializeCameraControls() {
+            const toggleBtn = document.getElementById('cameraToggleBtn');
+            const cameraPreview = document.getElementById('cameraPreview');
+            const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+            const cameraStream = document.getElementById('cameraStream');
+            
+            // Set up toggle button click handler
+            toggleBtn.addEventListener('click', async function() {
+                if (cameraActive) {
+                    await stopCameraPreview();
+                } else {
+                    await startCameraPreview();
+                }
+            });
+            
+            // Set up stream error handling
+            cameraStream.addEventListener('error', function() {
+                console.warn('Camera stream error');
+                if (cameraActive) {
+                    showNotification('Camera stream interrupted', 'warning');
+                }
+            });
+            
+            // Check initial camera status
+            checkCameraStatus();
+        }
+        
+        async function startCameraPreview() {
+            const toggleBtn = document.getElementById('cameraToggleBtn');
+            const cameraPreview = document.getElementById('cameraPreview');
+            const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+            const cameraStream = document.getElementById('cameraStream');
+            
+            try {
+                toggleBtn.disabled = true;
+                toggleBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
+                
+                const response = await fetch('/api/camera/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    cameraActive = true;
+                    cameraPlaceholder.style.display = 'none';
+                    cameraPreview.style.display = 'block';
+                    
+                    // Force reload the camera stream
+                    const timestamp = new Date().getTime();
+                    cameraStream.src = `/video_feed?t=${timestamp}`;
+                    
+                    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+                    toggleBtn.className = 'btn btn-outline-danger btn-sm float-end';
+                    
+                    showNotification('Camera preview started', 'success');
+                } else {
+                    showNotification('Failed to start camera: ' + result.message, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error starting camera:', error);
+                showNotification('Error starting camera: ' + error.message, 'error');
+            } finally {
+                toggleBtn.disabled = false;
+            }
+        }
+        
+        async function stopCameraPreview() {
+            const toggleBtn = document.getElementById('cameraToggleBtn');
+            const cameraPreview = document.getElementById('cameraPreview');
+            const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+            
+            try {
+                toggleBtn.disabled = true;
+                toggleBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Stopping...';
+                
+                const response = await fetch('/api/camera/stop', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    cameraActive = false;
+                    cameraPreview.style.display = 'none';
+                    cameraPlaceholder.style.display = 'block';
+                    
+                    toggleBtn.innerHTML = '<i class="fas fa-play"></i> Start Camera';
+                    toggleBtn.className = 'btn btn-outline-primary btn-sm float-end';
+                    
+                    showNotification('Camera preview stopped', 'info');
+                } else {
+                    showNotification('Failed to stop camera: ' + result.message, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error stopping camera:', error);
+                showNotification('Error stopping camera: ' + error.message, 'error');
+            } finally {
+                toggleBtn.disabled = false;
+            }
+        }
+        
+        async function checkCameraStatus() {
+            try {
+                const response = await fetch('/api/camera/status');
+                const status = await response.json();
+                
+                const cameraPreview = document.getElementById('cameraPreview');
+                const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+                const toggleBtn = document.getElementById('cameraToggleBtn');
+                
+                if (status.active) {
+                    cameraActive = true;
+                    cameraPlaceholder.style.display = 'none';
+                    cameraPreview.style.display = 'block';
+                    
+                    toggleBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Camera';
+                    toggleBtn.className = 'btn btn-outline-danger btn-sm float-end';
+                    
+                    // Refresh stream
+                    const timestamp = new Date().getTime();
+                    document.getElementById('cameraStream').src = `/video_feed?t=${timestamp}`;
+                } else {
+                    cameraActive = false;
+                    cameraPreview.style.display = 'none';
+                    cameraPlaceholder.style.display = 'block';
+                    
+                    toggleBtn.innerHTML = '<i class="fas fa-play"></i> Start Camera';
+                    toggleBtn.className = 'btn btn-outline-primary btn-sm float-end';
+                }
+                
+            } catch (error) {
+                console.error('Error checking camera status:', error);
+            }
+        }
+        
+        // Listen for camera status updates from server
+        socket.on('camera_status', function(data) {
+            console.log('Camera status update:', data);
+            
+            if (data.active && !cameraActive) {
+                // Camera started by another client
+                checkCameraStatus();
+                showNotification('Camera started: ' + data.message, 'info');
+            } else if (!data.active && cameraActive) {
+                // Camera stopped by another client
+                checkCameraStatus();
+                showNotification('Camera stopped: ' + data.message, 'info');
+            }
+        });
+        
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize camera controls
+            initializeCameraControls();
+            
+            // Request initial update
+            socket.emit('request_update');
+            
+            // Set up periodic updates
+            setInterval(() => {
+                fetchStatistics();
+            }, 10000); // Update every 10 seconds
+        });
+    </script>
+</body>
+</html> 

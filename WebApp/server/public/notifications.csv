@@ -10,3 +10,67 @@ id,datetime,content,status
 9,Jun 3,Set threshold for Temperature to 25 °C in Sector A,Completed
 10,Jun 3,Set threshold for Humidity to 60 % in Sector A,Completed
 11,Jun 3,Set threshold for Light to 500 lux in Sector A,Completed
+12,Jun 3,User logged in,Completed
+13,Jun 3,User logged in,Completed
+14,Jun 3,Started Light in Off mode in Sector A,Completed
+15,Jun 3,Adjusted Temperature threshold to 26 °C in Sector A,Pending
+16,Jun 3,Adjusted Temperature threshold to 27 °C in Sector A,Pending
+17,Jun 3,Adjusted Temperature threshold to 28 °C in Sector A,Pending
+18,Jun 3,Adjusted Temperature threshold to 29 °C in Sector A,Pending
+19,Jun 3,Adjusted Temperature threshold to 30 °C in Sector A,Pending
+20,Jun 3,Adjusted Temperature threshold to 31 °C in Sector A,Pending
+21,Jun 3,Adjusted Temperature threshold to 32 °C in Sector A,Pending
+22,Jun 3,Adjusted Temperature threshold to 33 °C in Sector A,Pending
+23,Jun 3,Adjusted Temperature threshold to 34 °C in Sector A,Pending
+24,Jun 3,Set threshold for Temperature to 34 °C in Sector A,Completed
+25,Jun 3,Started Light in Off mode in Sector A,Completed
+26,Jun 3,Started Motor Fan in On mode in Sector A,Completed
+27,Jun 3,User logged in,Completed
+28,Jun 3,Adjusted Temperature threshold to 3 °C in Sector A,Pending
+29,Jun 3,Adjusted Temperature threshold to 35 °C in Sector A,Pending
+30,Jun 3,Adjusted Temperature threshold to 3 °C in Sector A,Pending
+31,Jun 3,Adjusted Temperature threshold to 30 °C in Sector A,Pending
+32,Jun 3,Set threshold for Temperature to 30 °C in Sector A,Completed
+33,Jun 3,Adjusted Humidity threshold to 6 % in Sector A,Pending
+34,Jun 3,Adjusted Humidity threshold to NaN % in Sector A,Pending
+35,Jun 3,Adjusted Humidity threshold to NaN % in Sector A,Pending
+36,Jun 3,Adjusted Humidity threshold to 7 % in Sector A,Pending
+37,Jun 3,Adjusted Humidity threshold to 70 % in Sector A,Pending
+38,Jun 3,Set threshold for Humidity to 70 % in Sector A,Completed
+39,Jun 3,Adjusted Light threshold to 0 lux in Sector A,Pending
+40,Jun 3,Adjusted Light threshold to 3 lux in Sector A,Pending
+41,Jun 3,Adjusted Light threshold to 30 lux in Sector A,Pending
+42,Jun 3,Adjusted Light threshold to 300 lux in Sector A,Pending
+43,Jun 3,Set threshold for Light to 300 lux in Sector A,Completed
+44,Jun 3,User logged in,Completed
+45,Jun 3,User logged in,Completed
+46,Jun 3,Adjusted Temperature threshold to 3 °C in Sector A,Pending
+47,Jun 3,Adjusted Temperature threshold to NaN °C in Sector A,Pending
+48,Jun 3,Adjusted Temperature threshold to 2 °C in Sector A,Pending
+49,Jun 3,Adjusted Temperature threshold to 25 °C in Sector A,Pending
+50,Jun 3,Set threshold for Temperature to 25 °C in Sector A,Completed
+51,Jun 3,Adjusted Humidity threshold to 7 % in Sector A,Pending
+52,Jun 3,Adjusted Humidity threshold to NaN % in Sector A,Pending
+53,Jun 3,Adjusted Humidity threshold to 6 % in Sector A,Pending
+54,Jun 3,Adjusted Humidity threshold to 60 % in Sector A,Pending
+55,Jun 3,Set threshold for Humidity to 60 % in Sector A,Completed
+56,Jun 3,Set threshold for Light to 300 lux in Sector A,Completed
+57,Jun 3,User logged in,Completed
+58,Jun 3,Adjusted Temperature threshold to 2 °C in Sector A,Pending
+59,Jun 3,Adjusted Temperature threshold to NaN °C in Sector A,Pending
+60,Jun 3,Adjusted Temperature threshold to 3 °C in Sector A,Pending
+61,Jun 3,Adjusted Temperature threshold to 30 °C in Sector A,Pending
+62,Jun 3,Adjusted Humidity threshold to 6 % in Sector A,Pending
+63,Jun 3,Adjusted Humidity threshold to NaN % in Sector A,Pending
+64,Jun 3,Adjusted Humidity threshold to 6 % in Sector A,Pending
+65,Jun 3,Adjusted Humidity threshold to 60 % in Sector A,Pending
+66,Jun 3,Adjusted Temperature threshold to 3 °C in Sector A,Pending
+67,Jun 3,Adjusted Temperature threshold to NaN °C in Sector A,Pending
+68,Jun 3,Adjusted Temperature threshold to 2 °C in Sector A,Pending
+69,Jun 3,Adjusted Temperature threshold to 28 °C in Sector A,Pending
+70,Jun 3,Adjusted Temperature threshold to 2 °C in Sector A,Pending
+71,Jun 3,Adjusted Temperature threshold to 26 °C in Sector A,Pending
+72,Jun 3,Set threshold for Temperature to 26 °C in Sector A,Completed
+73,Jun 3,Set threshold for Humidity to 60 % in Sector A,Completed
+74,Jun 3,Set threshold for Light to 300 lux in Sector A,Completed
+75,Jun 3,Started Motor Fan in Off mode in Sector A,Completed

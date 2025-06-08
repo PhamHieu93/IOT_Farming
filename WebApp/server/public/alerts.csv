@@ -1,108 +1,427 @@
-datetime, content, status
-2025-05-31T17:53:53.713Z,Temperature has reached the threshold,critical
-2025-05-31T17:53:53.851Z,Light has reached the threshold,critical
-2025-05-31T17:53:53.889Z,Temperature is near the threshold,warning
-2025-05-31T17:54:03.538Z,Temperature has reached the threshold,critical
-2025-05-31T17:54:03.640Z,Light has reached the threshold,critical
-2025-05-31T17:54:03.855Z,Temperature is near the threshold,warning
-2025-05-31T17:54:18.238Z,Temperature is near the threshold,warning
-2025-05-31T17:54:18.333Z,Humidity has reached the threshold,critical
-2025-06-01T00:21:16.546Z,Temperature has reached the threshold,critical
-2025-06-01T00:21:16.648Z,Temperature is near the threshold,warning
-2025-06-01T00:21:25.842Z,Temperature has reached the threshold,critical
-2025-06-01T00:21:25.892Z,Humidity is near the threshold,warning
-2025-06-01T00:21:35.816Z,Humidity is near the threshold,warning
-2025-06-01T00:21:35.837Z,Temperature has reached the threshold,critical
-2025-06-01T00:21:45.866Z,Temperature has reached the threshold,critical
-2025-06-01T00:21:46.017Z,Temperature is near the threshold,warning
-2025-06-01T00:21:55.825Z,Temperature has reached the threshold,critical
-2025-06-01T00:21:55.867Z,Light is near the threshold,warning
-2025-06-01T00:22:06.399Z,Temperature is near the threshold,warning
-2025-06-01T00:22:06.446Z,Temperature has reached the threshold,critical
-2025-06-01T00:22:15.801Z,Humidity has reached the threshold,critical
-2025-06-01T00:22:15.887Z,Temperature is near the threshold,warning
-2025-06-01T00:22:26.475Z,Temperature is near the threshold,warning
-2025-06-01T00:22:26.478Z,Humidity has reached the threshold,critical
-2025-06-01T00:22:35.811Z,Humidity has reached the threshold,critical
-2025-06-01T00:22:35.905Z,Temperature is near the threshold,warning
-2025-06-01T00:23:18.238Z,Temperature has reached the threshold,critical
-2025-06-01T00:23:18.393Z,Temperature is near the threshold,warning
-2025-06-01T00:23:28.429Z,Humidity has reached the threshold,critical
-2025-06-01T00:23:28.515Z,Temperature is near the threshold,warning
-2025-06-01T00:23:38.497Z,Temperature has reached the threshold,critical
-2025-06-01T00:23:38.515Z,Temperature is near the threshold,warning
-2025-06-01T00:23:48.411Z,Temperature is near the threshold,warning
-2025-06-01T00:23:48.461Z,Temperature has reached the threshold,critical
-2025-06-01T00:23:58.417Z,Humidity has reached the threshold,critical
-2025-06-01T00:23:58.418Z,Temperature is near the threshold,warning
-2025-06-01T00:24:08.466Z,Temperature has reached the threshold,critical
-2025-06-01T00:24:08.567Z,Temperature is near the threshold,warning
-2025-06-01T00:24:18.403Z,Temperature is near the threshold,warning
-2025-06-01T00:24:18.502Z,Temperature has reached the threshold,critical
-2025-06-01T00:24:28.474Z,Light is near the threshold,warning
-2025-06-01T00:24:28.476Z,Temperature has reached the threshold,critical
-2025-06-01T00:25:13.480Z,Light has reached the threshold,critical
-2025-06-01T00:25:13.541Z,Temperature is near the threshold,warning
-2025-06-01T00:26:13.514Z,Temperature has reached the threshold,critical
-2025-06-01T00:26:13.530Z,Temperature is near the threshold,warning
-2025-06-01T00:26:38.412Z,Temperature has reached the threshold,critical
-2025-06-01T00:26:38.414Z,Temperature is near the threshold,warning
-2025-06-01T00:26:48.400Z,Temperature is near the threshold,warning
-2025-06-01T00:26:48.462Z,Temperature has reached the threshold,critical
-2025-06-01T00:28:02.033Z,Temperature has reached the threshold,critical
-2025-06-01T00:28:02.242Z,Temperature is near the threshold,warning
-2025-06-01T00:28:24.841Z,Temperature is near the threshold,warning
-2025-06-01T00:28:24.953Z,Temperature is near the threshold,warning
-2025-06-01T00:28:25.082Z,Light has reached the threshold,critical
-2025-06-01T13:32:37.615Z,Temperature has reached the threshold,critical
-2025-06-01T13:32:37.794Z,Temperature is near the threshold,warning
-2025-06-01T13:32:44.616Z,Temperature has reached the threshold,critical
-2025-06-01T13:32:44.780Z,Temperature is near the threshold,warning
-2025-06-01T13:38:05.572Z,Humidity is near the threshold,warning
-2025-06-01T13:38:05.582Z,Temperature has reached the threshold,critical
-2025-06-01T13:40:30.295Z,Temperature is near the threshold,warning
-2025-06-01T13:40:30.612Z,Temperature has reached the threshold,critical
-2025-06-01T13:42:06.167Z,Temperature has reached the threshold,critical
-2025-06-01T13:42:06.174Z,Temperature is near the threshold,warning
-2025-06-01T13:45:21.124Z,Temperature has reached the threshold,critical
-2025-06-01T13:45:21.134Z,Temperature is near the threshold,warning
-2025-06-01T16:54:56.803Z,Temperature is near the threshold,warning
-2025-06-01T16:54:56.806Z,Temperature is near the threshold,warning
-2025-06-01T16:54:56.892Z,Temperature is near the threshold,warning
-2025-06-01T16:55:06.173Z,Temperature is near the threshold,warning
-2025-06-01T16:55:06.190Z,Temperature is near the threshold,warning
-2025-06-01T16:55:06.194Z,Temperature is near the threshold,warning
-2025-06-01T16:55:16.188Z,Temperature is near the threshold,warning
-2025-06-01T16:55:16.203Z,Temperature is near the threshold,warning
-2025-06-01T16:55:16.207Z,Temperature is near the threshold,warning
-2025-06-01T16:55:26.194Z,Temperature is near the threshold,warning
-2025-06-01T16:55:26.214Z,Temperature is near the threshold,warning
-2025-06-01T16:55:26.222Z,Temperature is near the threshold,warning
-2025-06-01T16:55:36.176Z,Temperature is near the threshold,warning
-2025-06-01T16:55:36.322Z,Temperature is near the threshold,warning
-2025-06-01T16:55:36.327Z,Temperature is near the threshold,warning
-2025-06-01T16:55:46.361Z,Temperature is near the threshold,warning
-2025-06-01T16:55:46.365Z,Temperature is near the threshold,warning
-2025-06-01T16:55:46.380Z,Temperature is near the threshold,warning
-2025-06-01T16:55:56.232Z,Temperature is near the threshold,warning
-2025-06-01T16:55:56.389Z,Temperature is near the threshold,warning
-2025-06-01T16:55:56.394Z,Temperature is near the threshold,warning
-2025-06-01T16:56:06.226Z,Temperature is near the threshold,warning
-2025-06-01T16:56:06.229Z,Temperature is near the threshold,warning
-2025-06-01T16:56:06.232Z,Temperature is near the threshold,warning
-2025-06-01T16:56:30.155Z,Temperature is near the threshold,warning
-2025-06-01T16:56:30.188Z,Temperature is near the threshold,warning
-2025-06-01T16:56:30.193Z,Temperature is near the threshold,warning
-2025-06-01T16:56:36.294Z,Temperature is near the threshold,warning
-2025-06-01T16:56:36.325Z,Temperature is near the threshold,warning
-2025-06-01T16:56:36.330Z,Humidity is near the threshold,warning
-2025-06-02T03:42:48.129Z,Temperature has reached the threshold,critical
-2025-06-02T03:42:48.261Z,Temperature is near the threshold,warning
-2025-06-02T03:42:48.398Z,Humidity is near the threshold,warning
-2025-06-02T03:43:12.613Z,Light is near the threshold,warning
-2025-06-02T03:43:12.895Z,Temperature is near the threshold,warning
-2025-06-02T03:47:41.899Z,Humidity is near the threshold,warning
-2025-06-02T03:48:06.477Z,Temperature is near the threshold,warning
-2025-06-02T03:55:48.980Z,Light has reached the threshold,critical
-2025-06-02T04:04:10.605Z,Temperature has reached the threshold,critical
-2025-06-02T04:04:10.839Z,Temperature has reached the threshold,critical
+datetime,content,status
+2025-05-31T17:53:53.713Z,undefined,undefined
+2025-05-31T17:53:53.851Z,undefined,undefined
+2025-05-31T17:53:53.889Z,undefined,undefined
+2025-05-31T17:54:03.538Z,undefined,undefined
+2025-05-31T17:54:03.640Z,undefined,undefined
+2025-05-31T17:54:03.855Z,undefined,undefined
+2025-05-31T17:54:18.238Z,undefined,undefined
+2025-05-31T17:54:18.333Z,undefined,undefined
+2025-06-01T00:21:16.546Z,undefined,undefined
+2025-06-01T00:21:16.648Z,undefined,undefined
+2025-06-01T00:21:25.842Z,undefined,undefined
+2025-06-01T00:21:25.892Z,undefined,undefined
+2025-06-01T00:21:35.816Z,undefined,undefined
+2025-06-01T00:21:35.837Z,undefined,undefined
+2025-06-01T00:21:45.866Z,undefined,undefined
+2025-06-01T00:21:46.017Z,undefined,undefined
+2025-06-01T00:21:55.825Z,undefined,undefined
+2025-06-01T00:21:55.867Z,undefined,undefined
+2025-06-01T00:22:06.399Z,undefined,undefined
+2025-06-01T00:22:06.446Z,undefined,undefined
+2025-06-01T00:22:15.801Z,undefined,undefined
+2025-06-01T00:22:15.887Z,undefined,undefined
+2025-06-01T00:22:26.475Z,undefined,undefined
+2025-06-01T00:22:26.478Z,undefined,undefined
+2025-06-01T00:22:35.811Z,undefined,undefined
+2025-06-01T00:22:35.905Z,undefined,undefined
+2025-06-01T00:23:18.238Z,undefined,undefined
+2025-06-01T00:23:18.393Z,undefined,undefined
+2025-06-01T00:23:28.429Z,undefined,undefined
+2025-06-01T00:23:28.515Z,undefined,undefined
+2025-06-01T00:23:38.497Z,undefined,undefined
+2025-06-01T00:23:38.515Z,undefined,undefined
+2025-06-01T00:23:48.411Z,undefined,undefined
+2025-06-01T00:23:48.461Z,undefined,undefined
+2025-06-01T00:23:58.417Z,undefined,undefined
+2025-06-01T00:23:58.418Z,undefined,undefined
+2025-06-01T00:24:08.466Z,undefined,undefined
+2025-06-01T00:24:08.567Z,undefined,undefined
+2025-06-01T00:24:18.403Z,undefined,undefined
+2025-06-01T00:24:18.502Z,undefined,undefined
+2025-06-01T00:24:28.474Z,undefined,undefined
+2025-06-01T00:24:28.476Z,undefined,undefined
+2025-06-01T00:25:13.480Z,undefined,undefined
+2025-06-01T00:25:13.541Z,undefined,undefined
+2025-06-01T00:26:13.514Z,undefined,undefined
+2025-06-01T00:26:13.530Z,undefined,undefined
+2025-06-01T00:26:38.412Z,undefined,undefined
+2025-06-01T00:26:38.414Z,undefined,undefined
+2025-06-01T00:26:48.400Z,undefined,undefined
+2025-06-01T00:26:48.462Z,undefined,undefined
+2025-06-01T00:28:02.033Z,undefined,undefined
+2025-06-01T00:28:02.242Z,undefined,undefined
+2025-06-01T00:28:24.841Z,undefined,undefined
+2025-06-01T00:28:24.953Z,undefined,undefined
+2025-06-01T00:28:25.082Z,undefined,undefined
+2025-06-01T13:32:37.615Z,undefined,undefined
+2025-06-01T13:32:37.794Z,undefined,undefined
+2025-06-01T13:32:44.616Z,undefined,undefined
+2025-06-01T13:32:44.780Z,undefined,undefined
+2025-06-01T13:38:05.572Z,undefined,undefined
+2025-06-01T13:38:05.582Z,undefined,undefined
+2025-06-01T13:40:30.295Z,undefined,undefined
+2025-06-01T13:40:30.612Z,undefined,undefined
+2025-06-01T13:42:06.167Z,undefined,undefined
+2025-06-01T13:42:06.174Z,undefined,undefined
+2025-06-01T13:45:21.124Z,undefined,undefined
+2025-06-01T13:45:21.134Z,undefined,undefined
+2025-06-01T16:54:56.803Z,undefined,undefined
+2025-06-01T16:54:56.806Z,undefined,undefined
+2025-06-01T16:54:56.892Z,undefined,undefined
+2025-06-01T16:55:06.173Z,undefined,undefined
+2025-06-01T16:55:06.190Z,undefined,undefined
+2025-06-01T16:55:06.194Z,undefined,undefined
+2025-06-01T16:55:16.188Z,undefined,undefined
+2025-06-01T16:55:16.203Z,undefined,undefined
+2025-06-01T16:55:16.207Z,undefined,undefined
+2025-06-01T16:55:26.194Z,undefined,undefined
+2025-06-01T16:55:26.214Z,undefined,undefined
+2025-06-01T16:55:26.222Z,undefined,undefined
+2025-06-01T16:55:36.176Z,undefined,undefined
+2025-06-01T16:55:36.322Z,undefined,undefined
+2025-06-01T16:55:36.327Z,undefined,undefined
+2025-06-01T16:55:46.361Z,undefined,undefined
+2025-06-01T16:55:46.365Z,undefined,undefined
+2025-06-01T16:55:46.380Z,undefined,undefined
+2025-06-01T16:55:56.232Z,undefined,undefined
+2025-06-01T16:55:56.389Z,undefined,undefined
+2025-06-01T16:55:56.394Z,undefined,undefined
+2025-06-01T16:56:06.226Z,undefined,undefined
+2025-06-01T16:56:06.229Z,undefined,undefined
+2025-06-01T16:56:06.232Z,undefined,undefined
+2025-06-01T16:56:30.155Z,undefined,undefined
+2025-06-01T16:56:30.188Z,undefined,undefined
+2025-06-01T16:56:30.193Z,undefined,undefined
+2025-06-01T16:56:36.294Z,undefined,undefined
+2025-06-01T16:56:36.325Z,undefined,undefined
+2025-06-01T16:56:36.330Z,undefined,undefined
+2025-06-02T03:42:48.129Z,undefined,undefined
+2025-06-02T03:42:48.261Z,undefined,undefined
+2025-06-02T03:42:48.398Z,undefined,undefined
+2025-06-02T03:43:12.613Z,undefined,undefined
+2025-06-02T03:43:12.895Z,undefined,undefined
+2025-06-02T03:47:41.899Z,undefined,undefined
+2025-06-02T03:48:06.477Z,undefined,undefined
+2025-06-02T03:55:48.980Z,undefined,undefined
+2025-06-02T04:04:10.605Z,undefined,undefined
+2025-06-02T04:04:10.839Z,undefined,undefined
+2025-06-03T03:33:24.278Z,undefined,undefined
+2025-06-03T03:33:24.284Z,undefined,undefined
+2025-06-03T03:33:24.290Z,undefined,undefined
+2025-06-03T03:34:16.385Z,undefined,undefined
+2025-06-03T03:34:16.389Z,undefined,undefined
+2025-06-03T03:34:16.396Z,undefined,undefined
+2025-06-03T03:34:16.401Z,undefined,undefined
+2025-06-03T03:34:16.406Z,undefined,undefined
+2025-06-03T03:34:16.410Z,undefined,undefined
+2025-06-03T03:36:17.218Z,undefined,undefined
+2025-06-03T03:36:17.222Z,undefined,undefined
+2025-06-03T03:36:17.226Z,undefined,undefined
+2025-06-03T03:36:17.231Z,undefined,undefined
+2025-06-03T03:36:17.237Z,undefined,undefined
+2025-06-03T03:36:17.242Z,undefined,undefined
+2025-06-03T03:40:23.261Z,undefined,undefined
+2025-06-03T03:40:23.263Z,undefined,undefined
+2025-06-03T03:40:23.268Z,undefined,undefined
+2025-06-03T12:40:07.159Z,undefined,undefined
+2025-06-03T12:40:07.212Z,undefined,undefined
+2025-06-03T12:40:07.306Z,undefined,undefined
+2025-06-03T12:40:24.507Z,undefined,undefined
+2025-06-03T12:40:24.567Z,undefined,undefined
+2025-06-03T12:40:24.623Z,undefined,undefined
+2025-06-03T12:40:34.600Z,undefined,undefined
+2025-06-03T12:40:34.608Z,undefined,undefined
+2025-06-03T12:40:34.710Z,undefined,undefined
+2025-06-03T12:40:44.510Z,undefined,undefined
+2025-06-03T12:40:44.555Z,undefined,undefined
+2025-06-03T12:40:44.605Z,undefined,undefined
+2025-06-03T12:41:21.142Z,undefined,undefined
+2025-06-03T12:41:21.178Z,undefined,undefined
+2025-06-03T12:41:21.239Z,undefined,undefined
+2025-06-03T12:41:30.355Z,undefined,undefined
+2025-06-03T12:41:30.357Z,undefined,undefined
+2025-06-03T12:41:30.610Z,undefined,undefined
+2025-06-03T12:41:40.269Z,undefined,undefined
+2025-06-03T12:41:40.306Z,undefined,undefined
+2025-06-03T12:41:40.398Z,undefined,undefined
+2025-06-03T12:41:50.258Z,undefined,undefined
+2025-06-03T12:41:50.263Z,undefined,undefined
+2025-06-03T12:41:50.307Z,undefined,undefined
+2025-06-03T12:42:00.275Z,undefined,undefined
+2025-06-03T12:42:00.282Z,undefined,undefined
+2025-06-03T12:42:00.316Z,undefined,undefined
+2025-06-03T12:42:10.338Z,undefined,undefined
+2025-06-03T12:42:10.371Z,undefined,undefined
+2025-06-03T12:42:10.374Z,undefined,undefined
+2025-06-03T12:42:20.282Z,undefined,undefined
+2025-06-03T12:42:20.288Z,undefined,undefined
+2025-06-03T12:42:20.346Z,undefined,undefined
+2025-06-03T12:42:30.278Z,undefined,undefined
+2025-06-03T12:42:30.283Z,undefined,undefined
+2025-06-03T12:42:30.396Z,undefined,undefined
+2025-06-03T12:42:40.330Z,undefined,undefined
+2025-06-03T12:42:40.334Z,undefined,undefined
+2025-06-03T12:42:40.391Z,undefined,undefined
+2025-06-03T12:42:50.274Z,undefined,undefined
+2025-06-03T12:42:50.277Z,undefined,undefined
+2025-06-03T12:42:50.425Z,undefined,undefined
+2025-06-03T12:43:00.227Z,undefined,undefined
+2025-06-03T12:43:00.412Z,undefined,undefined
+2025-06-03T12:43:10.276Z,undefined,undefined
+2025-06-03T12:43:10.309Z,undefined,undefined
+2025-06-03T12:44:56.039Z,Humidity has reached the threshold,critical
+2025-06-03T12:44:56.041Z,Light is near the threshold,warning
+2025-06-03T12:44:56.245Z,Temperature is near the threshold,warning
+2025-06-03T12:45:05.195Z,Humidity has reached the threshold,critical
+2025-06-03T12:45:05.247Z,Light is near the threshold,warning
+2025-06-03T12:45:05.409Z,Temperature is near the threshold,warning
+2025-06-03T12:45:15.339Z,Temperature is near the threshold,warning
+2025-06-03T12:45:15.418Z,Humidity has reached the threshold,critical
+2025-06-03T12:45:15.607Z,Light is near the threshold,warning
+2025-06-03T12:45:25.276Z,Humidity has reached the threshold,critical
+2025-06-03T12:45:25.281Z,Temperature is near the threshold,warning
+2025-06-03T12:45:25.328Z,Light is near the threshold,warning
+2025-06-03T12:45:35.251Z,Humidity has reached the threshold,critical
+2025-06-03T12:45:35.304Z,Temperature is near the threshold,warning
+2025-06-03T12:45:35.446Z,Light is near the threshold,warning
+2025-06-03T12:45:45.326Z,Light is near the threshold,warning
+2025-06-03T12:45:45.329Z,Humidity has reached the threshold,critical
+2025-06-03T12:45:45.392Z,Temperature is near the threshold,warning
+2025-06-03T12:45:55.256Z,Temperature is near the threshold,warning
+2025-06-03T12:45:55.311Z,Humidity has reached the threshold,critical
+2025-06-03T12:45:55.441Z,Light is near the threshold,warning
+2025-06-03T12:46:05.318Z,Humidity has reached the threshold,critical
+2025-06-03T12:46:05.320Z,Temperature is near the threshold,warning
+2025-06-03T12:46:05.440Z,Light is near the threshold,warning
+2025-06-03T12:46:15.249Z,Temperature is near the threshold,warning
+2025-06-03T12:46:15.251Z,Light is near the threshold,warning
+2025-06-03T12:46:15.304Z,Humidity has reached the threshold,critical
+2025-06-03T12:46:25.254Z,Temperature is near the threshold,warning
+2025-06-03T12:46:25.256Z,Humidity has reached the threshold,critical
+2025-06-03T12:46:25.360Z,Light is near the threshold,warning
+2025-06-03T12:47:13.277Z,Temperature is near the threshold,warning
+2025-06-03T12:47:13.280Z,Humidity has reached the threshold,critical
+2025-06-03T12:47:13.335Z,Light is near the threshold,warning
+2025-06-03T12:48:13.453Z,Humidity has reached the threshold,critical
+2025-06-03T12:48:13.455Z,Temperature is near the threshold,warning
+2025-06-03T12:48:13.518Z,Light is near the threshold,warning
+2025-06-03T12:48:36.294Z,Temperature is near the threshold,warning
+2025-06-03T12:48:36.298Z,Humidity has reached the threshold,critical
+2025-06-03T12:48:36.311Z,Light is near the threshold,warning
+2025-06-03T12:48:45.270Z,Temperature is near the threshold,warning
+2025-06-03T12:48:45.359Z,Humidity has reached the threshold,critical
+2025-06-03T12:48:45.364Z,Light is near the threshold,warning
+2025-06-03T12:48:55.447Z,Light is near the threshold,warning
+2025-06-03T12:48:55.452Z,Humidity has reached the threshold,critical
+2025-06-03T12:49:05.260Z,Humidity has reached the threshold,critical
+2025-06-03T12:49:05.327Z,Light is near the threshold,warning
+2025-06-03T12:49:15.311Z,Humidity has reached the threshold,critical
+2025-06-03T12:49:15.428Z,Light is near the threshold,warning
+2025-06-03T12:49:35.542Z,Humidity has reached the threshold,critical
+2025-06-03T12:49:35.586Z,Light is near the threshold,warning
+2025-06-03T12:49:45.375Z,Humidity has reached the threshold,critical
+2025-06-03T12:49:45.389Z,Light is near the threshold,warning
+2025-06-03T12:50:13.466Z,Light is near the threshold,warning
+2025-06-03T12:51:13.535Z,Temperature has reached the threshold,critical
+2025-06-03T12:51:13.550Z,Humidity has reached the threshold,critical
+2025-06-03T12:51:27.516Z,Humidity has reached the threshold,critical
+2025-06-03T14:15:42.194Z,Temperature is near the threshold,warning
+2025-06-03T14:15:42.275Z,Humidity has reached the threshold,critical
+2025-06-03T14:15:51.113Z,Humidity has reached the threshold,critical
+2025-06-03T14:15:51.122Z,Light is near the threshold,warning
+2025-06-03T14:15:51.201Z,Temperature is near the threshold,warning
+2025-06-03T14:16:01.123Z,Temperature is near the threshold,warning
+2025-06-03T14:16:01.130Z,Humidity has reached the threshold,critical
+2025-06-03T14:16:01.154Z,Light is near the threshold,warning
+2025-06-03T14:16:21.007Z,Temperature is near the threshold,warning
+2025-06-03T14:16:21.046Z,Light is near the threshold,warning
+2025-06-03T14:18:20.962Z,Humidity has reached the threshold,critical
+2025-06-03T14:18:21.165Z,Light is near the threshold,warning
+2025-06-03T14:18:31.358Z,Light is near the threshold,warning
+2025-06-03T14:18:31.557Z,Humidity has reached the threshold,critical
+2025-06-03T14:18:41.285Z,Light is near the threshold,warning
+2025-06-03T14:18:41.432Z,Humidity has reached the threshold,critical
+2025-06-03T14:18:51.515Z,Humidity has reached the threshold,critical
+2025-06-03T14:18:51.703Z,Light is near the threshold,warning
+2025-06-03T14:19:01.280Z,Light is near the threshold,warning
+2025-06-03T14:19:01.340Z,Humidity has reached the threshold,critical
+2025-06-03T14:19:11.343Z,Humidity has reached the threshold,critical
+2025-06-03T14:19:11.462Z,Light is near the threshold,warning
+2025-06-03T14:19:21.356Z,Humidity has reached the threshold,critical
+2025-06-03T14:19:21.425Z,Light is near the threshold,warning
+2025-06-03T14:19:56.456Z,Temperature has reached the threshold,critical
+2025-06-03T14:19:56.467Z,Humidity has reached the threshold,critical
+2025-06-03T14:19:56.510Z,Light is near the threshold,warning
+2025-06-03T14:20:01.367Z,Temperature has reached the threshold,critical
+2025-06-03T14:20:01.528Z,Humidity has reached the threshold,critical
+2025-06-03T14:20:01.570Z,Light is near the threshold,warning
+2025-06-03T14:20:11.374Z,Temperature has reached the threshold,critical
+2025-06-03T14:20:11.382Z,Humidity has reached the threshold,critical
+2025-06-03T14:20:11.397Z,Light is near the threshold,warning
+2025-06-03T14:20:21.285Z,Temperature has reached the threshold,critical
+2025-06-03T14:20:21.288Z,Humidity has reached the threshold,critical
+2025-06-03T14:20:21.362Z,Light is near the threshold,warning
+2025-06-03T14:20:31.364Z,Temperature has reached the threshold,critical
+2025-06-03T14:20:31.369Z,Light is near the threshold,warning
+2025-06-03T14:20:31.427Z,Humidity has reached the threshold,critical
+2025-06-03T14:20:41.349Z,Humidity has reached the threshold,critical
+2025-06-03T14:20:41.399Z,Light is near the threshold,warning
+2025-06-03T14:20:51.424Z,Humidity has reached the threshold,critical
+2025-06-03T14:20:51.435Z,Light is near the threshold,warning
+2025-06-03T14:21:01.326Z,Humidity has reached the threshold,critical
+2025-06-03T14:21:01.328Z,Light is near the threshold,warning
+2025-06-03T16:12:29.838Z,Temperature has reached the threshold,critical
+2025-06-03T16:12:29.842Z,Light has reached the threshold,critical
+2025-06-03T16:12:38.739Z,Temperature has reached the threshold,critical
+2025-06-03T16:12:38.786Z,Light has reached the threshold,critical
+2025-06-03T16:12:38.844Z,Humidity has reached the threshold,critical
+2025-06-03T16:12:48.734Z,Humidity has reached the threshold,critical
+2025-06-03T16:12:48.737Z,Light has reached the threshold,critical
+2025-06-03T16:12:48.796Z,Temperature has reached the threshold,critical
+2025-06-03T16:12:59.255Z,Temperature has reached the threshold,critical
+2025-06-03T16:12:59.467Z,Humidity has reached the threshold,critical
+2025-06-03T16:12:59.471Z,Light has reached the threshold,critical
+2025-06-03T16:13:09.381Z,Humidity has reached the threshold,critical
+2025-06-03T16:13:09.383Z,Temperature has reached the threshold,critical
+2025-06-03T16:13:09.485Z,Light has reached the threshold,critical
+2025-06-03T16:13:19.284Z,Temperature has reached the threshold,critical
+2025-06-03T16:13:19.287Z,Humidity has reached the threshold,critical
+2025-06-03T16:13:19.365Z,Light has reached the threshold,critical
+2025-06-03T16:13:29.274Z,Temperature has reached the threshold,critical
+2025-06-03T16:13:29.338Z,Humidity has reached the threshold,critical
+2025-06-03T16:13:29.613Z,Light has reached the threshold,critical
+2025-06-03T16:13:39.254Z,Temperature has reached the threshold,critical
+2025-06-03T16:13:39.268Z,Light has reached the threshold,critical
+2025-06-03T16:13:39.326Z,Humidity has reached the threshold,critical
+2025-06-03T16:13:49.374Z,Temperature has reached the threshold,critical
+2025-06-03T16:13:49.376Z,Humidity has reached the threshold,critical
+2025-06-03T16:13:49.383Z,Light has reached the threshold,critical
+2025-06-03T16:13:59.376Z,Temperature has reached the threshold,critical
+2025-06-03T16:13:59.444Z,Humidity has reached the threshold,critical
+2025-06-03T16:13:59.503Z,Light has reached the threshold,critical
+2025-06-03T16:14:09.267Z,Light has reached the threshold,critical
+2025-06-03T16:14:09.269Z,Temperature has reached the threshold,critical
+2025-06-03T16:15:10.345Z,Temperature has reached the threshold,critical
+2025-06-03T16:15:10.462Z,Light has reached the threshold,critical
+2025-06-03T16:15:10.498Z,Humidity has reached the threshold,critical
+2025-06-03T16:16:11.413Z,Light has reached the threshold,critical
+2025-06-03T16:16:11.497Z,Humidity has reached the threshold,critical
+2025-06-03T16:17:12.395Z,Temperature has reached the threshold,critical
+2025-06-03T16:17:12.397Z,Humidity has reached the threshold,critical
+2025-06-03T16:17:12.553Z,Light has reached the threshold,critical
+2025-06-03T16:18:13.483Z,Humidity has reached the threshold,critical
+2025-06-03T16:18:13.488Z,Temperature has reached the threshold,critical
+2025-06-03T16:18:13.582Z,Light has reached the threshold,critical
+2025-06-03T16:19:08.230Z,Temperature has reached the threshold,critical
+2025-06-03T16:19:08.232Z,Light has reached the threshold,critical
+2025-06-03T16:19:08.242Z,Humidity has reached the threshold,critical
+2025-06-03T16:19:08.719Z,Temperature has reached the threshold,critical
+2025-06-03T16:19:08.725Z,Light has reached the threshold,critical
+2025-06-03T16:31:28.720Z,Humidity is near the threshold,warning
+2025-06-03T16:31:28.908Z,Light is near the threshold,warning
+2025-06-03T16:31:38.424Z,Light is near the threshold,warning
+2025-06-03T16:31:45.736Z,Light is near the threshold,warning
+2025-06-03T16:31:55.288Z,Light is near the threshold,warning
+2025-06-03T16:32:05.299Z,Light is near the threshold,warning
+2025-06-03T16:32:15.275Z,Humidity has reached the threshold,critical
+2025-06-03T16:32:15.289Z,Light is near the threshold,warning
+2025-06-03T16:32:25.411Z,Humidity has reached the threshold,critical
+2025-06-03T16:32:25.416Z,Light is near the threshold,warning
+2025-06-03T16:32:35.286Z,Humidity has reached the threshold,critical
+2025-06-03T16:32:35.304Z,Light is near the threshold,warning
+2025-06-03T16:32:45.171Z,Humidity has reached the threshold,critical
+2025-06-03T16:32:55.269Z,Light is near the threshold,warning
+2025-06-03T16:34:58.022Z,Light is near the threshold,warning
+2025-06-03T16:34:58.071Z,Humidity has reached the threshold,critical
+2025-06-03T16:34:58.177Z,Temperature has reached the threshold,critical
+2025-06-03T16:38:44.568Z,Humidity has reached the threshold,critical
+2025-06-03T16:38:44.623Z,Temperature has reached the threshold,critical
+2025-06-03T16:38:44.811Z,Light is near the threshold,warning
+2025-06-03T16:38:54.697Z,Temperature has reached the threshold,critical
+2025-06-03T16:38:54.710Z,Humidity has reached the threshold,critical
+2025-06-03T16:38:54.731Z,Light is near the threshold,warning
+2025-06-03T16:39:05.604Z,Temperature has reached the threshold,critical
+2025-06-03T16:39:05.607Z,Humidity has reached the threshold,critical
+2025-06-03T16:39:05.612Z,Light is near the threshold,warning
+2025-06-03T16:39:15.337Z,Temperature has reached the threshold,critical
+2025-06-03T16:39:15.356Z,Humidity has reached the threshold,critical
+2025-06-03T16:39:15.459Z,Light is near the threshold,warning
+2025-06-03T16:39:25.441Z,Humidity has reached the threshold,critical
+2025-06-03T16:39:25.470Z,Temperature has reached the threshold,critical
+2025-06-03T16:39:25.478Z,Light is near the threshold,warning
+2025-06-03T16:39:35.359Z,Temperature has reached the threshold,critical
+2025-06-03T16:39:35.511Z,Humidity has reached the threshold,critical
+2025-06-03T16:39:35.562Z,Light is near the threshold,warning
+2025-06-03T16:39:45.301Z,Temperature has reached the threshold,critical
+2025-06-03T16:39:45.462Z,Humidity has reached the threshold,critical
+2025-06-03T16:39:45.464Z,Light is near the threshold,warning
+2025-06-03T16:39:54.476Z,Light is near the threshold,warning
+2025-06-03T16:39:54.527Z,Temperature has reached the threshold,critical
+2025-06-03T16:39:54.569Z,Humidity has reached the threshold,critical
+2025-06-03T16:40:05.251Z,Humidity has reached the threshold,critical
+2025-06-03T16:40:05.256Z,Temperature has reached the threshold,critical
+2025-06-03T16:40:05.441Z,Light is near the threshold,warning
+2025-06-03T16:40:57.605Z,Temperature has reached the threshold,critical
+2025-06-03T16:40:57.617Z,Humidity has reached the threshold,critical
+2025-06-03T16:40:57.657Z,Light is near the threshold,warning
+2025-06-03T16:41:06.749Z,Temperature has reached the threshold,critical
+2025-06-03T16:41:06.754Z,Light is near the threshold,warning
+2025-06-03T16:41:06.934Z,Humidity has reached the threshold,critical
+2025-06-03T16:41:16.986Z,Temperature has reached the threshold,critical
+2025-06-03T16:41:16.995Z,Light is near the threshold,warning
+2025-06-03T16:41:17.060Z,Humidity has reached the threshold,critical
+2025-06-03T16:41:26.730Z,Humidity has reached the threshold,critical
+2025-06-03T16:41:26.895Z,Temperature has reached the threshold,critical
+2025-06-03T16:41:26.923Z,Light is near the threshold,warning
+2025-06-03T16:41:36.779Z,Temperature has reached the threshold,critical
+2025-06-03T16:41:36.937Z,Light is near the threshold,warning
+2025-06-03T16:41:36.950Z,Humidity has reached the threshold,critical
+2025-06-03T16:44:04.074Z,Light is near the threshold,warning
+2025-06-03T16:44:04.428Z,Humidity has reached the threshold,critical
+2025-06-03T16:44:04.707Z,Temperature has reached the threshold,critical
+2025-06-03T16:44:14.415Z,Temperature has reached the threshold,critical
+2025-06-03T16:44:14.422Z,Humidity has reached the threshold,critical
+2025-06-03T16:44:14.448Z,Light is near the threshold,warning
+2025-06-03T16:44:24.413Z,Humidity has reached the threshold,critical
+2025-06-03T16:44:24.417Z,Temperature has reached the threshold,critical
+2025-06-03T16:44:24.601Z,Light is near the threshold,warning
+2025-06-03T16:44:34.305Z,Humidity has reached the threshold,critical
+2025-06-03T16:44:34.319Z,Temperature has reached the threshold,critical
+2025-06-03T16:44:34.506Z,Light is near the threshold,warning
+2025-06-03T16:44:44.294Z,Light is near the threshold,warning
+2025-06-03T16:44:44.300Z,Temperature has reached the threshold,critical
+2025-06-03T16:44:44.504Z,Humidity has reached the threshold,critical
+2025-06-03T16:44:54.284Z,Temperature has reached the threshold,critical
+2025-06-03T16:44:54.441Z,Humidity has reached the threshold,critical
+2025-06-03T16:44:54.450Z,Light is near the threshold,warning
+2025-06-03T16:45:04.272Z,Temperature has reached the threshold,critical
+2025-06-03T16:45:04.275Z,Humidity has reached the threshold,critical
+2025-06-03T16:45:04.298Z,Light is near the threshold,warning
+2025-06-03T16:46:00.396Z,Light is near the threshold,warning
+2025-06-03T16:46:00.399Z,Temperature has reached the threshold,critical
+2025-06-03T16:46:00.539Z,Humidity has reached the threshold,critical
+2025-06-03T16:46:13.403Z,Humidity has reached the threshold,critical
+2025-06-03T16:46:13.537Z,Temperature has reached the threshold,critical
+2025-06-03T16:46:13.558Z,Light is near the threshold,warning
+2025-06-03T16:47:13.423Z,Humidity has reached the threshold,critical
+2025-06-03T16:47:13.427Z,Temperature has reached the threshold,critical
+2025-06-03T16:47:13.583Z,Light is near the threshold,warning
+2025-06-03T16:48:13.462Z,Light is near the threshold,warning
+2025-06-03T16:48:13.516Z,Humidity has reached the threshold,critical
+2025-06-03T16:48:13.523Z,Temperature has reached the threshold,critical
+2025-06-03T16:48:41.223Z,Temperature has reached the threshold,critical
+2025-06-03T16:48:41.232Z,Light is near the threshold,warning
+2025-06-03T16:48:41.240Z,Humidity has reached the threshold,critical
+2025-06-03T16:48:43.997Z,Temperature has reached the threshold,critical
+2025-06-03T16:48:44.004Z,Humidity has reached the threshold,critical
+2025-06-03T16:48:44.174Z,Light is near the threshold,warning
+2025-06-03T16:48:53.824Z,Light is near the threshold,warning
+2025-06-03T16:48:53.952Z,Temperature has reached the threshold,critical
+2025-06-03T16:48:54.009Z,Humidity has reached the threshold,critical
+2025-06-03T16:49:03.831Z,Temperature has reached the threshold,critical
+2025-06-03T16:49:04.007Z,Light is near the threshold,warning
+2025-06-03T16:49:04.039Z,Humidity has reached the threshold,critical
+2025-06-03T16:49:13.857Z,Temperature has reached the threshold,critical
+2025-06-03T16:49:13.867Z,Humidity has reached the threshold,critical
+2025-06-03T16:49:14.080Z,Light is near the threshold,warning

@@ -14,6 +14,10 @@ TOKEN = "ttrv0asoe3tln5zqjswc"  # Device token from CoreIoT/ThingsBoard
 BROKER = "app.coreiot.io"       # MQTT Broker
 PORT = 1883
 
+temp_threshold = 31.0  # Threshold for temperature
+humi_threshold = 90.0  # Threshold for humidity
+light_threshold = 330.0  # Threshold for light
+
 # --- Keras Model Preparation ---
 def split_sequences(sequences, n_steps):
     X, y = list(), list()
@@ -203,12 +207,24 @@ while True:
             humi_str = line.split("Humidity:")[1].split("%")[0].strip()
             temp = float(temp_str)
             humi = float(humi_str)
-            print(f"Đã đọc được - Nhiệt độ: {temp}°C, Độ ẩm: {humi}%")
-        
+            if temp > temp_threshold:
+                ser.write((json.dumps({"fan": 1}) + "\n").encode())
+            else:
+                ser.write((json.dumps({"fan": 0}) + "\n").encode())
+            if humi > humi_threshold:
+                ser.write((json.dumps({"pump": 1}) + "\n").encode())
+            else:
+                ser.write((json.dumps({"pump": 0}) + "\n").encode())
+
         if "Light:" in line:
             # Parse light
             light_str = line.split("Light:")[1].split("lux")[0].strip()
             light = float(light_str)/10
+            if light < light_threshold:
+                ser.write((json.dumps({"switch": 1}) + "\n").encode())
+            else:
+                ser.write((json.dumps({"switch": 0}) + "\n").encode())
+
             print(f"Đã đọc được - Ánh sáng: {light} lux")
             
         if "Moisture:" in line:
